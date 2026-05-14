@@ -1,0 +1,21 @@
+import mysql.connector
+
+def get_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        database="restaurante"
+    )
+
+def ejecutar_query_lectura(query, params=None):
+    with get_connection() as conn:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.execute(query)
+            return cursor.fetchall()
+
+def ejecutar_query_escritura(query, params=None):
+    with get_connection() as conn:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.execute(query)
+            conn.commit() 
+            return cursor.lastrowid
