@@ -10,12 +10,12 @@ def get_connection():
 def ejecutar_query_lectura(query, params=None):
     with get_connection() as conn:
         with conn.cursor(dictionary=True) as cursor:
-            cursor.execute(query)
+            cursor.execute(query or ())
             return cursor.fetchall()
 
 def ejecutar_query_escritura(query, params=None):
     with get_connection() as conn:
         with conn.cursor(dictionary=True) as cursor:
-            cursor.execute(query)
+            cursor.execute(query or ())
             conn.commit() 
             return cursor.lastrowid
