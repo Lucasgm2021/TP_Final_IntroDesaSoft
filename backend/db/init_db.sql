@@ -1,15 +1,14 @@
-CREATE TABLE clientes (
-    id_clientes INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE usuarios (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+
+    es_admin BOOLEAN DEFAULT FALSE,
+    -- puede crear es si puede crear usuarios admin
+    puede_crear BOOLEAN DEFAULT FALSE,
+
     reservas INT DEFAULT 0,
     canceladas INT DEFAULT 0
-);
-
-CREATE TABLE admins (
-    id_admin INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    puede_crear BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE categoria_plato (
@@ -23,7 +22,9 @@ CREATE TABLE plato (
     nombre VARCHAR(50) NOT NULL,
     link_imagen VARCHAR(500) NOT NULL,
     precio DECIMAL(10,2) NOT NULL,
+
     hay_stock BOOLEAN DEFAULT TRUE,
+
     gluten BOOLEAN DEFAULT FALSE,
     producto_animal BOOLEAN DEFAULT FALSE,
     carnes BOOLEAN DEFAULT FALSE,
@@ -37,16 +38,21 @@ CREATE TABLE plato (
 
 CREATE TABLE reserva (
     id_reserva INT PRIMARY KEY AUTO_INCREMENT,
+
     id_usuario INT,
+
     interior BOOLEAN DEFAULT TRUE,
+
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha DATETIME NOT NULL,
+
     codigo_qr VARCHAR(500) NOT NULL,
+
     comensales INT NOT NULL,
 
-    CONSTRAINT fk_reserva_cliente
+    CONSTRAINT fk_reserva_usuario
         FOREIGN KEY (id_usuario)
-        REFERENCES clientes(id_clientes)
+        REFERENCES usuarios(id_usuario)
         ON DELETE SET NULL
 );
 
@@ -64,8 +70,11 @@ CREATE TABLE servicios_extra (
 
 CREATE TABLE mesa (
     id_mesa INT PRIMARY KEY AUTO_INCREMENT,
+
     numero INT UNIQUE,
+
     capacidad INT NOT NULL,
+
     interior BOOLEAN DEFAULT TRUE,
     funcional BOOLEAN DEFAULT TRUE
 );
@@ -73,15 +82,19 @@ CREATE TABLE mesa (
 CREATE TABLE reserva_mesa (
     id_reserva INT,
     id_mesa INT,
+
     estado ENUM(
         'pendiente',
         'confirmada',
         'cancelada',
         'finalizada'
     ) DEFAULT 'pendiente',
-    reseñada BOOL default FALSE,
+
+    reseñada BOOLEAN DEFAULT FALSE,
+
     hora_reserva TIMESTAMP,
-    fecha DATETIME default (CURRENT_DATE),
+
+    fecha DATETIME DEFAULT (CURRENT_DATE),
 
     PRIMARY KEY (id_reserva, id_mesa),
 
@@ -96,28 +109,31 @@ CREATE TABLE reserva_mesa (
         ON DELETE CASCADE
 );
 
-
-
-
 CREATE TABLE reseña (
-        id_reseña INT PRIMARY KEY AUTO_INCREMENT,
-        id_usuario INT,
-        id_reserva INT,
-        fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        calificacion INT NOT NULL CHECK (calificacion BETWEEN 1 AND 5),
-        comentario TEXT,
-        pendiente BOOLEAN DEFAULT TRUE,
-        aprobada BOOLEAN DEFAULT FALSE,
+    id_reseña INT PRIMARY KEY AUTO_INCREMENT,
 
-        CONSTRAINT fk_reseña_cliente
-                            FOREIGN KEY (id_usuario)
-                                REFERENCES clientes(id_clientes)
-                                ON DELETE SET NULL,
+    id_usuario INT,
+    id_reserva INT,
 
-        CONSTRAINT fk_reseña_reserva
-                            FOREIGN KEY (id_reserva)
-                                REFERENCES reserva(id_reserva)
-                                ON DELETE CASCADE
+    fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    calificacion INT NOT NULL
+        CHECK (calificacion BETWEEN 1 AND 5),
+
+    comentario TEXT,
+
+    pendiente BOOLEAN DEFAULT TRUE,
+    aprobada BOOLEAN DEFAULT FALSE,
+
+    CONSTRAINT fk_reseña_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_reseña_reserva
+        FOREIGN KEY (id_reserva)
+        REFERENCES reserva(id_reserva)
+        ON DELETE CASCADE
 );
 
 -- DATOS INICIALES
@@ -131,9 +147,34 @@ VALUES
 
 INSERT INTO configuracion (clave, valor)
 VALUES
-('nombre_restaurante', 'PUERTO HERMOSO'),
-('telefono', '+54 11 1234-5678'),
-('horario', 'Lunes a Domingo 12:00 - 00:00'),
-('historia', 'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeño sueño familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas.
+(
+    'nombre_restaurante',
+    'PUERTO HERMOSO'
+),
+(
+    'telefono',
+    '+54 11 1234-5678'
+),
+(
+    'horario',
+    'Lunes a Domingo 12:00 - 00:00'
+),
+(
+    'historia',
+    'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeño sueño familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas.
 Hoy, tres generaciones después, mantenemos intacta la esencia que nos dio origen: la calidez del trato familiar y el respeto por la cocina bien hecha. Somos la historia viva de un barrio que amamos, evolucionando con el tiempo pero conservando siempre el corazón en nuestros fuegos.
-Medio siglo de familia, encuentros y pasión por la mesa.');
+Medio siglo de familia, encuentros y pasión por la mesa.'
+);
+
+INSERT INTO usuarios (
+    email,
+    password,
+    es_admin,
+    puede_crear
+)
+VALUES (
+    'admin@puertohermoso.com',
+    '1234',
+    TRUE,
+    TRUE
+);

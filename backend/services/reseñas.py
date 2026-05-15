@@ -1,5 +1,5 @@
 from db.reseñas import (
-    obtener_cliente_por_email,
+    obtener_usuario_por_email,
     reserva_puede_reseñarse,
     crear_reseña,
     marcar_reserva_reseñada,
@@ -7,52 +7,63 @@ from db.reseñas import (
     obtener_todas_las_reseñas
 )
 
+
 def crear_reseña_service(data):
     email = data.get("email")
+    password = data.get("password")
 
     id_reserva = data.get("id_reserva")
     calificacion = data.get("calificacion")
     comentario = data.get("comentario")
 
-    if not email:
+    if not email or not password:
         return {
             "ok": False,
-            "mensaje": "Falta email"
+            "mensaje": "Faltan credenciales"
         }, 400
 
-    cliente = obtener_cliente_por_email(email)
+    usuario = obtener_usuario_por_email(
+        email
+    )
 
-    if not cliente:
+    if not usuario:
         return {
             "ok": False,
-            "mensaje": "Cliente no encontrado"
+            "mensaje": "Usuario no encontrado"
         }, 404
+
+    if usuario["password"] != password:
+        return {
+            "ok": False,
+            "mensaje": "Password incorrecta"
+        }, 401
 
     if not reserva_puede_reseñarse(
         id_reserva,
-        cliente["id_clientes"]
+        usuario["id_usuario"]
     ):
         return {
             "ok": False,
-            "mensaje": (
-                "La reserva no puede reseñarse"
-            )
+            "mensaje": "La reserva no puede reseñarse"
         }, 400
 
     id_reseña = crear_reseña(
-        cliente["id_clientes"],
+        usuario["id_usuario"],
         id_reserva,
         calificacion,
         comentario
     )
 
-    marcar_reserva_reseñada(id_reserva)
+    marcar_reserva_reseñada(
+        id_reserva
+    )
 
     return {
         "ok": True,
         "mensaje": "Reseña creada",
         "id_reseña": id_reseña
     }, 201
+
 
 def obtener_reseñas_aprobadas_service():
     reseñas = obtener_reseñas_aprobadas()
