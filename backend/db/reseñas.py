@@ -3,18 +3,26 @@ from db.config import (
     ejecutar_query_escritura
 )
 
-def obtener_cliente_por_email(email):
+
+def obtener_usuario_por_email(email):
     query = """
         SELECT *
-        FROM clientes
+        FROM usuarios
         WHERE email = %s
     """
 
-    resultado = ejecutar_query_lectura(query, (email,))
+    resultado = ejecutar_query_lectura(
+        query,
+        (email,)
+    )
+
     return resultado[0] if resultado else None
 
 
-def reserva_puede_reseñarse(id_reserva, id_usuario):
+def reserva_puede_reseñarse(
+    id_reserva,
+    id_usuario
+):
     query = """
         SELECT *
         FROM reserva_mesa rm
@@ -28,7 +36,10 @@ def reserva_puede_reseñarse(id_reserva, id_usuario):
 
     resultado = ejecutar_query_lectura(
         query,
-        (id_reserva, id_usuario)
+        (
+            id_reserva,
+            id_usuario
+        )
     )
 
     return len(resultado) > 0
@@ -49,7 +60,14 @@ def crear_reseña(
             pendiente,
             aprobada
         )
-        VALUES (%s, %s, %s, %s, TRUE, FALSE)
+        VALUES (
+            %s,
+            %s,
+            %s,
+            %s,
+            TRUE,
+            FALSE
+        )
     """
 
     return ejecutar_query_escritura(
@@ -63,14 +81,20 @@ def crear_reseña(
     )
 
 
-def marcar_reserva_reseñada(id_reserva):
+def marcar_reserva_reseñada(
+    id_reserva
+):
     query = """
         UPDATE reserva_mesa
         SET reseñada = TRUE
         WHERE id_reserva = %s
     """
 
-    ejecutar_query_escritura(query, (id_reserva,))
+    ejecutar_query_escritura(
+        query,
+        (id_reserva,)
+    )
+
 
 def obtener_reseñas_aprobadas():
     query = """
@@ -82,11 +106,17 @@ def obtener_reseñas_aprobadas():
             r.comentario,
             r.aprobada,
             r.pendiente,
-            c.email
+
+            u.id_usuario,
+            u.email
+
         FROM reseña r
-        LEFT JOIN clientes c
-            ON r.id_usuario = c.id_clientes
+
+        LEFT JOIN usuarios u
+            ON r.id_usuario = u.id_usuario
+
         WHERE r.aprobada = TRUE
+
         ORDER BY r.fecha DESC
     """
 
@@ -103,11 +133,55 @@ def obtener_todas_las_reseñas():
             r.comentario,
             r.aprobada,
             r.pendiente,
-            c.email
+
+            u.id_usuario,
+            u.email
+
         FROM reseña r
-        LEFT JOIN clientes c
-            ON r.id_usuario = c.id_clientes
+
+        LEFT JOIN usuarios u
+            ON r.id_usuario = u.id_usuario
+
         ORDER BY r.fecha DESC
     """
 
     return ejecutar_query_lectura(query)
+
+
+def modificar_estado_reseña(
+    id_reseña,
+    aprobada=None,
+    pendiente=None
+):
+    updates = []
+    params = []
+
+    if aprobada is not None:
+        updates.append(
+            "aprobada = %s"
+        )
+        params.append(aprobada)
+
+    if pendiente is not None:
+        updates.append(
+            "pendiente = %s"
+        )
+        params.append(pendiente)
+
+    if len(updates) == 0:
+        return False
+
+    query = f"""
+        UPDATE reseña
+        SET {", ".join(updates)}
+        WHERE id_reseña = %s
+    """
+
+    params.append(id_reseña)
+
+    ejecutar_query_escritura(
+        query,
+        tuple(params)
+    )
+
+    return True

@@ -3,8 +3,8 @@ from flask import Blueprint, request, jsonify
 from services.reseñas import (
     crear_reseña_service,
     obtener_reseñas_aprobadas_service,
-    obtener_todas_las_reseñas_service
-
+    obtener_todas_las_reseñas_service,
+    modificar_reseña_service
 )
 
 reseñas_bp = Blueprint(
@@ -38,6 +38,19 @@ def obtener_reseñas_aprobadas():
 def obtener_todas_las_reseñas():
     respuesta, status = (
         obtener_todas_las_reseñas_service()
+    )
+
+    return jsonify(respuesta), status
+
+@reseñas_bp.route("/admin/<int:id_reseña>", methods=["PATCH"])
+def modificar_reseña(id_reseña):
+    data = request.json
+
+    respuesta, status = (
+        modificar_reseña_service(
+            id_reseña,
+            data
+        )
     )
 
     return jsonify(respuesta), status
