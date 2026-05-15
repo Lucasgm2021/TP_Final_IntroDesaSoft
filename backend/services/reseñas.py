@@ -106,22 +106,29 @@ def modificar_reseña_service(
     id_reseña,
     data
 ):
-    aprobada = data.get("aprobada")
-    pendiente = data.get("pendiente")
+    estado = data.get("estado")
 
-    if (
-        aprobada is None and
-        pendiente is None
-    ):
+    estados_validos = [
+        "no_revisada",
+        "no_aprobada",
+        "aprobada"
+    ]
+
+    if not estado:
         return error_msg(
             400,
-            "No hay campos para modificar"
+            "Falta estado"
+        )
+
+    if estado not in estados_validos:
+        return error_msg(
+            400,
+            "Estado invalido"
         )
 
     modificada = modificar_estado_reseña(
         id_reseña,
-        aprobada,
-        pendiente
+        estado
     )
 
     if not modificada:
@@ -130,6 +137,4 @@ def modificar_reseña_service(
             "No se pudo modificar la reseña"
         )
 
-    return {
-        "message": "Reseña modificada"
-    }, 200
+    return error_msg(200, "Reseña modificada")

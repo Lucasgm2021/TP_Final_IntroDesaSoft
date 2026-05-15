@@ -57,16 +57,14 @@ def crear_reseña(
             id_reserva,
             calificacion,
             comentario,
-            pendiente,
-            aprobada
+            estado
         )
         VALUES (
             %s,
             %s,
             %s,
             %s,
-            TRUE,
-            FALSE
+            'no_revisada'
         )
     """
 
@@ -104,8 +102,7 @@ def obtener_reseñas_aprobadas():
             r.fecha,
             r.calificacion,
             r.comentario,
-            r.aprobada,
-            r.pendiente,
+            r.estado,
 
             u.id_usuario,
             u.email
@@ -115,7 +112,7 @@ def obtener_reseñas_aprobadas():
         LEFT JOIN usuarios u
             ON r.id_usuario = u.id_usuario
 
-        WHERE r.aprobada = TRUE
+        WHERE r.estado = 'aprobada'
 
         ORDER BY r.fecha DESC
     """
@@ -131,8 +128,7 @@ def obtener_todas_las_reseñas():
             r.fecha,
             r.calificacion,
             r.comentario,
-            r.aprobada,
-            r.pendiente,
+            r.estado,
 
             u.id_usuario,
             u.email
@@ -150,38 +146,20 @@ def obtener_todas_las_reseñas():
 
 def modificar_estado_reseña(
     id_reseña,
-    aprobada=None,
-    pendiente=None
+    estado
 ):
-    updates = []
-    params = []
-
-    if aprobada is not None:
-        updates.append(
-            "aprobada = %s"
-        )
-        params.append(aprobada)
-
-    if pendiente is not None:
-        updates.append(
-            "pendiente = %s"
-        )
-        params.append(pendiente)
-
-    if len(updates) == 0:
-        return False
-
-    query = f"""
+    query = """
         UPDATE reseña
-        SET {", ".join(updates)}
+        SET estado = %s
         WHERE id_reseña = %s
     """
 
-    params.append(id_reseña)
-
     ejecutar_query_escritura(
         query,
-        tuple(params)
+        (
+            estado,
+            id_reseña
+        )
     )
 
     return True
