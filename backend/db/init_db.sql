@@ -1,11 +1,10 @@
 CREATE TABLE usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
 
     es_admin BOOLEAN DEFAULT FALSE,
-    -- puede crear es si puede crear usuarios admin
-    puede_crear BOOLEAN DEFAULT FALSE,
 
     reservas INT DEFAULT 0,
     canceladas INT DEFAULT 0
@@ -13,14 +12,18 @@ CREATE TABLE usuarios (
 
 CREATE TABLE categoria_plato (
     id_categoria INT PRIMARY KEY AUTO_INCREMENT,
+
     categoria VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE plato (
     id_plato INT PRIMARY KEY AUTO_INCREMENT,
+
     id_categoria INT,
+
     nombre VARCHAR(50) NOT NULL,
     link_imagen VARCHAR(500) NOT NULL,
+
     precio DECIMAL(10,2) NOT NULL,
 
     hay_stock BOOLEAN DEFAULT TRUE,
@@ -44,6 +47,7 @@ CREATE TABLE reserva (
     interior BOOLEAN DEFAULT TRUE,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
     fecha DATETIME NOT NULL,
 
     codigo_qr VARCHAR(500) NOT NULL,
@@ -58,13 +62,17 @@ CREATE TABLE reserva (
 
 CREATE TABLE configuracion (
     clave VARCHAR(100) PRIMARY KEY,
+
     valor TEXT
 );
 
 CREATE TABLE servicios_extra (
     id_servicio INT PRIMARY KEY AUTO_INCREMENT,
+
     nombre VARCHAR(100) NOT NULL,
+
     descripcion VARCHAR(500),
+
     disponible BOOLEAN DEFAULT TRUE
 );
 
@@ -121,8 +129,11 @@ CREATE TABLE reseña (
 
     comentario TEXT,
 
-    pendiente BOOLEAN DEFAULT TRUE,
-    aprobada BOOLEAN DEFAULT FALSE,
+    estado ENUM(
+        'no_revisada',
+        'no_aprobada',
+        'aprobada'
+    ) DEFAULT 'no_revisada',
 
     CONSTRAINT fk_reseña_usuario
         FOREIGN KEY (id_usuario)
@@ -168,12 +179,10 @@ Medio siglo de familia, encuentros y pasión por la mesa.'
 INSERT INTO usuarios (
     email,
     password,
-    es_admin,
-    puede_crear
+    es_admin
 )
 VALUES (
     'admin@puertohermoso.com',
     '1234',
-    TRUE,
     TRUE
 );
