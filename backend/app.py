@@ -5,6 +5,9 @@ from routes.reservas import reservas_bp
 #from routes.reseñas import reseñas_bp
 #from routes.info_frontend import info_frontend_bp
 #from routes.estadisticas import estadisticas_bp
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
