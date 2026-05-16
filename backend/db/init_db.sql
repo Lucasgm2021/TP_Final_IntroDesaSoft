@@ -85,7 +85,6 @@ CREATE TABLE reserva_mesa (
 
     estado ENUM(
         'pendiente',
-        'confirmada',
         'cancelada',
         'finalizada'
     ) DEFAULT 'pendiente',
