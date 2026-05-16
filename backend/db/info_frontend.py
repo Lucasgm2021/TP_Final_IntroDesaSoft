@@ -9,15 +9,15 @@ def crear_configuracion( clave,valor ):
             clave,
             valor
         )
-        VALUES (%s, %s)
+        VALUES (:clave,:valor)
     """
 
     ejecutar_query_escritura(
         query,
-        (
-            clave,
-            valor
-        )
+        {
+            "clave": clave,
+            "valor": valor
+        }
     )
 
 
@@ -36,12 +36,12 @@ def obtener_configuracion_por_clave(
     query = """
         SELECT clave, valor
         FROM configuracion
-        WHERE clave = %s
+        WHERE clave = :clave
     """
 
     resultado = ejecutar_query_lectura(
         query,
-        (clave,)
+        {"clave": clave}
     )
 
     return resultado[0] if resultado else None
@@ -53,16 +53,16 @@ def actualizar_configuracion(
 ):
     query = """
         UPDATE configuracion
-        SET valor = %s
-        WHERE clave = %s
+        SET valor = :valor
+        WHERE clave = :clave
     """
 
     ejecutar_query_escritura(
         query,
-        (
-            valor,
-            clave
-        )
+        {
+            "valor": valor,
+            "clave": clave
+        }
     )
 
 
@@ -71,10 +71,10 @@ def borrar_configuracion(
 ):
     query = """
         DELETE FROM configuracion
-        WHERE clave = %s
+        WHERE clave = :clave
     """
 
     ejecutar_query_escritura(
         query,
-        (clave,)
+        {"clave": clave}
     )
