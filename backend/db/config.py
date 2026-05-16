@@ -1,22 +1,19 @@
-import mysql.connector
+from sqlalchemy import create_engine, text
 
-def get_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="1234",
-        database="restaurante"
-    )
+# mysql+pymysql://usuario:password@host/db
+engine = create_engine(
+    "mysql+pymysql://root:1234@localhost/restaurante",
+    echo=False,
+    future=True
+)
+
 
 def ejecutar_query_lectura(query, params=None):
-    with get_connection() as conn:
-        with conn.cursor(dictionary=True) as cursor:
-            cursor.execute(query, params or ())
-            return cursor.fetchall()
+    with engine.connect() as conn:
+        resultado = conn.execute(text(query), params or ())
+        return resultado.mappings().all()
 
 def ejecutar_query_escritura(query, params=None):
-    with get_connection() as conn:
-        with conn.cursor(dictionary=True) as cursor:
-            cursor.execute(query, params or ())
-            conn.commit()
-            return cursor.lastrowid
+    with engine.begin() as conn:
+        resultado = conn.execute(text(query), params or ())
+        return resultado.lastrowid
