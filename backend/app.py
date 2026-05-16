@@ -30,15 +30,7 @@ Session(app)
 @app.route("/")
 def index():
     return "Backend encendido"
-@app.route("/perfil")
-def perfil():
-    if "id_usuario" not in session:
-        return "No iniciaste sesion"
-    return f"""
-    <p> Usuario: {session['id_usuario']} </p>
-    <p> Email: {session['email']} </p>
-    <p> Admin: {True if session['es_admin'] else False} </p>
-    """
+
 #app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
 app.register_blueprint(menu_bp, url_prefix="/menu")
 #app.register_blueprint(reservas_bp, url_prefix="/reservas")
