@@ -4,8 +4,9 @@ from services.reseñas import (
     crear_reseña_service,
     obtener_reseñas_aprobadas_service,
     obtener_todas_las_reseñas_service,
-    modificar_reseña_service
+    modificar_reseña_service, reservas_reseñables_service
 )
+from services.verificaciones import check_usuario_es_admin, check_usuario
 
 reseñas_bp = Blueprint(
     "reseñas",
@@ -16,12 +17,27 @@ reseñas_bp = Blueprint(
 @reseñas_bp.route("/", methods=["POST"])
 def crear_reseña():
     data = request.json
+    is_user, error = check_usuario()
+
+    if not is_user:
+        respuesta, status = error
+        return jsonify(respuesta), status
 
     respuesta, status = (
         crear_reseña_service(data)
     )
 
     return jsonify(respuesta), status
+
+@reseñas_bp.route("/reseñables", methods=["GET"])
+def obtener_reseñables():
+    is_user, error = check_usuario()
+
+    if not is_user:
+        respuesta, status = error
+        return jsonify(respuesta), status
+
+    return reservas_reseñables_service()
 
 @reseñas_bp.route("/", methods=["GET"])
 def obtener_reseñas_aprobadas():
@@ -32,23 +48,32 @@ def obtener_reseñas_aprobadas():
     return jsonify(respuesta), status
 
 
-#al tener admin deberia comprobar que sea admin, pero como no tenemos sessions todavia
-#lo dejo asi para determinar que es para admins
-@reseñas_bp.route("/admin", methods=["GET"])
+
+@reseñas_bp.route("/todas", methods=["GET"])
 def obtener_todas_las_reseñas():
+    es_admin, error = check_usuario_es_admin()
+    if not es_admin:
+        respuesta, status = error
+        return jsonify(respuesta), status
+
     respuesta, status = (
         obtener_todas_las_reseñas_service()
     )
 
     return jsonify(respuesta), status
 
-@reseñas_bp.route("/admin/<int:id_reseña>", methods=["PATCH"])
-def modificar_reseña(id_reseña):
+@reseñas_bp.route("/<int:id>", methods=["PATCH"])
+def modificar_reseña(id):
     data = request.json
+
+    es_admin, error = check_usuario_es_admin()
+    if not es_admin:
+        respuesta, status = error
+        return jsonify(respuesta), status
 
     respuesta, status = (
         modificar_reseña_service(
-            id_reseña,
+            id,
             data
         )
     )

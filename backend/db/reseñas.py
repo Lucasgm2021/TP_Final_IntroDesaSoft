@@ -1,45 +1,30 @@
+from flask import session
+
 from db.config import (
     ejecutar_query_lectura,
     ejecutar_query_escritura
 )
 
-
-def obtener_usuario_por_email(email):
-    query = """
-        SELECT *
-        FROM usuarios
-        WHERE email = %s
-    """
-
-    resultado = ejecutar_query_lectura(
-        query,
-        (email,)
-    )
-
-    return resultado[0] if resultado else None
-
-
 def reserva_puede_reseñarse(
-    id_reserva,
-    id_usuario
+    id_reserva
 ):
     query = """
         SELECT *
         FROM reserva_mesa rm
         INNER JOIN reserva r
             ON rm.id_reserva = r.id_reserva
-        WHERE rm.id_reserva = %s
-        AND r.id_usuario = %s
+        WHERE rm.id_reserva = :id_reserva
+        AND r.id_usuario = :id_usuario
         AND rm.estado = 'finalizada'
         AND rm.reseñada = FALSE
     """
 
     resultado = ejecutar_query_lectura(
         query,
-        (
-            id_reserva,
-            id_usuario
-        )
+        {
+            "id_reserva":id_reserva,
+            "id_usuario":session["id_usuario"],
+        }
     )
 
     return len(resultado) > 0
@@ -60,22 +45,22 @@ def crear_reseña(
             estado
         )
         VALUES (
-            %s,
-            %s,
-            %s,
-            %s,
+            :id_usuario,
+            :id_reserva,
+            :calificacion,
+            :comentario,
             'no_revisada'
         )
     """
 
     return ejecutar_query_escritura(
         query,
-        (
-            id_usuario,
-            id_reserva,
-            calificacion,
-            comentario
-        )
+        {
+            "id_usuario":session["id_usuario"],
+            "id_reserva":id_reserva,
+            "calificacion":calificacion,
+            "comentario":comentario
+        }
     )
 
 
@@ -85,12 +70,12 @@ def marcar_reserva_reseñada(
     query = """
         UPDATE reserva_mesa
         SET reseñada = TRUE
-        WHERE id_reserva = %s
+        WHERE id_reserva = :id_reserva
     """
 
     ejecutar_query_escritura(
         query,
-        (id_reserva,)
+        {"id_reserva":id_reserva}
     )
 
 
@@ -150,16 +135,25 @@ def modificar_estado_reseña(
 ):
     query = """
         UPDATE reseña
-        SET estado = %s
-        WHERE id_reseña = %s
+        SET estado = :estado
+        WHERE id_reseña = :id_reseña
     """
 
     ejecutar_query_escritura(
         query,
-        (
-            estado,
-            id_reseña
-        )
+        {
+            "estado":estado,
+            "id_reseña":id_reseña
+        }
     )
 
     return True
+
+def obtener_todas_las_reseñables_usuario():
+    query = """
+        SELECT r.id_reseña FROM reseña r
+        LEFT JOIN usuarios u ON r.id_usuario = u.id_usuario
+        WHERE u.id_usuario = :id_usuario
+    """
+
+    return ejecutar_query_lectura(query,{"id_usuario":session["id_usuario"]})
