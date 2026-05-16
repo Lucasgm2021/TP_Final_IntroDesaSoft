@@ -44,11 +44,9 @@ CREATE TABLE reserva (
 
     id_usuario INT,
 
-    interior BOOLEAN DEFAULT TRUE,
+    interior BOOLEAN DEFAULT TRUE NOT NULL,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    fecha DATETIME NOT NULL,
 
     codigo_qr VARCHAR(500) NOT NULL,
 
@@ -79,12 +77,12 @@ CREATE TABLE servicios_extra (
 CREATE TABLE mesa (
     id_mesa INT PRIMARY KEY AUTO_INCREMENT,
 
-    numero INT UNIQUE,
+    numero INT UNIQUE NOT NULL,
 
     capacidad INT NOT NULL,
 
-    interior BOOLEAN DEFAULT TRUE,
-    funcional BOOLEAN DEFAULT TRUE
+    interior BOOLEAN DEFAULT TRUE NOT NULL,
+    funcional BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE reserva_mesa (
@@ -93,16 +91,15 @@ CREATE TABLE reserva_mesa (
 
     estado ENUM(
         'pendiente',
-        'confirmada',
         'cancelada',
         'finalizada'
     ) DEFAULT 'pendiente',
 
-    reseñada BOOLEAN DEFAULT FALSE,
+    reseñada BOOLEAN DEFAULT FALSE NOT NULL,
 
-    hora_reserva TIMESTAMP,
+    hora_reserva TIME NOT NULL,
 
-    fecha DATETIME DEFAULT (CURRENT_DATE),
+    fecha DATE DEFAULT (CURRENT_DATE) NOT NULL,
 
     PRIMARY KEY (id_reserva, id_mesa),
 
