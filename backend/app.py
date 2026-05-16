@@ -1,6 +1,6 @@
 from flask import Flask
 #from routes.usuarios import usuarios_bp
-#from routes.menu import menu_bp
+from routes.menu import menu_bp
 #from routes.reservas import reservas_bp
 #from routes.reseñas import reseñas_bp
 #from routes.info_frontend import info_frontend_bp
@@ -15,7 +15,7 @@ def index():
     return "hola mundo!"
 
 #app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
-#app.register_blueprint(menu_bp, url_prefix="/menu")
+app.register_blueprint(menu_bp, url_prefix="/menu")
 #app.register_blueprint(reservas_bp, url_prefix="/reservas")
 #app.register_blueprint(reseñas_bp, url_prefix="/reseñas")
 #app.register_blueprint(info_frontend_bp, url_prefix="/info_frontend")
