@@ -30,29 +30,18 @@ INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (205, 4, FALSE, TRUE), (206, 6, FALSE, TRUE), (207, 6, FALSE, TRUE), (208, 8, FALSE, TRUE),
 (209, 2, FALSE, TRUE), (210, 4, FALSE, TRUE);
 
-INSERT INTO reserva (id_usuario, interior, uuid_qr, estado_qr, qr_expiracion, comensales)
+INSERT INTO reserva (id_usuario)
 WITH RECURSIVE seq AS (
     SELECT 1 AS n
     UNION ALL
     SELECT n + 1 FROM seq WHERE n < 100
 )
-    SELECT 
-        FLOOR(1 + (RAND() * 10)) AS id_usuario,          
-        IF(RAND() > 0.5, TRUE, FALSE) AS interior,     
-        LOWER(CONCAT(
-            SUBSTRING(MD5(CONCAT(UUID(), n)), 1, 8), '-',
-            SUBSTRING(MD5(CONCAT(UUID(), n)), 9, 4), '-',
-            SUBSTRING(MD5(CONCAT(UUID(), n)), 13, 4), '-',
-            SUBSTRING(MD5(CONCAT(UUID(), n)), 17, 4), '-',
-            SUBSTRING(MD5(CONCAT(UUID(), n)), 21, 12)
-        )) AS uuid_qr,
-        'pendiente' AS estado_qr,                       
-        NOW() + INTERVAL FLOOR(15 + (RAND() * 1425)) MINUTE AS qr_expiracion,
-        FLOOR(2 + (RAND() * 5)) AS comensales           
-    FROM seq;
+SELECT 
+    FLOOR(1 + (RAND() * 10)) AS id_usuario                
+FROM seq;
 
 
-INSERT INTO reserva_mesa (id_reserva, id_mesa, estado, reseñada, hora_reserva, fecha)
+INSERT INTO reserva_mesa (id_reserva, id_mesa, estado, pendiente_reseña, hora_reserva, fecha,interior, uuid_qr, estado_qr, qr_expiracion, comensales)
 WITH RECURSIVE seq AS (
     SELECT 1 AS n
     UNION ALL
@@ -62,7 +51,7 @@ SELECT
     n AS id_reserva,                                  -- Maps 1:1 with the 100 reservations we created
     FLOOR(1 + (RAND() * 20)) AS id_mesa,             -- Assigns one of the 20 tables randomly
     ELT(FLOOR(1 + (RAND() * 3)), 'pendiente', 'cancelada', 'finalizada') AS estado,
-    IF(RAND() > 0.8, TRUE, FALSE) AS reseñada,
+    IF(RAND() > 0.8, TRUE, FALSE) AS pendiente_reseña,
     -- Cycles times perfectly on the hour (18:00, 19:00, 20:00, 21:00, 22:00)
     CASE (n % 5)
         WHEN 0 THEN '18:00:00'
@@ -72,7 +61,18 @@ SELECT
         ELSE '22:00:00'
     END AS hora_reserva,
     -- Splits the 100 rows perfectly down the middle into 2 specific days
-    IF(n <= 50, '2026-06-01', '2026-06-02') AS fecha
+    IF(n <= 50, '2026-06-01', '2026-06-02') AS fecha,
+    IF(RAND() > 0.5, TRUE, FALSE) AS interior,     
+    LOWER(CONCAT(
+        SUBSTRING(MD5(CONCAT(UUID(), n)), 1, 8), '-',
+        SUBSTRING(MD5(CONCAT(UUID(), n)), 9, 4), '-',
+        SUBSTRING(MD5(CONCAT(UUID(), n)), 13, 4), '-',
+        SUBSTRING(MD5(CONCAT(UUID(), n)), 17, 4), '-',
+        SUBSTRING(MD5(CONCAT(UUID(), n)), 21, 12)
+    )) AS uuid_qr,
+    'pendiente' AS estado_qr,                       
+    NOW() + INTERVAL FLOOR(15 + (RAND() * 1425)) MINUTE AS qr_expiracion,
+    FLOOR(2 + (RAND() * 5)) AS comensales     
 FROM seq;
 
-UPDATE reserva_mesa SET reseñada = FALSE WHERE estado <> 'finalizada' -- corrijo estado de reseñada
+UPDATE reserva_mesa SET pendiente_reseña = FALSE WHERE estado <> 'finalizada' -- corrijo estado de reseñada
