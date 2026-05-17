@@ -3,25 +3,26 @@
   <body style="font-family: Arial, sans-serif; color: #333333; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px;">
       
-      <h2>Hello {recipient_name},</h2>
-      <p>Thank you for registering. Please authenticate your new account below:</p>
+      <h1>¡Hola!</h1>
+      <p>Gracias por elegir nuestro restaurante y realizar una reserva.</p>
+      <p style="margin-bottom: 10px;">Presentar este QR el dia que asista al restaurante:</p>
       
-      <h4 style="margin-bottom: 10px;">Presentar este QR el dia que asista al restaurante.</h4>
-      <img src="cid:{qr_cid}" alt="Your QR Code" style="border: 1px solid #cccccc; width: 150px; height: 150px;"/>
-      <p style="font-size: 13px; color: #666666; margin-bottom: 15px;">Si desea cancelar la reserva:</p>            
-      <a href="{button_url}" target="_blank" style="
-          background-color: #2b7a78; 
-          color: #ffffff; 
-          text-decoration: none; 
-          padding: 12px 24px; 
-          border-radius: 4px; 
-          display: inline-block; 
-          font-weight: bold;
-          font-size: 14px;
-      ">
-      CANCELAR RESERVA
-      </a>
-      
+      <div style="text-align: center">
+        <img src="cid:{qr_cid}" alt="Your QR Code" style="border: 1px solid #cccccc; width: 150px; height: 150px;"/>
+        <p style="font-size: 13px; color: #666666; margin-bottom: 15px;">Si desea cancelar la reserva:</p>            
+        <a href="{url_cancelar}" target="_blank" style="
+            background-color: #2b7a78; 
+            color: #ffffff; 
+            text-decoration: none; 
+            padding: 12px 24px; 
+            border-radius: 4px; 
+            display: inline-block; 
+            font-weight: bold;
+            font-size: 14px;
+        ">
+        CANCELAR RESERVA
+        </a>
+      </div>
     </div>
   </body>
 </html>

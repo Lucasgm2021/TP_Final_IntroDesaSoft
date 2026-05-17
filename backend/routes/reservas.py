@@ -1,6 +1,5 @@
 from flask import Blueprint, request
 from services import reservas as servicios_reservas
-from services import mail as servicios_mail
 from utiles.messages import error_msg, paginacion_msg
 from datetime import datetime
 
@@ -66,7 +65,7 @@ def obtener_cantidades_comensales_posibles():
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():
-    return servicios_mail.enviar_mail_con_qr()
+    return servicios_reservas.crear_reserva()
 
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.
 @reservas_bp.route("/", methods=["GET"])
