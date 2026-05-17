@@ -72,17 +72,10 @@ def obtener_cantidades_comensales_posibles():
 @reservas_bp.route("/mostrar_confirmacion", methods=["GET"])
 def mostrar_confirmacion_reserva():
     id_qr = request.args.get("code")
-    res  = servicios_reservas.obtener_reservas_por_qr(id_qr)
-
-    if not res:
-        return jsonify({"Error:":"qr no encontrado"}),404
-    res = res[0]
-    if res["estado_qr"] != "pendiente":
-        return jsonify({"Error:":"qr no valido"}),400
 
     html_page = f"""
-    <h1>Reservation Validated!</h1>
-    <p>Customer: {res['id_usuario']}</p>
+    <h1>CONFIRMACION DE RESERVA</h1>
+    <p>Haga click en el siguiente botón para confirmar la reserva.</p>
     
     <form action="/reservas/confirmar/{id_qr}" method="POST">
         <button type="submit" style="padding: 10px 20px; background: green; color: white;">
@@ -116,12 +109,21 @@ def crear_reserva():
 
 @reservas_bp.route("/confirmar/<id_qr_reserva>",methods=["POST"])
 def confirmar_reserva(id_qr_reserva):
-    res, _ = servicios_reservas.obtener_reservas_por_qr(id_qr_reserva)
-    res = res[0]
-    id_reserva = res["id_reserva"]
-    servicios_reservas.modificar_estado_qr({"uuid_qr":id_qr_reserva,"estado_qr":"usado"})
-    servicios_reservas.modificar_estado_reserva({"id_reserva":id_reserva,"estado":"finalizada"})
+    res  = servicios_reservas.obtener_reservas_por_qr(id_qr_reserva)
     
+    if not res:
+        return jsonify({"Error:":"qr no encontrado"}),404
+
+    if type(res) == dict and res["estado_qr"] != "pendiente":
+        return jsonify({"Error:":"qr no valido"}),400
+    
+    if res["estado_reserva"] != "pendiente":
+        return jsonify({"Error:":"Reserva no valida."}),400
+    
+    try:    
+        servicios_reservas.modificar_estado_reserva_por_qr(id_qr_reserva,"finalizada","usado")
+    except:
+        return error_msg(500,"Error del servidor",description="Ha ocurrido un error en el servidor.")
     return jsonify({"msg":"data actualizada corretamente"}),200
 
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.

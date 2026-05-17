@@ -83,7 +83,7 @@ CREATE TABLE reserva_mesa (
     id_reserva INT,
     id_mesa INT,
 
-    estado ENUM(
+    estado_reserva ENUM(
         'pendiente',
         'cancelada',
         'finalizada'

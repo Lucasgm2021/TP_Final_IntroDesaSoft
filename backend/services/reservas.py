@@ -173,5 +173,5 @@ def modificar_estado_reserva(data):
 
     queries_reservas.actualizar_estado_reserva_mesa(id_reserva,nuevo_estado)
 
-def modificar_estado_qr(data):
-    queries_reservas.actualizar_estado_reserva_qr(data)
+def modificar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr):
+    queries_reservas.actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr)

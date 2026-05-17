@@ -41,7 +41,7 @@ SELECT
 FROM seq;
 
 
-INSERT INTO reserva_mesa (id_reserva, id_mesa, estado, pendiente_reseña, hora_reserva, fecha,interior, uuid_qr, estado_qr, qr_expiracion, comensales)
+INSERT INTO reserva_mesa (id_reserva, id_mesa, estado_reserva, pendiente_reseña, hora_reserva, fecha,interior, uuid_qr, estado_qr, qr_expiracion, comensales)
 WITH RECURSIVE seq AS (
     SELECT 1 AS n
     UNION ALL
@@ -50,7 +50,7 @@ WITH RECURSIVE seq AS (
 SELECT 
     n AS id_reserva,                                  -- Maps 1:1 with the 100 reservations we created
     FLOOR(1 + (RAND() * 20)) AS id_mesa,             -- Assigns one of the 20 tables randomly
-    ELT(FLOOR(1 + (RAND() * 3)), 'pendiente', 'cancelada', 'finalizada') AS estado,
+    ELT(FLOOR(1 + (RAND() * 3)), 'pendiente', 'cancelada', 'finalizada') AS estado_reserva,
     IF(RAND() > 0.8, TRUE, FALSE) AS pendiente_reseña,
     -- Cycles times perfectly on the hour (18:00, 19:00, 20:00, 21:00, 22:00)
     CASE (n % 5)
@@ -75,4 +75,4 @@ SELECT
     FLOOR(2 + (RAND() * 5)) AS comensales     
 FROM seq;
 
-UPDATE reserva_mesa SET pendiente_reseña = FALSE WHERE estado <> 'finalizada' -- corrijo estado de reseñada
+UPDATE reserva_mesa SET pendiente_reseña = FALSE WHERE estado_reserva <> 'finalizada' -- corrijo estado de reseñada
