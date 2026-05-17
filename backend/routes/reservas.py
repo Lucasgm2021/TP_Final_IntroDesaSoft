@@ -7,12 +7,19 @@ reservas_bp = Blueprint("reservas",__name__)
 @reservas_bp.route("/", methods=["GET"])
 def obtener_reservas():
 
+
     offset = request.args.get("_offset", default=0)
     limit = request.args.get("_limit", default=10)
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
     estado = request.args.get("estado")
 
+    try:
+        reservas, total = servicios_reservas.obtener_reservas(
+            offset, limit, fecha, hora, estado
+        )
+    except ValueError as e:
+        return error_msg(400,"Parametros invalidos",description=str(e))
     try:
         reservas, total = servicios_reservas.obtener_reservas(
             offset, limit, fecha, hora, estado
@@ -129,6 +136,22 @@ def confirmar_reserva(id_qr_reserva):
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.
 @reservas_bp.route("/", methods=["PATCH"])
 def modificar_estado_reserva():
+
+    data = request.get_json()
+
+    if not data:
+        return error_msg(400,"Body invalido","Debe enviarse JSON")
+
+    try:
+        servicios_reservas.modificar_estado_reserva(data)
+    except ValueError as e:
+        return error_msg(400,"Parametros invalidos",description=str(e))
+    except Exception as e:
+        return error_msg(500,"Error modificando reserva",description=str(e))
+
+    return {
+        "mensaje": "Reserva actualizada correctamente"
+    },200
 
     data = request.get_json()
 
