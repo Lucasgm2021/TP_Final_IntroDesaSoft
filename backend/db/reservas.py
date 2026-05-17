@@ -1,15 +1,54 @@
 import db.config as config
 
-QUERY_GET_RESERVAS = "SELECT * FROM reserva WHERE uuid_qr = %s"
-QUERY_COUNT_RESERVAS = """SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_SCHEMA = 'restaurante' AND TABLE_NAME = 'reserva';"""
+
+QUERY_GET_RESERVAS = "SELECT * FROM reserva LIMIT %s OFFSET %s"
+
+QUERY_GET_RESERVA_ID_QR = "SELECT * FROM reserva_mesa WHERE uuid_qr = %s"
+
+QUERY_COUNT_RESERVAS = "SELECT COUNT(*) as total FROM reserva"
+
+QUERY_COUNT_MESAS = " SELECT COUNT(*) as total FROM mesas"
+
+QUERY_MESAS_DISPONIBLES = """
+SELECT capacidad
+FROM mesas
+WHERE id NOT IN (
+    SELECT id_mesa
+    FROM reserva
+    WHERE fecha = %s
+    AND hora = %s
+    AND estado IN ('pendiente','confirmada')
+)
+"""
+
+QUERY_MESA_DISPONIBLE = """
+SELECT id, capacidad
+FROM mesas
+WHERE capacidad >= %s
+AND id NOT IN (
+    SELECT id_mesa
+    FROM reserva
+    WHERE fecha = %s
+    AND hora = %s
+    AND estado IN ('pendiente','confirmada')
+)
+ORDER BY capacidad
+LIMIT 1
+"""
+
+QUERY_INSERT_RESERVA = """
+INSERT INTO reserva
+(id_usuario,id_mesa,interior,fecha,hora,nro_comensales,estado)
+VALUES (%s,%s,%s,%s,%s,%s,'pendiente')
+"""
 
 QUERY_GET_RESERVA_ID = "SELECT * FROM reserva_mesa WHERE id_reserva = %s"
 
-QUERY_UPDATE_ESTADO_RESERVA = """
-UPDATE reserva_mesa
+
+QUERY_UPDATE_ESTADO = """
+UPDATE reserva
 SET estado = %s
-WHERE id_reserva = %s
+WHERE id = %s
 """
 
 QUERY_UPDATE_ESTADO_QR = """
@@ -18,9 +57,16 @@ SET estado_qr = %s
 WHERE uuid_qr = %s
 """
 
-def obtener_reservas(id_hash):
+QUERY_UPDATE_ESTADO_RESERVA = """
+UPDATE reserva_mesa
+SET estado = %s
+WHERE id_reserva = %s
+"""
+
+def obtener_reservas(offset, limit):
     return config.ejecutar_query_lectura(
-        QUERY_GET_RESERVAS,params=(id_hash,)
+        QUERY_GET_RESERVAS,
+        params=(limit, offset)
     )
 
 def obtener_reserva_por_id(id_reserva):
@@ -28,6 +74,15 @@ def obtener_reserva_por_id(id_reserva):
     resultado = config.ejecutar_query_lectura(
         QUERY_GET_RESERVA_ID,
         params=(id_reserva,)
+    )
+
+    return resultado[0] if resultado else None
+
+def obtener_reserva_por_qr(id_reserva_qr):
+
+    resultado = config.ejecutar_query_lectura(
+        QUERY_GET_RESERVA_ID_QR,
+        params=(id_reserva_qr,)
     )
 
     return resultado[0] if resultado else None
