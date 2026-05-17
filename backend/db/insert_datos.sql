@@ -30,19 +30,26 @@ INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (205, 4, FALSE, TRUE), (206, 6, FALSE, TRUE), (207, 6, FALSE, TRUE), (208, 8, FALSE, TRUE),
 (209, 2, FALSE, TRUE), (210, 4, FALSE, TRUE);
 
--- Using a recursive CTE to quickly generate 100 rows without writing them out manually
-INSERT INTO reserva (id_usuario, interior, codigo_qr, comensales)
+INSERT INTO reserva (id_usuario, interior, uuid_qr, estado_qr, qr_expiracion, comensales)
 WITH RECURSIVE seq AS (
     SELECT 1 AS n
     UNION ALL
     SELECT n + 1 FROM seq WHERE n < 100
 )
-SELECT 
-    FLOOR(1 + (RAND() * 10)) AS id_usuario,          -- Random user ID between 1 and 10
-    IF(RAND() > 0.5, TRUE, FALSE) AS interior,       -- Randomly indoor or outdoor preference
-    MD5(RAND()) AS codigo_qr,                        -- Generates a mock unique QR hash string
-    FLOOR(2 + (RAND() * 7)) AS comensales            -- Random party size between 2 and 6
-FROM seq;
+    SELECT 
+        FLOOR(1 + (RAND() * 10)) AS id_usuario,          
+        IF(RAND() > 0.5, TRUE, FALSE) AS interior,     
+        LOWER(CONCAT(
+            SUBSTRING(MD5(CONCAT(UUID(), n)), 1, 8), '-',
+            SUBSTRING(MD5(CONCAT(UUID(), n)), 9, 4), '-',
+            SUBSTRING(MD5(CONCAT(UUID(), n)), 13, 4), '-',
+            SUBSTRING(MD5(CONCAT(UUID(), n)), 17, 4), '-',
+            SUBSTRING(MD5(CONCAT(UUID(), n)), 21, 12)
+        )) AS uuid_qr,
+        'pendiente' AS estado_qr,                       
+        NOW() + INTERVAL FLOOR(15 + (RAND() * 1425)) MINUTE AS qr_expiracion,
+        FLOOR(2 + (RAND() * 5)) AS comensales           
+    FROM seq;
 
 
 INSERT INTO reserva_mesa (id_reserva, id_mesa, estado, reseñada, hora_reserva, fecha)
@@ -68,4 +75,4 @@ SELECT
     IF(n <= 50, '2026-06-01', '2026-06-02') AS fecha
 FROM seq;
 
-UPDATE reserva_mesa SET reseñada = FALSE WHERE estado <> 'finalizada' --corrijo estado de reseñada
+UPDATE reserva_mesa SET reseñada = FALSE WHERE estado <> 'finalizada' -- corrijo estado de reseñada

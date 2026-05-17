@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template_string,jsonify
 from services import reservas as servicios_reservas
 from utiles.messages import error_msg, paginacion_msg
 from datetime import datetime
@@ -17,6 +17,7 @@ def obtener_reservas():
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
     estado = request.args.get("estado")
+    id_hash = request.args.get("code")
 
     #validar tipos de datos
     if not str(offset).isnumeric() or not str(limit).isnumeric():
@@ -46,7 +47,7 @@ def obtener_reservas():
        return error_msg(400, "Estado inválido", "INVALID_STATE") 
 
     try:
-        reservas = servicios_reservas.obtener_reservas(offset,limit)
+        reservas = servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado,id_hash)
     except Exception as e:
         return error_msg(500,"Error obteniendo usuarios.",description=f"Ocurrio un error al intentar obtener usuarios. \n{e}") 
     
@@ -62,10 +63,50 @@ def obtener_mesas_disponibles():
 def obtener_cantidades_comensales_posibles():
     pass
 
+@reservas_bp.route("/mostrar_confirmacion", methods=["GET"])
+def mostrar_confirmacion_reserva():
+    offset = request.args.get("_offset", default=0)
+    limit = request.args.get("_limit", default=10)
+    fecha = request.args.get("fecha")
+    hora = request.args.get("hora")
+    estado = request.args.get("estado")
+
+    id_qr = request.args.get("code")
+    res, status = servicios_reservas.obtener_reservas(offset, limit, fecha, hora, estado,id_qr)
+
+    if not res:
+        return jsonify({"Error:":"qr no encontrado"}),404
+    res = res[0]
+    if res["estado_qr"] != "pendiente":
+        return jsonify({"Error:":"qr no valido"}),400
+
+    html_page = f"""
+    <h1>Reservation Validated!</h1>
+    <p>Customer: {res['id_usuario']}</p>
+    
+    <form action="/reservas/confirmar/{id_qr}" method="POST">
+        <button type="submit" style="padding: 10px 20px; background: green; color: white;">
+            Confirmar reserva
+        </button>
+    </form>
+    """
+    return render_template_string(html_page,id_qr=id_qr),200
+    
+
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():
     return servicios_reservas.crear_reserva()
+
+@reservas_bp.route("/confirmar/<id_qr_reserva>",methods=["POST"])
+def confirmar_reserva(id_qr_reserva):
+    res, _ = servicios_reservas.obtener_reservas(0,10,None,None,None,id_qr_reserva)
+    res = res[0]
+    id_reserva = res["id_reserva"]
+    servicios_reservas.modificar_estado_qr({"uuid_qr":id_qr_reserva,"estado_qr":"usado"})
+    servicios_reservas.modificar_estado_reserva({"id_reserva":id_reserva,"estado":"finalizada"})
+    
+    return jsonify({"msg":"data actualizada corretamente"}),200
 
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.
 @reservas_bp.route("/", methods=["GET"])

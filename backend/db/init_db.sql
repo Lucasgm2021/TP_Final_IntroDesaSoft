@@ -48,8 +48,16 @@ CREATE TABLE reserva (
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    codigo_qr VARCHAR(500) NOT NULL,
+    uuid_qr CHAR(36) not null,
 
+    estado_qr ENUM(
+        'pendiente',
+        'usado',
+        'expirado'
+    ) DEFAULT 'pendiente',
+ 
+    qr_expiracion TIMESTAMP NOT NULL,
+    
     comensales INT NOT NULL,
 
     CONSTRAINT fk_reserva_usuario
