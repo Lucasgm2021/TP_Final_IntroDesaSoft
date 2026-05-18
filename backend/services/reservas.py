@@ -1,3 +1,4 @@
+from flask import session
 import uuid
 from pathlib import Path
 from datetime import datetime,timedelta
@@ -6,7 +7,8 @@ import services.mail as servicios_mail
 from services.messages import error_msg, paginacion_msg
 
 ESTADOS_RESERVA = ("pendiente","confirmada","cancelada")
-CAMPOS_RESERVA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales")
+CAMPOS_DATA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales","id_usuario")
+CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva":["cancelada"]}
 
 def obtener_reservas(offset,limit,fecha,hora,estado):
     if not str(offset).isnumeric() or not str(limit).isnumeric():
@@ -111,6 +113,9 @@ def crear_reserva(data):
     if not id_usuario:
         return error_msg(400,"Parametros invalidos","id_usuario es obligatorio")
 
+    if id_usuario != session["id_usuario"] and not session["es_admin"]:
+        return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")        
+
     if not fecha or not hora:
         return error_msg(400,"Parametros invalidos","fecha y hora son obligatorios")
 
@@ -178,6 +183,25 @@ def modificar_reserva(id_reserva,data):
     if not data:
         return error_msg(400,"Body invalido","Debe enviarse JSON")
 
+    if len(data) > len(CAMPOS_RESERVA):
+        return error_msg(400,"Body invalido","No se puede enviar mas claves que los disponibles.")
+
+    for clave in data:
+        if clave not in CAMPOS_RESERVA:
+            return error_msg(400,"Body invalido","No se puede enviar una clave que no existe.")
+
+    id_usuario = data.get("id_usuario")
+    if not id_usuario:
+        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio")
+
+    if not session["es_admin"]:
+        if id_usuario != session["id_usuario"]:
+            return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion") 
+
+        for clave in data:
+            if clave not in CAMPOS_RESERVA_EDITABLES_USUARIO:
+                return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion") 
+                
     try:
         reserva = queries_reservas.obtener_reserva_por_id(id_reserva)
     except:
@@ -185,13 +209,6 @@ def modificar_reserva(id_reserva,data):
 
     if not reserva:
         return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
-    
-    if len(data) > len(CAMPOS_RESERVA):
-        return error_msg(400,"Body invalido","No se puede enviar mas claves que los disponibles.")
-
-    for clave in data:
-        if clave not in CAMPOS_RESERVA:
-            return error_msg(400,"Body invalido","No se puede enviar una clave que no existe.")
             
     try:
         queries_reservas.actualizar_reserva(id_reserva,data)

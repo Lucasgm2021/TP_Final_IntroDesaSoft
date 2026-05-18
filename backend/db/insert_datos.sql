@@ -1,4 +1,4 @@
-DELETE FROM usuarios;
+DELETE FROM usuarios WHERE email != 'admin@puertohermoso.com';
 
 DELETE FROM mesa;
 
