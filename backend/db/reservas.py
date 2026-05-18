@@ -138,13 +138,6 @@ def obtener_mesa_disponible(fecha,hora,comensales):
 
     return resultado[0] if resultado else None
 
-def insertar_reserva(id_usuario):
-
-    return config.ejecutar_query_escritura(
-        QUERY_INSERT_RESERVA,
-        params=(id_usuario,)
-    )
-
 def insertar_reserva_mesa(id_reserva,id_mesa,interior,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion):
 
     return config.ejecutar_query_escritura(

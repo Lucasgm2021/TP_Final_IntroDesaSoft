@@ -99,9 +99,6 @@ def obtener_cantidades_comensales_posibles(fecha, hora):
     capacidad_maxima = max(capacidades)
     return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
 
-def contar_total_reservas():
-    return queries_reservas.obtener_total_reservas()
-
 def crear_reserva(data):
     if not data:
         return error_msg(400,"Body invalido","Debe enviarse JSON")
@@ -177,7 +174,6 @@ def crear_reserva(data):
         return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
     return {"msg":"Reserva creada exitosamente","id": reserva_id},201
 
-
 def modificar_reserva(id_reserva,data):
     if not data:
         return error_msg(400,"Body invalido","Debe enviarse JSON")
@@ -224,7 +220,6 @@ def confirmar_reserva_por_qr(uuid_reserva):
     except:
         return error_msg(500,"Error del servidor",description="Ha ocurrido un error en el servidor.")
     return {"msg":"Reserva confirmada exitosamente."},201
-
 
 def cancelar_reserva_por_mail(uuid_reserva):
     res  = queries_reservas.obtener_reserva_por_qr(uuid_reserva)
