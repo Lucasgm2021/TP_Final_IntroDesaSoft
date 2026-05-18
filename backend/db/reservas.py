@@ -55,8 +55,7 @@ QUERY_GET_RESERVA_ID = "SELECT * FROM reserva_mesa WHERE id_reserva = %s"
 
 QUERY_UPDATE_ESTADO_QR = """
 UPDATE reserva_mesa
-SET estado_qr = %s, estado_reserva = %s
-WHERE uuid_qr = %s
+SET estado_reserva = %s
 """
 
 QUERY_UPDATE_ESTADO_RESERVA = """
@@ -144,10 +143,19 @@ def actualizar_estado_reserva(id_reserva,estado_reserva):
         params=(estado_reserva,id_reserva)
     )
 
-def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr):
+def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None):
+    params = [estado_reserva]
+    query = QUERY_UPDATE_ESTADO_QR
+    if estado_qr:
+        query += ", estado_qr = %s"
+        params = params + [estado_qr]
+    query += " WHERE uuid_qr = %s"
+    params = params + [id_qr_reserva]
+    print(query, params)
+    params = tuple(params)
     return config.ejecutar_query_escritura(
-        QUERY_UPDATE_ESTADO_QR,
-        params=(estado_qr,estado_reserva,id_qr_reserva)
+        query,
+        params=params
     )
 
 def obtener_total_mesas_en_uso():

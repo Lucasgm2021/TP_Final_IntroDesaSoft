@@ -58,9 +58,6 @@ def obtener_reservas(offset,limit,fecha,hora,estado):
 
     return reservas, total_reservas
 
-def obtener_reservas_por_qr(id_qr):
-    return queries_reservas.obtener_reserva_por_qr(id_qr)
-
 def obtener_mesas_disponibles():
     #total de mesas - mesas usadas en un determinado momento = mesas disponibles en ese momento
     total_mesas = queries_reservas.obtener_total_mesas()
@@ -123,6 +120,8 @@ def crear_reserva(data):
     try:
         datetime.strptime(fecha,"%Y-%m-%d")
         datetime.strptime(hora,"%H:%M:%S")
+        time_stamp = fecha + " " + hora
+        fecha_hora = datetime.strptime(time_stamp, "%Y-%m-%d %H:%M:%S")
     except ValueError:
         return error_msg(400,"Parametros invalidos",description="Fecha u hora con formato incorrecto.")
 
@@ -131,6 +130,9 @@ def crear_reserva(data):
 
     if not isinstance(interior, bool):
         return error_msg(400,"Parametros invalidos","interior debe ser un booleano")
+
+    if fecha_hora <= datetime.now():
+        return error_msg(400,"Parametros invalidos","La fecha y hora ingresadas no pueden ser anteriores al instante actual.")       
 
     # buscar mesa disponible
     mesa = queries_reservas.obtener_mesa_disponible(
@@ -147,8 +149,6 @@ def crear_reserva(data):
         reserva_id = queries_reservas.insertar_reserva(
             id_usuario,
         )
-        time_stamp = fecha + " " + hora
-        fecha_hora = datetime.strptime(time_stamp, "%Y-%m-%d %H:%M:%S")
 
         fecha_hora_mas_30min = fecha_hora + timedelta(minutes=30)
         uuid_qr = str(uuid.uuid4()).replace("-","")
@@ -163,7 +163,7 @@ def crear_reserva(data):
         asunto = "RESERVA REGISTRADA"
         datos_mail = {
             "qr_data": f"http://localhost:5000/reservas/mostrar_confirmacion?code={uuid_qr}",
-            "url_cancelar": "http://localhost:5000/reservas"
+            "url_cancelar": f"http://localhost:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
 
         servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
@@ -203,5 +203,38 @@ def modificar_estado_reserva(data):
 
     queries_reservas.actualizar_estado_reserva_mesa(id_reserva,nuevo_estado)
 
-def modificar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr):
-    queries_reservas.actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr)
+def confirmar_reserva_por_qr(id_qr_reserva):
+    res  = queries_reservas.obtener_reserva_por_qr(id_qr_reserva)
+    if not res:
+        return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
+
+    if res["estado_qr"] != "pendiente":
+        return error_msg(400,"Error: Reserva no valida.",description="El QR ya fue leido o expiró.")
+
+
+    if res["qr_expiracion"] < datetime.now():
+        return error_msg(400,"Error: Reserva no valida.",description="El QR expiró.")
+
+    if res["estado_reserva"] != "pendiente":
+        return error_msg(400,"Error: Reserva no valida.",description="La reserva no es valida para ser confirmada.")
+
+    try:   
+        queries_reservas.actualizar_estado_reserva_por_qr(id_qr_reserva,"finalizada","usado")
+    except:
+        return error_msg(500,"Error del servidor",description="Ha ocurrido un error en el servidor.")
+    return {"msg":"Reserva confirmada exitosamente."},201
+
+
+def cancelar_reserva_por_mail(id_qr_reserva):
+    res  = queries_reservas.obtener_reserva_por_qr(id_qr_reserva)
+    if not res:
+        return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
+    
+    if res["estado_reserva"] != "pendiente":
+        return {"Error":"La reserva no era valida como para ser cancelada."},400
+
+    try:   
+        queries_reservas.actualizar_estado_reserva_por_qr(id_qr_reserva,"cancelada")
+    except Exception as e:
+        return error_msg(500,"Error del servidor",description=f"Ha ocurrido un error en el servidor. {e}")
+    return {"msg":"Reserva cancelada exitosamente."},201

@@ -51,33 +51,39 @@ def mostrar_confirmacion_reserva():
     """
     return render_template_string(html_page,id_qr=id_qr),200
     
+@reservas_bp.route("/mostrar_cancelacion", methods=["GET"])
+def mostrar_cancelacion_reserva():
+    id_qr = request.args.get("code")
+
+    html_page = f"""
+    <h1>CANCELACION DE RESERVA</h1>
+    <p>Haga click en el siguiente botón para cancelar la reserva.</p>
+    
+    <form action="/reservas/cancelar/{id_qr}" method="POST">
+        <button type="submit" style="padding: 10px 20px; background: green; color: white;">
+            Cancelar reserva
+        </button>
+    </form>
+    """
+    return render_template_string(html_page,id_qr=id_qr),200
+
 
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():
-
     data = request.get_json()
     res,status = servicios_reservas.crear_reserva(data)
     return jsonify(res),status
 
 @reservas_bp.route("/confirmar/<id_qr_reserva>",methods=["POST"])
-def confirmar_reserva(id_qr_reserva):
-    res  = servicios_reservas.obtener_reservas_por_qr(id_qr_reserva)
-    
-    if not res:
-        return jsonify({"Error:":"qr no encontrado"}),404
+def confirmar_reserva(id_qr_reserva): 
+    res, status = servicios_reservas.confirmar_reserva_por_qr(id_qr_reserva)
+    return jsonify(res),status
 
-    if type(res) == dict and res["estado_qr"] != "pendiente":
-        return jsonify({"Error:":"qr no valido"}),400
-    
-    if res["estado_reserva"] != "pendiente":
-        return jsonify({"Error:":"Reserva no valida."}),400
-    
-    try:    
-        servicios_reservas.modificar_estado_reserva_por_qr(id_qr_reserva,"finalizada","usado")
-    except:
-        return error_msg(500,"Error del servidor",description="Ha ocurrido un error en el servidor.")
-    return jsonify({"msg":"data actualizada corretamente"}),200
+@reservas_bp.route("/cancelar/<id_qr_reserva>",methods=["POST"])
+def cancelar_reserva(id_qr_reserva): 
+    res, status = servicios_reservas.cancelar_reserva_por_mail(id_qr_reserva)
+    return jsonify(res),status
 
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.
 @reservas_bp.route("/", methods=["PATCH"])
