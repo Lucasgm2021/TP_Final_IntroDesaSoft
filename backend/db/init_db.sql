@@ -97,7 +97,7 @@ CREATE TABLE reserva_mesa (
 
     interior BOOLEAN DEFAULT TRUE NOT NULL,
 
-    uuid_qr CHAR(36) not null,
+    uuid_qr CHAR(36) not null UNIQUE,
 
     estado_qr ENUM(
         'pendiente',

@@ -1,6 +1,6 @@
 import db.config as config
 
-QUERY_GET_RESERVAS = "SELECT * FROM reserva_mesa LIMIT %s OFFSET %s"
+QUERY_GET_RESERVAS = "SELECT * FROM reserva_mesa"
 
 QUERY_GET_RESERVA_ID_QR = "SELECT * FROM reserva_mesa WHERE uuid_qr = %s"
 
@@ -58,16 +58,31 @@ UPDATE reserva_mesa
 SET estado_reserva = %s
 """
 
-QUERY_UPDATE_ESTADO_RESERVA = """
+QUERY_UPDATE_RESERVA = """
 UPDATE reserva_mesa
-SET estado_reserva = %s
-WHERE id_reserva = %s
-"""
+SET """
 
-def obtener_reservas(offset, limit):
+def obtener_reservas(data,limit=None,offset=None):
+    query = QUERY_GET_RESERVAS
+    lista_de_condiciones = []
+    valores_de_condicion = []
+    for key in data:
+        lista_de_condiciones.append(f"{key} = %s")
+        valores_de_condicion.append(data[key])
+
+    if data:
+        string_para_query = " and ".join(lista_de_condiciones)
+        query += f" WHERE {string_para_query}"
+    lista_params = valores_de_condicion
+    if offset and limit:
+        paginacion = " LIMIT %s OFFSET %s"
+        query += " " + paginacion
+        lista_params += [limit,offset]
+    tupla_params = tuple(lista_params)
+
     return config.ejecutar_query_lectura(
-        QUERY_GET_RESERVAS,
-        params=(limit, offset)
+        query,
+        params=tupla_params
     )
 
 def obtener_reserva_por_id(id_reserva):
@@ -137,10 +152,21 @@ def insertar_reserva_mesa(id_reserva,id_mesa,interior,fecha,hora_reserva,comensa
         params=(id_reserva,id_mesa,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion)
     )
 
-def actualizar_estado_reserva(id_reserva,estado_reserva):
+def actualizar_reserva(id_reserva,data):
+    query = QUERY_UPDATE_RESERVA
+    lista_de_datos_a_modificar = []
+    valores_a_modificar = []
+    for key in data:
+        lista_de_datos_a_modificar.append(f"{key} = %s")
+        valores_a_modificar.append(data[key])
+    string_para_query = ", ".join(lista_de_datos_a_modificar)
+    condicion = " WHERE id_reserva = %s"
+    query += string_para_query + condicion
+    params = tuple(valores_a_modificar + [id_reserva])
+    print(query)
     return config.ejecutar_query_escritura(
-        QUERY_UPDATE_ESTADO_RESERVA,
-        params=(estado_reserva,id_reserva)
+        query,
+        params=params
     )
 
 def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None):

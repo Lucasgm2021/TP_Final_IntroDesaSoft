@@ -13,8 +13,8 @@ def obtener_reservas():
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
     estado = request.args.get("estado")
-
-    return servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado)
+    res,status = servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado)
+    return jsonify(res),status
 
 #GET /mesas/disponibles. Sin parametros. Devuelve la cantidad de mesas disponibles en ese momento.
 @reservas_bp.route("/mesas/disponibles", methods=["GET"])
@@ -67,7 +67,6 @@ def mostrar_cancelacion_reserva():
     """
     return render_template_string(html_page,id_qr=id_qr),200
 
-
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():
@@ -75,48 +74,19 @@ def crear_reserva():
     res,status = servicios_reservas.crear_reserva(data)
     return jsonify(res),status
 
-@reservas_bp.route("/confirmar/<id_qr_reserva>",methods=["POST"])
-def confirmar_reserva(id_qr_reserva): 
-    res, status = servicios_reservas.confirmar_reserva_por_qr(id_qr_reserva)
+@reservas_bp.route("/confirmar/<uuid_reserva>",methods=["POST"])
+def confirmar_reserva(uuid_reserva): 
+    res, status = servicios_reservas.confirmar_reserva_por_qr(uuid_reserva)
     return jsonify(res),status
 
-@reservas_bp.route("/cancelar/<id_qr_reserva>",methods=["POST"])
-def cancelar_reserva(id_qr_reserva): 
-    res, status = servicios_reservas.cancelar_reserva_por_mail(id_qr_reserva)
+@reservas_bp.route("/cancelar/<uuid_reserva>",methods=["POST"])
+def cancelar_reserva(uuid_reserva): 
+    res, status = servicios_reservas.cancelar_reserva_por_mail(uuid_reserva)
     return jsonify(res),status
 
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.
-@reservas_bp.route("/", methods=["PATCH"])
-def modificar_estado_reserva():
-
+@reservas_bp.route("/<id_reserva>", methods=["PATCH"])
+def modificar_reserva(id_reserva):
     data = request.get_json()
-
-    if not data:
-        return error_msg(400,"Body invalido","Debe enviarse JSON")
-
-    try:
-        servicios_reservas.modificar_estado_reserva(data)
-    except ValueError as e:
-        return error_msg(400,"Parametros invalidos",description=str(e))
-    except Exception as e:
-        return error_msg(500,"Error modificando reserva",description=str(e))
-
-    return {
-        "mensaje": "Reserva actualizada correctamente"
-    },200
-
-    data = request.get_json()
-
-    if not data:
-        return error_msg(400,"Body invalido","Debe enviarse JSON")
-
-    try:
-        servicios_reservas.modificar_estado_reserva(data)
-    except ValueError as e:
-        return error_msg(400,"Parametros invalidos",description=str(e))
-    except Exception as e:
-        return error_msg(500,"Error modificando reserva",description=str(e))
-
-    return {
-        "mensaje": "Reserva actualizada correctamente"
-    },200
+    res, status = servicios_reservas.modificar_reserva(id_reserva,data)
+    return jsonify(res),status

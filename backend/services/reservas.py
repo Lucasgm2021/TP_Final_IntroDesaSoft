@@ -6,44 +6,49 @@ import services.mail as servicios_mail
 from services.messages import error_msg, paginacion_msg
 
 ESTADOS_RESERVA = ("pendiente","confirmada","cancelada")
+CAMPOS_RESERVA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales")
 
 def obtener_reservas(offset,limit,fecha,hora,estado):
-    # validar offset y limit
     if not str(offset).isnumeric() or not str(limit).isnumeric():
         return error_msg(400,"Parametros invalidos",description="offset y limit deben ser numeros enteros")
     offset = int(offset)
     limit = int(limit)
-
+    data={}
     if offset < 0 or limit <= 0:
         return error_msg(400,"Parametros invalidos",description="offset debe ser 0 o mayor y limit debe ser mayor a 0")
-
-    total_reservas = contar_total_reservas()
-    if offset >= total_reservas and total_reservas != 0:
-        return error_msg(400,"Parametros invalidos",description="offset no puede ser mayor o igual al total de usuarios")
 
     # validar fecha
     if fecha:
         try:
             datetime.strptime(fecha,"%Y-%m-%d")
+            data["fecha"]=fecha
         except ValueError:
             return error_msg(400,"Parametros invalidos",description="Fecha debe tener formato YYY-mm-dd")
 
     # validar hora
     if hora:
         try:
-            datetime.strptime(hora,"%H:%M")
+            data["hora_reserva"] = hora
+            datetime.strptime(hora,"%H:%M:%S")
         except ValueError:
             return error_msg(400,"Parametros invalidos",description="Hora debe tener formato HH:MM")
 
     # validar estado
-    if estado and estado not in ESTADOS_RESERVA:
-           return error_msg(400,"Parametros invalidos",description="Estado no valido")
+    if estado:
+        if estado not in ESTADOS_RESERVA:
+            return error_msg(400,"Parametros invalidos",description="Estado no valido")
+        else:
+            data["estado_reserva"] = estado
     try:
-        reservas = queries_reservas.obtener_reservas(offset,limit)
+        total_reservas = len(queries_reservas.obtener_reservas(data=data))
+        if offset >= total_reservas and total_reservas != 0:
+            return error_msg(400,"Parametros invalidos",description="offset no puede ser mayor o igual al total de usuarios")
+        
+        reservas = queries_reservas.obtener_reservas(data=data,limit=limit,offset=offset)
         #fecha es datetime.date, hora es datetime.timedelta y qr_expiracion es datetime.datetime
         reservas = [{**reserva, "fecha": reserva["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(reserva["hora_reserva"]), "qr_expiracion": str(reserva["qr_expiracion"])}  for reserva in reservas]
     except:
-        return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
+        return error_msg(500,"Error obteniendo reservas",description=f"Ha ocurrido un error en el servidor.")
 
     return paginacion_msg(
         reservas,
@@ -52,7 +57,8 @@ def obtener_reservas(offset,limit,fecha,hora,estado):
         total_reservas,
         "http://localhost:5000/reservas",
         "reservas",
-        200
+        200,
+        data
     )
     
 
@@ -142,8 +148,8 @@ def crear_reserva(data):
     )
 
     if not mesa:
-        raise ValueError("No hay mesas disponibles para esa cantidad de comensales")
-    print("mesa: ",mesa)
+        return {"msg":"No hay mesas disponibles para esa cantidad de comensales"},200
+
     id_mesa = mesa["id_mesa"]
     try:
         reserva_id = queries_reservas.insertar_reserva(
@@ -172,39 +178,34 @@ def crear_reserva(data):
     return {"msg":"Reserva creada exitosamente","id": reserva_id},201
 
 
-def modificar_estado_reserva(data):
+def modificar_reserva(id_reserva,data):
+    if not data:
+        return error_msg(400,"Body invalido","Debe enviarse JSON")
 
-    id_reserva = data.get("id_reserva")
-    nuevo_estado = data.get("estado")
-
-    if not id_reserva:
-        raise ValueError("id_reserva es obligatorio")
-
-    if not nuevo_estado:
-        raise ValueError("estado es obligatorio")
-
-    if nuevo_estado not in ESTADOS_RESERVA:
-        raise ValueError("Estado invalido")
-
-    reserva = queries_reservas.obtener_reserva_por_id(id_reserva)
+    try:
+        reserva = queries_reservas.obtener_reserva_por_id(id_reserva)
+    except:
+        return error_msg(500,"Error obteniendo reserva",description="Ha ocurrido un error en el servidor.")
 
     if not reserva:
-        raise ValueError("Reserva no encontrada")
+        return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
+    
+    if len(data) > len(CAMPOS_RESERVA):
+        return error_msg(400,"Body invalido","No se puede enviar mas claves que los disponibles.")
 
-    estado_actual = reserva["estado"]
+    for clave in data:
+        if clave not in CAMPOS_RESERVA:
+            return error_msg(400,"Body invalido","No se puede enviar una clave que no existe.")
+            
+    try:
+        queries_reservas.actualizar_reserva(id_reserva,data)
+    except:
+        return error_msg(500,"Error modificando reservas",description=f"Ha ocurrido un error en el servidor.")
 
-    # regla del sistema
-    if estado_actual in ("cancelada"):
-        raise ValueError("No se puede modificar una reserva cancelada")
+    return {},201
 
-    # regla que definieron
-    if estado_actual != "pendiente":
-        raise ValueError("Solo se puede modificar una reserva pendiente")
-
-    queries_reservas.actualizar_estado_reserva_mesa(id_reserva,nuevo_estado)
-
-def confirmar_reserva_por_qr(id_qr_reserva):
-    res  = queries_reservas.obtener_reserva_por_qr(id_qr_reserva)
+def confirmar_reserva_por_qr(uuid_reserva):
+    res  = queries_reservas.obtener_reserva_por_qr(uuid_reserva)
     if not res:
         return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
 
@@ -219,14 +220,14 @@ def confirmar_reserva_por_qr(id_qr_reserva):
         return error_msg(400,"Error: Reserva no valida.",description="La reserva no es valida para ser confirmada.")
 
     try:   
-        queries_reservas.actualizar_estado_reserva_por_qr(id_qr_reserva,"finalizada","usado")
+        queries_reservas.actualizar_estado_reserva_por_qr(uuid_reserva,"finalizada","usado")
     except:
         return error_msg(500,"Error del servidor",description="Ha ocurrido un error en el servidor.")
     return {"msg":"Reserva confirmada exitosamente."},201
 
 
-def cancelar_reserva_por_mail(id_qr_reserva):
-    res  = queries_reservas.obtener_reserva_por_qr(id_qr_reserva)
+def cancelar_reserva_por_mail(uuid_reserva):
+    res  = queries_reservas.obtener_reserva_por_qr(uuid_reserva)
     if not res:
         return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
     
@@ -234,7 +235,7 @@ def cancelar_reserva_por_mail(id_qr_reserva):
         return {"Error":"La reserva no era valida como para ser cancelada."},400
 
     try:   
-        queries_reservas.actualizar_estado_reserva_por_qr(id_qr_reserva,"cancelada")
+        queries_reservas.actualizar_estado_reserva_por_qr(uuid_reserva,"cancelada")
     except Exception as e:
         return error_msg(500,"Error del servidor",description=f"Ha ocurrido un error en el servidor. {e}")
     return {"msg":"Reserva cancelada exitosamente."},201
