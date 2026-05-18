@@ -7,8 +7,9 @@ import services.mail as servicios_mail
 from services.messages import error_msg, paginacion_msg
 
 ESTADOS_RESERVA = ("pendiente","confirmada","cancelada")
-CAMPOS_DATA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales","id_usuario")
-CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva":["cancelada"]}
+#CAMPOS_RESERVA_POST = ("id_usuario","hora_reserva","fecha","id_mesa","comensales","interior")
+CAMPOS_RESERVA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales","id_usuario")
+CAMPOS_RESERVA_EDITABLES_USUARIO = ("estado_reserva")
 
 def obtener_reservas(offset,limit,fecha,hora,estado):
     if not str(offset).isnumeric() or not str(limit).isnumeric():
@@ -155,7 +156,7 @@ def crear_reserva(data):
     id_mesa = mesa["id_mesa"]
     try:
         reserva_id = queries_reservas.insertar_reserva(
-            id_usuario,
+            id_usuario
         )
 
         fecha_hora_mas_30min = fecha_hora + timedelta(minutes=30)
@@ -199,8 +200,11 @@ def modificar_reserva(id_reserva,data):
             return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion") 
 
         for clave in data:
+            if clave == "id_usuario": continue
             if clave not in CAMPOS_RESERVA_EDITABLES_USUARIO:
-                return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion") 
+                return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")
+            elif clave=="estado_reserva" and data[clave]!= "cancelada":
+                 return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")                
                 
     try:
         reserva = queries_reservas.obtener_reserva_por_id(id_reserva)
