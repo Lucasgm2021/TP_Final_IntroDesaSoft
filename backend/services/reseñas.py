@@ -57,6 +57,7 @@ def crear_reseña_service(data):
 
 def obtener_reseñas_aprobadas_service():
     reseñas = obtener_reseñas_aprobadas()
+    reseñas = [dict(row) for row in reseñas]
 
     return {
         "data": reseñas
@@ -65,7 +66,7 @@ def obtener_reseñas_aprobadas_service():
 
 def obtener_todas_las_reseñas_service():
     reseñas = obtener_todas_las_reseñas()
-
+    reseñas = [dict(row) for row in reseñas]
     return {
         "data": reseñas
     }, 200
@@ -91,7 +92,8 @@ def modificar_reseña_service(
     if estado not in estados_validos:
         return error_msg(
             400,
-            "Estado invalido"
+            "Estado invalido",
+            description="Estados validos: \"aprobada\", \"no_aprobada\""
         )
 
     modificada = modificar_estado_reseña(
@@ -105,7 +107,8 @@ def modificar_reseña_service(
             "No se pudo modificar la reseña"
         )
 
-    return error_msg(200, "Reseña modificada")
+    return error_msg(200, "Reseña modificada","comment")
 
 def reservas_reseñables_service():
-    return obtener_todas_las_reseñables_usuario()
+    reseñas = obtener_todas_las_reseñables_usuario()
+    return [dict(row) for row in reseñas]

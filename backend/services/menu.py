@@ -11,6 +11,7 @@ from services.messages import error_msg
 
 def obtener_menu_service():
     platos = obtener_todos_los_platos()
+    platos = [dict(row) for row in platos]
     return {
         "data": platos
     }, 200

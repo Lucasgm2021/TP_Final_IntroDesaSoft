@@ -151,9 +151,24 @@ def modificar_estado_reseña(
 
 def obtener_todas_las_reseñables_usuario():
     query = """
-        SELECT r.id_reseña FROM reseña r
-        LEFT JOIN usuarios u ON r.id_usuario = u.id_usuario
-        WHERE u.id_usuario = :id_usuario
-    """
+    SELECT DISTINCT
+        r.id_reserva,
+        r.fecha
+    FROM reserva r
+
+    JOIN reserva_mesa rm
+        ON r.id_reserva = rm.id_reserva
+
+    LEFT JOIN reseña re
+        ON r.id_reserva = re.id_reserva
+
+    WHERE
+        r.id_usuario = :id_usuario
+        AND rm.estado = 'finalizada'
+        AND rm.reseñada = FALSE
+        AND r.fecha < NOW()
+        AND re.id_reseña IS NULL
+"""
+
 
     return ejecutar_query_lectura(query,{"id_usuario":session["id_usuario"]})
