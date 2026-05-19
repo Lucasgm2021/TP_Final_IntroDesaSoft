@@ -62,6 +62,8 @@ QUERY_UPDATE_RESERVA = """
 UPDATE reserva_mesa
 SET """
 
+QUERY_UPDATE_CONTADORES_RESERVA = "UPDATE usuarios"
+
 def obtener_reservas(data,limit=None,offset=None):
     query = QUERY_GET_RESERVAS
     lista_de_condiciones = []
@@ -184,3 +186,19 @@ def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None
         query,
         params
     )
+
+def actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=None, diferencia_cancelar=None):
+    query = QUERY_UPDATE_CONTADORES_RESERVA + " SET"
+    params = {}
+    valores_a_modificar = []
+    if diferencia_total:
+        valores_a_modificar.append(" reserva = reserva + :diferencia_total")
+        params["diferencia_total"] = diferencia_total
+
+    if diferencia_cancelar:
+        valores_a_modificar.append(" canceladas = canceladas + :diferencia_cancelar")
+        params["diferencia_cancelar"] = diferencia_cancelar
+
+    query += " and ".join(valores_a_modificar) + " WHERE id_usuario = :id_usuario"
+    params["id_usuario"] = id_usuario
+    return config.ejecutar_query_escritura(query,params)

@@ -6,10 +6,12 @@ import db.reservas as queries_reservas
 import services.mail as servicios_mail
 from services.messages import error_msg, paginacion_msg
 
-ESTADOS_RESERVA = ("pendiente","confirmada","cancelada")
-#CAMPOS_RESERVA_POST = ("id_usuario","hora_reserva","fecha","id_mesa","comensales","interior")
-CAMPOS_RESERVA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales","id_usuario")
-CAMPOS_RESERVA_EDITABLES_USUARIO = ("estado_reserva")
+ESTADOS_RESERVA = {"pendiente","confirmada","cancelada"}
+ESTADOS_QR = {"pendiente","usado","expirado"}
+MAS_UNO = 1
+MENOS_UNO = -1
+CAMPOS_RESERVA = {"id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales"}
+CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
 
 def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
     #validar sesion admin
@@ -199,6 +201,7 @@ def crear_reserva(data):
         }
 
         servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
+        #queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except:
         return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
     return {"msg":"Reserva creada exitosamente","id": reserva_id},201
@@ -208,17 +211,17 @@ def modificar_reserva(id_reserva,data):
     if not data:
         return error_msg(400,"Body invalido","Debe enviarse JSON")
 
-    if len(data) > len(CAMPOS_RESERVA):
+    if len(data) > len(CAMPOS_RESERVA) + 1:
         return error_msg(400,"Body invalido","No se puede enviar mas claves que los disponibles.")
 
     for clave in data:
-        if clave not in CAMPOS_RESERVA:
+        if clave not in CAMPOS_RESERVA.add("id_usuario"):
             return error_msg(400,"Body invalido","No se puede enviar una clave que no existe.")
 
     #validar acciones con permiso admin
     id_usuario = data.get("id_usuario")
-    if not id_usuario:
-        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio")
+    if not id_usuario or not isinstance(id_usuario, int) or id_usuario <= 0:
+        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio y debe ser entero mayor a cero.")
 
     if not session["es_admin"]:
         if id_usuario != session["id_usuario"]:
@@ -231,7 +234,33 @@ def modificar_reserva(id_reserva,data):
             elif clave=="estado_reserva" and data[clave]!= "cancelada":
                  return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")                
 
-    #VALIDAR TIPOS, VER.
+    #Validacion de tipos
+    if id_mesa and (not isinstance(id_mesa, int) or id_mesa <= 0):
+        return error_msg(400,"Parametros invalidos","El id_mesa debe ser de tipo entero positivo.")   
+    if estado_reserva and estado_reserva not in ESTADOS_RESERVA:
+        return error_msg(400,"Parametros invalidos","El estado_reserva ingresado no es valido.")
+
+    if pendiente_reseña and (not isinstance(pendiente_reseña, bool)):
+        return error_msg(400,"Parametros invalidos","El estado_reserva ingresado no es valido.")
+
+    try:
+        if hora:
+            datetime.strptime(hora,"%H:%M:%S")
+        if fecha:
+            datetime.strptime(fecha,"%Y-%m-%d")
+        if qr_expiracion:
+            datetime.strptime(qr_expiracion, "%Y-%m-%d %H:%M:%S")
+    except:
+        return error_msg(400,"Parametros invalidos","La fecha u hora ingresadas no tienen formato correcto.")
+
+    if interior and (not isinstance(interior, bool)):
+        return error_msg(400,"Parametros invalidos","El interior ingresado no es valido.")
+    
+    if estado_qr and estado_qr not in ESTADOS_QR:
+        return error_msg(400,"Parametros invalidos","El estado_reserva ingresado no es valido.")
+
+    if comensales and (not isinstance(comensales, int) or comensales <= 0):
+        return error_msg(400,"Parametros invalidos","El nro de comensales debe ser de tipo entero positivo.") 
 
     #ver si la reserva existe y modificarla.               
     try:
@@ -243,7 +272,13 @@ def modificar_reserva(id_reserva,data):
         return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
             
     try:
+        #estado_anterior = reserva["estado_reserva"]
         queries_reservas.actualizar_reserva(id_reserva,data)
+        #Pendiente analizar integridad de contadores de reserva en usuario
+        #if estado_reserva in data:
+        #    estado_nuevo = queries_reservas.obtener_reserva_por_id(id_reserva)["estado_reserva"]
+        #   queries_reservas.actualizar_contadores_reservas_usuario(id_reserva, ?????)
+
     except:
         return error_msg(500,"Error modificando reservas",description=f"Ha ocurrido un error en el servidor.")
 
@@ -282,6 +317,7 @@ def cancelar_reserva_por_mail(uuid_reserva):
 
     try:   
         queries_reservas.actualizar_estado_reserva_por_qr(uuid_reserva,"cancelada")
+        #queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_cancelar=MAS_UNO)
     except Exception as e:
         return error_msg(500,"Error del servidor",description=f"Ha ocurrido un error en el servidor. {e}")
     return {"msg":"Reserva cancelada exitosamente."},201
