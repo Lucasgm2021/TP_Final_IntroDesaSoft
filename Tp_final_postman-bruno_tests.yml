@@ -14,12 +14,219 @@ config:
       bypassProxy: ''
 items:
   - info:
+      name: reseñas
+      type: folder
+      seq: 3
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: crear_reseña
+          type: http
+          seq: 2
+        http:
+          method: POST
+          url: http://127.0.0.1:5000/reseñas/
+          body:
+            type: json
+            data: |-
+              {
+                "id_reserva": 3,
+                "calificacion": 3,
+                "comentario": "Medio pelo pero safa"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: get_all_admin
+          type: http
+          seq: 4
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/reseñas/todas
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: get_aprobadas
+          type: http
+          seq: 1
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/reseñas/
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: modificar_estado
+          type: http
+          seq: 5
+        http:
+          method: PATCH
+          url: http://127.0.0.1:5000/reseñas/:id
+          params:
+            - name: id
+              value: '5'
+              type: path
+          body:
+            type: json
+            data: |-
+              {
+                "estado": "no_aprobada" // o "aprobada"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: reseñables_xUsuario
+          type: http
+          seq: 3
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/reseñas/reseñables
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+  - info:
+      name: info_frontend
+      type: folder
+      seq: 2
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: 1_info
+          type: http
+          seq: 3
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/info_frontend/:key
+          params:
+            - name: key
+              value: alumnos
+              type: path
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: actualizar_info
+          type: http
+          seq: 4
+        http:
+          method: PATCH
+          url: http://127.0.0.1:5000/info_frontend/:calve
+          params:
+            - name: calve
+              value: alumnos
+              type: path
+          body:
+            type: json
+            data: |-
+              {
+                "valor" : "10"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: all_info
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/info_frontend
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: crear_config (crear_info)
+          type: http
+          seq: 1
+        http:
+          method: POST
+          url: http://127.0.0.1:5000/info_frontend/
+          body:
+            type: json
+            data: |-
+              {
+                "clave": "alumnos",
+                "valor": 8
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: eliminar_info
+          type: http
+          seq: 5
+        http:
+          method: DELETE
+          url: http://127.0.0.1:5000/info_frontend/:clave
+          params:
+            - name: clave
+              value: alumnos
+              type: path
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+  - info:
       name: sesion_usuario
       type: folder
       seq: 1
     request:
       auth: inherit
     items:
+      - info:
+          name: Login-admin
+          type: http
+          seq: 4
+        http:
+          method: POST
+          url: http://127.0.0.1:5000/sesion/login
+          body:
+            type: json
+            data: |-
+              {
+                "email":"admin@puertohermoso.com",
+                "password":"1234"
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
       - info:
           name: Login
           type: http
@@ -31,27 +238,7 @@ items:
             type: json
             data: |-
               {
-                "email":"ramiro@gmail.com",
-                "password":"alfajorcit01"
-              }
-          auth: inherit
-        settings:
-          encodeUrl: true
-          timeout: 0
-          followRedirects: true
-          maxRedirects: 5
-      - info:
-          name: Registro
-          type: http
-          seq: 2
-        http:
-          method: POST
-          url: http://127.0.0.1:5000/sesion/register
-          body:
-            type: json
-            data: |-
-              {
-                "email":"ramiro@gmail.com",
+                "email":"ramiro.admin@gmail.com",
                 "password":"alfajorcito"
               }
           auth: inherit
@@ -74,26 +261,6 @@ items:
           followRedirects: true
           maxRedirects: 5
       - info:
-          name: Login-admin
-          type: http
-          seq: 4
-        http:
-          method: POST
-          url: http://127.0.0.1:5000/sesion/login
-          body:
-            type: json
-            data: |-
-              {
-                "email":"admin@puertohermoso.com",
-                "password":"1234"
-              }
-          auth: inherit
-        settings:
-          encodeUrl: true
-          timeout: 0
-          followRedirects: true
-          maxRedirects: 5
-      - info:
           name: perfil-temp
           type: http
           seq: 5
@@ -106,71 +273,19 @@ items:
           timeout: 0
           followRedirects: true
           maxRedirects: 5
-  - info:
-      name: info_frontend
-      type: folder
-      seq: 2
-    request:
-      auth: inherit
-    items:
       - info:
-          name: crear_config (crear_info)
-          type: http
-          seq: 1
-        http:
-          method: POST
-          url: http://127.0.0.1:5000/info_frontend/
-          body:
-            type: json
-            data: |-
-              {
-                "clave": "paginas",
-                "valor": 5
-              }
-          auth: inherit
-        settings:
-          encodeUrl: true
-          timeout: 0
-          followRedirects: true
-          maxRedirects: 5
-      - info:
-          name: all_info
+          name: Registro
           type: http
           seq: 2
         http:
-          method: GET
-          url: http://127.0.0.1:5000/info_frontend
-          auth: inherit
-        settings:
-          encodeUrl: true
-          timeout: 0
-          followRedirects: true
-          maxRedirects: 5
-      - info:
-          name: 1_info
-          type: http
-          seq: 3
-        http:
-          method: GET
-          url: http://127.0.0.1:5000/info_frontend/paginas
-          auth: inherit
-        settings:
-          encodeUrl: true
-          timeout: 0
-          followRedirects: true
-          maxRedirects: 5
-      - info:
-          name: actualizar_info
-          type: http
-          seq: 4
-        http:
-          method: PATCH
-          url: http://127.0.0.1:5000/info_frontend/telefono
+          method: POST
+          url: http://127.0.0.1:5000/sesion/register
           body:
             type: json
             data: |-
               {
-                "valor" : "+54 9 11 8765-4321"
+                "email":"pedro@fi.uba.ar",
+                "password":"caracol"
               }
           auth: inherit
         settings:
@@ -178,72 +293,128 @@ items:
           timeout: 0
           followRedirects: true
           maxRedirects: 5
-      - info:
-          name: eliminar_info
-          type: http
-          seq: 5
-        http:
-          method: DELETE
-          url: http://127.0.0.1:5000/info_frontend/paginas
-          auth: inherit
-        settings:
-          encodeUrl: true
-          timeout: 0
-          followRedirects: true
-          maxRedirects: 5
-  - info:
-      name: reseñas
-      type: folder
-      seq: 3
-    request:
-      auth: inherit
   - info:
       name: menu
       type: folder
       seq: 4
-      request:
-        auth: inherit
-      items:
-        - info:
-            name: Ver todo el menu
-            type: http
-            seq: 1
-          http:
-            method: GET
-            url: http://127.0.0.1:5000/menu/
-            auth: inherit
-          settings:
-            encodeUrl: true
-            timeout: 0
-            followRedirects: true
-            maxRedirects: 5
-        - info:
-            name: Crear plato (Admin)
-            type: http
-            seq: 2
-          http:
-            method: POST
-            url: http://127.0.0.1:5000/menu/admin
-            body:
-              type: json
-              data: |-
-                {
-                  "id_categoria": 3,
-                  "nombre": "Flan con Dulce de Leche",
-                  "link_imagen": "url_flan",
-                  "precio": 1800.00,
-                  "hay_stock": 1,
-                  "gluten": 0,
-                  "producto_animal": 1,
-                  "carnes": 0,
-                  "lactosa": 1
-                }
-            auth: inherit
-          settings:
-            encodeUrl: true
-            timeout: 0
-            followRedirects: true
-            maxRedirects: 5
+    items:
+      - info:
+          name: todos_platos
+          type: http
+          seq: 1
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/menu
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: plato_x_id
+          type: http
+          seq: 2
+        http:
+          method: GET
+          url: http://127.0.0.1:5000/menu/:id
+          params:
+            - name: id
+              value: '6'
+              type: path
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: crear_plato
+          type: http
+          seq: 3
+        http:
+          method: POST
+          url: http://127.0.0.1:5000/menu
+          body:
+            type: json
+            data: |-
+              {
+                "id_categoria": 2,
+                "nombre": "Hamburguesa Puerto Hermoso",
+                "link_imagen": "https://picsum.photos/500/300?burger",
+                "precio": 18500,
+                "hay_stock": true,
+                "gluten": true,
+                "producto_animal": true,
+                "carnes": true,
+                "lactosa": true
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: editar_plato
+          type: http
+          seq: 4
+        http:
+          method: PUT
+          url: http://127.0.0.1:5000/menu/:id
+          params:
+            - name: id
+              value: '7'
+              type: path
+          body:
+            type: json
+            data: |-
+              {
+                "id_categoria": 2,
+                "nombre": "Hamburguesa Puerto Hermoso",
+                "link_imagen": "https://picsum.photos/500/300?burger",
+                "precio": 18500,
+                "hay_stock": true,
+                "gluten": true,
+                "producto_animal": true,
+                "carnes": true,
+                "lactosa": true
+              }
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+      - info:
+          name: eliminar_plato
+          type: http
+          seq: 5
+        http:
+          method: DELETE
+          url: http://127.0.0.1:5000/menu/:id
+          params:
+            - name: id
+              value: '7'
+              type: path
+          auth: inherit
+        settings:
+          encodeUrl: true
+          timeout: 0
+          followRedirects: true
+          maxRedirects: 5
+  - info:
+      name: usuarios
+      type: folder
+      seq: 5
+    request:
+      auth: inherit
+  - info:
+      name: reservas
+      type: folder
+      seq: 6
+    request:
+      auth: inherit
 bundled: true
 extensions:
   bruno:
@@ -253,5 +424,5 @@ extensions:
     presets:
       requestType: http
       requestUrl: http://127.0.0.1:5000
-    exportedAt: '2026-05-16T06:10:05.445Z'
+    exportedAt: '2026-05-19T19:42:10.241Z'
     exportedUsing: Bruno

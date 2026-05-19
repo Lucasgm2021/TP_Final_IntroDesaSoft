@@ -20,7 +20,7 @@ def obtener_plato(id_plato):
     respuesta, status = obtener_plato_service(id_plato)
     return jsonify(respuesta), status
 
-@menu_bp.route('/admin', methods=['POST']) #admin: crea un plato nuevo
+@menu_bp.route('/', methods=['POST']) #admin: crea un plato nuevo
 def agregar_plato():
     es_admin, error = check_usuario_es_admin()
     if not es_admin:
@@ -31,7 +31,7 @@ def agregar_plato():
     respuesta, status = crear_plato_service(data)
     return jsonify(respuesta), status
 
-@menu_bp.route('/admin/<int:id_plato>', methods=['PUT']) #admin: modifica un plato
+@menu_bp.route('/<int:id_plato>', methods=['PUT']) #admin: modifica un plato
 def editar_plato(id_plato):
     es_admin, error = check_usuario_es_admin()
     if not es_admin:
@@ -42,7 +42,7 @@ def editar_plato(id_plato):
     respuesta, status = modificar_plato_service(id_plato, data)
     return jsonify(respuesta), status
 
-@menu_bp.route('/admin/<int:id_plato>', methods=['DELETE']) #admin: borra un plato
+@menu_bp.route('/<int:id_plato>', methods=['DELETE']) #admin: borra un plato
 def eliminar_plato(id_plato):
     es_admin, error = check_usuario_es_admin()
     if not es_admin:

@@ -26,3 +26,8 @@ def check_usuario_es_admin():
         True,
         None
     )
+
+def check_usuario():
+    if "id_usuario" not in session:
+        return False, error_msg(401, "Necesitas iniciar sesion como usuario")
+    return True, None
