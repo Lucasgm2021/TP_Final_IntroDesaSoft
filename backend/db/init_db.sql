@@ -111,9 +111,6 @@ CREATE TABLE reserva_mesa (
 
     PRIMARY KEY (id_reserva, id_mesa),
 
-    CONSTRAINT uq_mesa_fecha_hora 
-        UNIQUE (id_mesa, fecha, hora_reserva),
-
     CONSTRAINT fk_reserva_mesa_reserva
         FOREIGN KEY (id_reserva)
         REFERENCES reserva(id_reserva)

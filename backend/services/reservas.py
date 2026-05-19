@@ -11,12 +11,25 @@ ESTADOS_RESERVA = ("pendiente","confirmada","cancelada")
 CAMPOS_RESERVA = ("id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales","id_usuario")
 CAMPOS_RESERVA_EDITABLES_USUARIO = ("estado_reserva")
 
-def obtener_reservas(offset,limit,fecha,hora,estado):
+def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
+    #validar sesion admin
+    if id_usuario and (not id_usuario.isnumeric() or int(id_usuario) <=0):
+        return error_msg(400,"Parametros invalidos",description="Id usuario debe ser de tipo entero y mayor a cero.")
+
+    #si el usuario no es admin => valido si intenta buscar info de todos los usuarios o de otro usuario en particular.
+    if not session["es_admin"] and (not id_usuario or int(id_usuario) != session["id_usuario"]):
+        return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")     
+        
+    #validar tipos
     if not str(offset).isnumeric() or not str(limit).isnumeric():
         return error_msg(400,"Parametros invalidos",description="offset y limit deben ser numeros enteros")
     offset = int(offset)
     limit = int(limit)
     data={}
+    if id_usuario:
+        id_usuario = int(id_usuario)
+        data["id_usuario"] = id_usuario
+
     if offset < 0 or limit <= 0:
         return error_msg(400,"Parametros invalidos",description="offset debe ser 0 o mayor y limit debe ser mayor a 0")
 
@@ -79,19 +92,23 @@ def obtener_mesas_disponibles():
 
     return {"mesas_disponibles":mesas_disponibles},200
 
-def obtener_cantidades_comensales_posibles(fecha, hora):
-    if not fecha or not hora:
-        return error_msg(400,"Parametros invalidos","fecha y hora son obligatorios")
+def obtener_cantidades_comensales_posibles(fecha, hora,interior):
+    if not fecha or not hora or not interior:
+        return error_msg(400,"Parametros invalidos","fecha, hora e interior son obligatorios")
     try:
         datetime.strptime(fecha,"%Y-%m-%d")
         datetime.strptime(hora,"%H:%M:%S")
     except ValueError:
         return error_msg(400,"Parametros invalidos",description="Fecha u hora con formato incorrecto.")
 
+    if interior.lower() not in ("true","false"):
+        return error_msg(400,"Parametros invalidos",description="Interior debe ser true or false.")        
+
     try: 
         capacidades = queries_reservas.obtener_capacidades_mesas_disponibles(
             fecha,
-            hora
+            hora,
+            interior
         )
     except:
         return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
@@ -111,20 +128,22 @@ def crear_reserva(data):
     hora = data.get("hora")
     nro_comensales = data.get("nro_comensales")
 
-    if not id_usuario:
-        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio")
+    #validacion de sesion: usuario reserva solo para si mismo y admin puede para cualquiera.
+    if not id_usuario or not isinstance(id_usuario, int) or id_usuario <= 0:
+        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio y debe ser de tipo entero positivo.")
 
     if id_usuario != session["id_usuario"] and not session["es_admin"]:
         return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")        
 
+    #validacion de tipos.
     if not fecha or not hora:
         return error_msg(400,"Parametros invalidos","fecha y hora son obligatorios")
 
-    if not nro_comensales:
-        return error_msg(400,"Parametros invalidos","nro_comensales es obligatorio")
+    if not nro_comensales or not isinstance(nro_comensales, int):
+        return error_msg(400,"Parametros invalidos","nro_comensales es obligatorio o no fue ingresado como entero.")
 
-    if interior is None:
-        return error_msg(400,"Parametros invalidos","interior es obligatorio")
+    if interior is None or not isinstance(interior, bool):
+        return error_msg(400,"Parametros invalidos","interior es obligatorio o no fue ingresado como booleano.")
 
     try:
         datetime.strptime(fecha,"%Y-%m-%d")
@@ -134,20 +153,22 @@ def crear_reserva(data):
     except ValueError:
         return error_msg(400,"Parametros invalidos",description="Fecha u hora con formato incorrecto.")
 
+    #validacion lógica
     if nro_comensales <= 0:
         return error_msg(400,"Parametros invalidos","nro_comensales debe ser mayor a 0")
-
-    if not isinstance(interior, bool):
-        return error_msg(400,"Parametros invalidos","interior debe ser un booleano")
 
     if fecha_hora <= datetime.now():
         return error_msg(400,"Parametros invalidos","La fecha y hora ingresadas no pueden ser anteriores al instante actual.")       
 
-    # buscar mesa disponible
+    if ":00:00" not in hora:
+        return error_msg(400,"Parametros invalidos","Solo se permiten ingresar horas en punto.")       
+
+    # buscar mesa disponible. Busca una mesa valida no esté en uso en fecha y hora dadas: mesa not in mesas en uso.
     mesa = queries_reservas.obtener_mesa_disponible(
         fecha,
         hora,
-        nro_comensales
+        nro_comensales,
+        interior
     )
 
     if not mesa:
@@ -155,6 +176,7 @@ def crear_reserva(data):
 
     id_mesa = mesa["id_mesa"]
     try:
+        #creo reserva
         reserva_id = queries_reservas.insertar_reserva(
             id_usuario
         )
@@ -167,6 +189,7 @@ def crear_reserva(data):
             id_mesa,interior,fecha,hora,nro_comensales,uuid_qr,qr_expiracion=fecha_hora_mas_30min
         )
     
+        #envío mail. Pendiente servicio de usuarios para obtener mail para enviar notificacion.
         mail_usuario = "lmino@fi.uba.ar"
         mail_template = Path(__file__).resolve().parent / "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
@@ -181,6 +204,7 @@ def crear_reserva(data):
     return {"msg":"Reserva creada exitosamente","id": reserva_id},201
 
 def modificar_reserva(id_reserva,data):
+    #validar adjunto, que sean ids validos
     if not data:
         return error_msg(400,"Body invalido","Debe enviarse JSON")
 
@@ -191,6 +215,7 @@ def modificar_reserva(id_reserva,data):
         if clave not in CAMPOS_RESERVA:
             return error_msg(400,"Body invalido","No se puede enviar una clave que no existe.")
 
+    #validar acciones con permiso admin
     id_usuario = data.get("id_usuario")
     if not id_usuario:
         return error_msg(400,"Parametros invalidos","id_usuario es obligatorio")
@@ -205,7 +230,10 @@ def modificar_reserva(id_reserva,data):
                 return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")
             elif clave=="estado_reserva" and data[clave]!= "cancelada":
                  return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")                
-                
+
+    #VALIDAR TIPOS, VER.
+
+    #ver si la reserva existe y modificarla.               
     try:
         reserva = queries_reservas.obtener_reserva_por_id(id_reserva)
     except:
@@ -222,6 +250,7 @@ def modificar_reserva(id_reserva,data):
     return {},201
 
 def confirmar_reserva_por_qr(uuid_reserva):
+    #validar reserva y qr
     res  = queries_reservas.obtener_reserva_por_qr(uuid_reserva)
     if not res:
         return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
@@ -243,6 +272,7 @@ def confirmar_reserva_por_qr(uuid_reserva):
     return {"msg":"Reserva confirmada exitosamente."},201
 
 def cancelar_reserva_por_mail(uuid_reserva):
+    #validar reserva
     res  = queries_reservas.obtener_reserva_por_qr(uuid_reserva)
     if not res:
         return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")

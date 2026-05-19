@@ -1,6 +1,6 @@
 import db.config as config
 
-QUERY_GET_RESERVAS = "SELECT * FROM reserva_mesa"
+QUERY_GET_RESERVAS = "SELECT reserva_mesa.* FROM reserva_mesa"
 
 QUERY_GET_RESERVA_ID_QR = "SELECT * FROM reserva_mesa WHERE uuid_qr = :uuid_qr"
 
@@ -21,13 +21,13 @@ WHERE id_mesa NOT IN (
     WHERE fecha = :fecha
     AND hora_reserva = :hora_reserva
     AND estado_reserva IN ('pendiente','confirmada')
-)
+) and funcional = true and interior = :interior
 """
 
 QUERY_MESA_DISPONIBLE = """
 SELECT id_mesa, capacidad
 FROM mesa
-WHERE capacidad >= :capacidad
+WHERE capacidad >= :capacidad and funcional = true and interior = :interior
 AND id_mesa NOT IN (
     SELECT id_mesa
     FROM reserva_mesa
@@ -72,6 +72,8 @@ def obtener_reservas(data,limit=None,offset=None):
 
     if data:
         string_para_query = " and ".join(lista_de_condiciones)
+        if "id_usuario" in data:
+            query += """ JOIN reserva on reserva_mesa.id_reserva = reserva.id_reserva"""
         query += f" WHERE {string_para_query}"
     if offset is not None and limit is not None:
         paginacion = " LIMIT :limit OFFSET :offset"
@@ -117,19 +119,19 @@ def obtener_total_mesas():
 
     return resultado[0]["total"]
 
-def obtener_capacidades_mesas_disponibles(fecha, hora):
+def obtener_capacidades_mesas_disponibles(fecha, hora, interior):
     resultado = config.ejecutar_query_lectura(
         QUERY_MESAS_DISPONIBLES,
-        params={"fecha":fecha,"hora_reserva":hora}
+        params={"fecha":fecha,"hora_reserva":hora,"interior":interior}
     )
     resultado = [mesa["capacidad"] for mesa in resultado]
     return resultado
 
-def obtener_mesa_disponible(fecha,hora,comensales):
+def obtener_mesa_disponible(fecha,hora,comensales,interior):
 
     resultado = config.ejecutar_query_lectura(
         QUERY_MESA_DISPONIBLE,
-        params={"capacidad":comensales,"fecha":fecha,"hora_reserva":hora}
+        params={"capacidad":comensales,"interior":interior,"fecha":fecha,"hora_reserva":hora}
     )
 
     return resultado[0] if resultado else None

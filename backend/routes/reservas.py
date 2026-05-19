@@ -18,7 +18,8 @@ def obtener_reservas():
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
     estado = request.args.get("estado")
-    res,status = servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado)
+    id_usuario = request.args.get("id_usuario")
+    res,status = servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado,id_usuario)
     return jsonify(res),status
 
 #GET /mesas/disponibles. Sin parametros. Devuelve la cantidad de mesas disponibles en ese momento.
@@ -32,7 +33,7 @@ def obtener_mesas_disponibles():
     res, status =  servicios_reservas.obtener_mesas_disponibles()
     return jsonify(res),status
 
-#GET /mesas/validacion. Parametros: fecha y hora. Devuelve listado desde 1 a una cantidad maxima de comensales que pueden reservar 1 mesa segun la disponibilidad de las mismas segun los parametros.
+#GET /mesas/validacion. Parametros: fecha, hora e interior. Devuelve listado desde 1 a una cantidad maxima de comensales que pueden reservar 1 mesa segun la disponibilidad de las mismas segun los parametros.
 @reservas_bp.route("/mesas/validacion", methods=["GET"])
 def obtener_cantidades_comensales_posibles():
     is_user, error = check_usuario()
@@ -43,9 +44,11 @@ def obtener_cantidades_comensales_posibles():
 
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
+    interior = request.args.get("interior")
     res,status = servicios_reservas.obtener_cantidades_comensales_posibles(
         fecha,
-        hora
+        hora,
+        interior
     )
 
     return jsonify(res),status
@@ -63,7 +66,7 @@ def mostrar_confirmacion_reserva():
     <h1>CONFIRMACION DE RESERVA</h1>
     <p>Haga click en el siguiente botón para confirmar la reserva.</p>
     
-    <form action="/reservas/confirmar/{id_qr}" method="POST">
+    <form action="http://localhost:5000/reservas/confirmar/{id_qr}" method="POST">
         <button type="submit" style="padding: 10px 20px; background: green; color: white;">
             Confirmar reserva
         </button>
@@ -84,7 +87,7 @@ def mostrar_cancelacion_reserva():
     <h1>CANCELACION DE RESERVA</h1>
     <p>Haga click en el siguiente botón para cancelar la reserva.</p>
     
-    <form action="/reservas/cancelar/{id_qr}" method="POST">
+    <form action="http://localhost:5000/reservas/cancelar/{id_qr}" method="POST">
         <button type="submit" style="padding: 10px 20px; background: green; color: white;">
             Cancelar reserva
         </button>
