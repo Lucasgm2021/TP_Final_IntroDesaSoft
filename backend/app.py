@@ -2,8 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 from datetime import timedelta
-#from routes.usuarios import usuarios_bp
-from routes.reservas import reservas_bp
+from routes.usuarios import usuarios_bp
 from routes.menu import menu_bp
 from routes.reservas import reservas_bp
 from routes.reseñas import reseñas_bp
@@ -35,8 +34,7 @@ Session(app)
 def index():
     return "Backend encendido"
 
-#app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
-app.register_blueprint(reservas_bp, url_prefix="/reservas")
+app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
 app.register_blueprint(menu_bp, url_prefix="/menu")
 app.register_blueprint(reseñas_bp, url_prefix="/reseñas")
 app.register_blueprint(info_frontend_bp, url_prefix="/info_frontend")
