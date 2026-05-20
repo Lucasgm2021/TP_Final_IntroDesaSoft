@@ -12,6 +12,7 @@ from routes.reseñas import reseñas_bp
 from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
 #from routes.estadisticas import estadisticas_bp
+from routes.mesas import mesas_bp
 
 
 
@@ -37,6 +38,8 @@ Session(app)
 def index():
     return "Backend encendido"
 
+
+app.register_blueprint(mesas_bp, url_prefix="/mesas")
 app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
 app.register_blueprint(menu_bp, url_prefix="/menu")
 app.register_blueprint(reseñas_bp, url_prefix="/reseñas")
