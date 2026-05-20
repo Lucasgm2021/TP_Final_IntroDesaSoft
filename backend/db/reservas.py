@@ -182,7 +182,7 @@ def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None
     params["estado_reserva"]=estado_reserva
     query = QUERY_UPDATE_ESTADO_QR
     if estado_qr:
-        query += ", estado_qr = :estado_qr"
+        query += ", estado_qr = :estado_qr, pendiente_reseña = TRUE"
         params["estado_qr"]=estado_qr
     query += " WHERE uuid_qr = :uuid_qr"
     params["uuid_qr"]=id_qr_reserva
