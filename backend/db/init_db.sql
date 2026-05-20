@@ -44,15 +44,7 @@ CREATE TABLE reserva (
 
     id_usuario INT,
 
-    interior BOOLEAN DEFAULT TRUE,
-
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    fecha DATETIME NOT NULL,
-
-    codigo_qr VARCHAR(500) NOT NULL,
-
-    comensales INT NOT NULL,
 
     CONSTRAINT fk_reserva_usuario
         FOREIGN KEY (id_usuario)
@@ -79,29 +71,43 @@ CREATE TABLE servicios_extra (
 CREATE TABLE mesa (
     id_mesa INT PRIMARY KEY AUTO_INCREMENT,
 
-    numero INT UNIQUE,
+    numero INT UNIQUE NOT NULL,
 
     capacidad INT NOT NULL,
 
-    interior BOOLEAN DEFAULT TRUE,
-    funcional BOOLEAN DEFAULT TRUE
+    interior BOOLEAN DEFAULT TRUE NOT NULL,
+    funcional BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 CREATE TABLE reserva_mesa (
     id_reserva INT,
     id_mesa INT,
 
-    estado ENUM(
+    estado_reserva ENUM(
         'pendiente',
         'cancelada',
         'finalizada'
+    ) DEFAULT 'pendiente' NOT NULL, 
+
+    pendiente_reseña BOOLEAN DEFAULT FALSE NOT NULL,
+
+    hora_reserva TIME NOT NULL,
+
+    fecha DATE DEFAULT (CURRENT_DATE) NOT NULL,
+
+    interior BOOLEAN DEFAULT TRUE NOT NULL,
+
+    uuid_qr CHAR(36) not null UNIQUE,
+
+    estado_qr ENUM(
+        'pendiente',
+        'usado',
+        'expirado'
     ) DEFAULT 'pendiente',
-
-    reseñada BOOLEAN DEFAULT FALSE,
-
-    hora_reserva TIMESTAMP,
-
-    fecha DATETIME DEFAULT (CURRENT_DATE),
+ 
+    qr_expiracion TIMESTAMP NOT NULL,
+    
+    comensales INT NOT NULL,
 
     PRIMARY KEY (id_reserva, id_mesa),
 
