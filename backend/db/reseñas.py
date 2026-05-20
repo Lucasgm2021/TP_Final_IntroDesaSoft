@@ -15,7 +15,7 @@ def reserva_puede_reseñarse(
             ON rm.id_reserva = r.id_reserva
         WHERE rm.id_reserva = :id_reserva
         AND r.id_usuario = :id_usuario
-        AND rm.estado = 'finalizada'
+        AND rm.estado_reserva = 'finalizada'
         AND rm.reseñada = FALSE
     """
 
@@ -152,8 +152,7 @@ def modificar_estado_reseña(
 def obtener_todas_las_reseñables_usuario():
     query = """
     SELECT DISTINCT
-        r.id_reserva,
-        r.fecha
+        r.id_reserva
     FROM reserva r
 
     JOIN reserva_mesa rm
@@ -164,9 +163,9 @@ def obtener_todas_las_reseñables_usuario():
 
     WHERE
         r.id_usuario = :id_usuario
-        AND rm.estado = 'finalizada'
+        AND rm.estado_reserva = 'finalizada'
         AND rm.reseñada = FALSE
-        AND r.fecha < NOW()
+        AND rm.fecha < NOW()
         AND re.id_reseña IS NULL
 """
 

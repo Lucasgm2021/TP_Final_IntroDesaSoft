@@ -1,0 +1,963 @@
+{
+  "info": {
+    "name": "Tp_final",
+    "description": null,
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "sesion_usuario",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/sesion/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "sesion",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\":\"ramiro.admin@gmail.com\",\n  \"password\":\"alfajorcito\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Registro",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/sesion/register",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "sesion",
+                "register"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\":\"pedro@fi.uba.ar\",\n  \"password\":\"caracol\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/sesion/logout",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "sesion",
+                "logout"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Login-admin",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/sesion/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "sesion",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\":\"admin@puertohermoso.com\",\n  \"password\":\"1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "perfil-temp",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/sesion/perfil",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "sesion",
+                "perfil"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "info_frontend",
+      "item": [
+        {
+          "name": "crear_config (crear_info)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/info_frontend/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "info_frontend",
+                ""
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clave\": \"alumnos\",\n  \"valor\": 8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "all_info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/info_frontend",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "info_frontend"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "1_info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/info_frontend/:key",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "info_frontend",
+                ":key"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "key",
+                  "value": "alumnos"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "actualizar_info",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/info_frontend/:calve",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "info_frontend",
+                ":calve"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "calve",
+                  "value": "alumnos"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"valor\" : \"10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "eliminar_info",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/info_frontend/:clave",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "info_frontend",
+                ":clave"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "clave",
+                  "value": "alumnos"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "reseñas",
+      "item": [
+        {
+          "name": "get_aprobadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/reseñas/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "reseñas",
+                ""
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "crear_reseña",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/reseñas/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "reseñas",
+                ""
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_reserva\": 3,\n  \"calificacion\": 3,\n  \"comentario\": \"Medio pelo pero safa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "reseñables_xUsuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/reseñas/reseñables",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "reseñas",
+                "reseñables"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "get_all_admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/reseñas/todas",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "reseñas",
+                "todas"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "modificar_estado",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/reseñas/:id",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "reseñas",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "5"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"no_aprobada\" // o \"aprobada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "item": [
+        {
+          "name": "todos_platos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/menu",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "menu"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "plato_x_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/menu/:id",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "menu",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "crear_plato",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/menu",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "menu"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_categoria\": 2,\n  \"nombre\": \"Hamburguesa Puerto Hermoso\",\n  \"link_imagen\": \"https://picsum.photos/500/300?burger\",\n  \"precio\": 18500,\n  \"hay_stock\": true,\n  \"gluten\": true,\n  \"producto_animal\": true,\n  \"carnes\": true,\n  \"lactosa\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "editar_plato",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/menu/:id",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "menu",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_categoria\": 2,\n  \"nombre\": \"Hamburguesa Puerto Hermoso\",\n  \"link_imagen\": \"https://picsum.photos/500/300?burger\",\n  \"precio\": 18500,\n  \"hay_stock\": true,\n  \"gluten\": true,\n  \"producto_animal\": true,\n  \"carnes\": true,\n  \"lactosa\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "eliminar_plato",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://127.0.0.1:5000/menu/:id",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1:5000"
+              ],
+              "path": [
+                "menu",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "7"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "usuarios",
+      "item": []
+    },
+    {
+      "name": "reservas",
+      "item": [
+        {
+          "name": "crear reservas",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\":1,\n\"interior\":true,\n\"hora\":\"18:00:00\",\n\"fecha\":\"2026-06-01\",\n\"nro_comensales\":4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "confirmar reserva qr",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/confirmar/6851e914dd6447149217f3455a6d69d8",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "confirmar",
+                "6851e914dd6447149217f3455a6d69d8"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "cancelar reserva",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/cancelar?code=965252aca65f4c01a39a5f682602fdc7",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "cancelar"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "965252aca65f4c01a39a5f682602fdc7"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "actualizar reserva",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/120",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "120"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"estado_reserva\":\"cancelada\",\"id_usuario\":4}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "mostrar_cancelacion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/mostrar_cancelacion",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "mostrar_cancelacion"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "obtener reservas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas?fecha=2026-06-01&hora=19:00:00&estado=finalizada",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas"
+              ],
+              "query": [
+                {
+                  "key": "fecha",
+                  "value": "2026-06-01"
+                },
+                {
+                  "key": "hora",
+                  "value": "19:00:00"
+                },
+                {
+                  "key": "estado",
+                  "value": "finalizada"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "validar mesas en fecha y hora",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/mesas/validacion?fecha=2026-06-01&hora=17:00:00&interior=true",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "mesas",
+                "validacion"
+              ],
+              "query": [
+                {
+                  "key": "fecha",
+                  "value": "2026-06-01"
+                },
+                {
+                  "key": "hora",
+                  "value": "17:00:00"
+                },
+                {
+                  "key": "interior",
+                  "value": "true"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "obtener_num_mesas_disponibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/mesas/disponibles",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "mesas",
+                "disponibles"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "mostrar_confirmacion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "http://localhost:5000/reservas/mostrar_confirmacion?code=d9a35e148a2b4bf18ba5e74d0ca76e50",
+              "protocol": "http",
+              "host": [
+                "localhost:5000"
+              ],
+              "path": [
+                "reservas",
+                "mostrar_confirmacion"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "d9a35e148a2b4bf18ba5e74d0ca76e50"
+                }
+              ],
+              "variable": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": []
+}

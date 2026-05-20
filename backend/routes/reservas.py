@@ -1,6 +1,5 @@
-from flask import Blueprint, request, render_template_string,jsonify, session
+from flask import Blueprint, request, render_template_string,jsonify
 from services import reservas as servicios_reservas
-from services.messages import error_msg, paginacion_msg
 from services.verificaciones import check_usuario_es_admin,check_usuario
 
 reservas_bp = Blueprint("reservas",__name__)
@@ -99,6 +98,7 @@ def mostrar_cancelacion_reserva():
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():
     is_user, error = check_usuario()
+
     if not is_user:
         respuesta, status = error
         return jsonify(respuesta), status

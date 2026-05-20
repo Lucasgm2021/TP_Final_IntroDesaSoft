@@ -1,3 +1,4 @@
+import os
 from flask import session
 import uuid
 from pathlib import Path
@@ -107,7 +108,7 @@ def obtener_cantidades_comensales_posibles(fecha, hora,interior):
         return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
 
     if not capacidades:
-        return jsonify({"Msg":"No hay mesas disponibles en esa fecha y hora."}),200
+        return {"Msg":"No hay mesas disponibles en esa fecha y hora."},200
 
     capacidad_maxima = max(capacidades)
     return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
@@ -115,18 +116,21 @@ def obtener_cantidades_comensales_posibles(fecha, hora,interior):
 def crear_reserva(data):
     if not data:
         return error_msg(400,"Body invalido","Debe enviarse JSON")
-    id_usuario = data.get("id_usuario")
     interior = data.get("interior")
     fecha = data.get("fecha")
     hora = data.get("hora")
     nro_comensales = data.get("nro_comensales")
 
-    #validacion de sesion: usuario reserva solo para si mismo y admin puede para cualquiera.
-    if validar_enteros_positivos(id_usuario,"id_usuario",[],es_parametro=False,obligatorio=True):
-        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio y debe ser de tipo entero positivo.")
-    
-    if id_usuario != session["id_usuario"] and not session["es_admin"]:
-        return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")        
+    if session.get("es_admin", False):
+        if "id_usuario" in data:
+            id_usuario = data.get("id_usuario")
+            if type(id_usuario) != int:
+                return error_msg(400,"Parametros invalidos","error", "id_usuario debe ser de tipo entero positivo.")
+        else:
+            id_usuario = session["id_usuario"]
+    else:
+        id_usuario = session["id_usuario"]
+
 
     #validacion de tipos.
     errores = []
@@ -181,7 +185,7 @@ def crear_reserva(data):
         )
     
         #envío mail. Pendiente servicio de usuarios para obtener mail para enviar notificacion.
-        mail_usuario = "lmino@fi.uba.ar"
+        mail_usuario = os.getenv("MAIL_ACCOUNT") # session["email"]
         mail_template = Path(__file__).resolve().parent / "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
         datos_mail = {
@@ -192,7 +196,7 @@ def crear_reserva(data):
         servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except:
-        return error_msg(500,"Error creando la reserva",description="Ha ocurrido un error en el servidor.")
+        return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor.")
     return {"msg":"Reserva creada exitosamente","id": reserva_id},201
 
 def modificar_reserva(id_reserva,data):

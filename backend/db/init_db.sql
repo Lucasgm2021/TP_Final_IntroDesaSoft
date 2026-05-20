@@ -89,7 +89,7 @@ CREATE TABLE reserva_mesa (
         'finalizada'
     ) DEFAULT 'pendiente' NOT NULL, 
 
-    pendiente_reseña BOOLEAN DEFAULT FALSE NOT NULL,
+    reseñada BOOLEAN DEFAULT FALSE NOT NULL,
 
     hora_reserva TIME NOT NULL,
 

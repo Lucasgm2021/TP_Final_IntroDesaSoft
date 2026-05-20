@@ -133,7 +133,7 @@ INSERT INTO `reserva` (`id_reserva`, `id_usuario`, `created_at`) VALUES
 (100, 6, '2026-05-18 03:10:31');
 
 
-INSERT INTO `reserva_mesa` (`id_reserva`, `id_mesa`, `estado_reserva`, `pendiente_reseña`, `hora_reserva`, `fecha`, `interior`, `uuid_qr`, `estado_qr`, `qr_expiracion`, `comensales`) VALUES
+INSERT INTO `reserva_mesa` (`id_reserva`, `id_mesa`, `estado_reserva`, `reseñada`, `hora_reserva`, `fecha`, `interior`, `uuid_qr`, `estado_qr`, `qr_expiracion`, `comensales`) VALUES
 (1, 1, 'pendiente', 0, '18:00:00', '2026-06-01', 0, 'b4e4bd0b-bed1-bf84-8324-e8a24205e750', 'pendiente', '2026-05-18 03:56:31', 6),
 (21, 1, 'cancelada', 0, '19:00:00', '2026-06-01', 1, '28114f97-f100-c131-faef-84acc2159603', 'pendiente', '2026-05-18 05:11:31', 6),
 (81, 1, 'cancelada', 0, '22:00:00', '2026-06-02', 0, '6c9325c6-b9e2-a8f2-3e81-b0e2ecf4025b', 'pendiente', '2026-05-18 22:17:31', 6),
@@ -234,3 +234,101 @@ INSERT INTO `reserva_mesa` (`id_reserva`, `id_mesa`, `estado_reserva`, `pendient
 (80, 20, 'finalizada', 0, '21:00:00', '2026-06-02', 0, 'f15d5bd0-eb47-6df7-c8bc-58d986877db2', 'pendiente', '2026-05-18 20:24:31', 3),
 (20, 20, 'pendiente', 0, '18:00:00', '2026-06-01', 1, '608a9143-f62b-807f-fb29-955b9bfaf5aa', 'pendiente', '2026-05-18 12:11:31', 2),
 (100, 20, 'pendiente', 0, '22:00:00', '2026-06-02', 0, '92658076-7e35-5bee-86c9-94dcc194942e', 'pendiente', '2026-05-18 03:52:31', 2);
+
+-- =========================
+-- SERVICIOS EXTRA
+-- =========================
+
+INSERT INTO servicios_extra (
+    nombre,
+    descripcion,
+    disponible
+)
+VALUES
+(
+    'Decoracion romantica',
+    'Velas y flores para ocasiones especiales',
+    TRUE
+),
+(
+    'Menu vegano',
+    'Opciones 100% vegetales',
+    TRUE
+),
+(
+    'Show en vivo',
+    'Musica en vivo viernes y sabados',
+    FALSE
+);
+
+-- =========================
+-- PLATOS
+-- =========================
+
+INSERT INTO plato (
+    id_categoria,
+    nombre,
+    link_imagen,
+    precio,
+    hay_stock,
+    gluten,
+    producto_animal,
+    carnes,
+    lactosa
+)
+VALUES
+(
+    1,
+    'Bruschettas',
+    'https://picsum.photos/500/300?1',
+    8500,
+    TRUE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE
+),
+(
+    2,
+    'Bife de chorizo',
+    'https://picsum.photos/500/300?2',
+    18500,
+    TRUE,
+    FALSE,
+    TRUE,
+    TRUE,
+    FALSE
+),
+(
+    2,
+    'Risotto de hongos',
+    'https://picsum.photos/500/300?3',
+    14500,
+    TRUE,
+    TRUE,
+    TRUE,
+    FALSE,
+    TRUE
+),
+(
+    3,
+    'Cheesecake',
+    'https://picsum.photos/500/300?4',
+    7500,
+    TRUE,
+    TRUE,
+    TRUE,
+    FALSE,
+    TRUE
+),
+(
+    4,
+    'Limonada',
+    'https://picsum.photos/500/300?5',
+    4500,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE
+);

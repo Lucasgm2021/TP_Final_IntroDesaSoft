@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
@@ -9,9 +12,9 @@ from routes.reseñas import reseñas_bp
 from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
 #from routes.estadisticas import estadisticas_bp
-from dotenv import load_dotenv
 
-load_dotenv()
+
+
 
 app = Flask(__name__)
 
@@ -39,6 +42,8 @@ app.register_blueprint(menu_bp, url_prefix="/menu")
 app.register_blueprint(reseñas_bp, url_prefix="/reseñas")
 app.register_blueprint(info_frontend_bp, url_prefix="/info_frontend")
 app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
+app.register_blueprint(reservas_bp, url_prefix="/reservas")
+
 #app.register_blueprint(estadisticas_bp, url_prefix="/estadisticas")
 
 if __name__ == "__main__":
