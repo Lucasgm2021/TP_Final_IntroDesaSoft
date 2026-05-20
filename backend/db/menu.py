@@ -14,7 +14,7 @@ def obtener_plato_por_id(id_plato): #busca un solo plato especifico por ID
         WHERE id_plato = :id_plato
     """
     resultado = ejecutar_query_lectura(query, {"id_plato": id_plato})
-    return resultado[0] if resultado else None
+    return dict(resultado[0]) if resultado else None
 
 def crear_plato(id_categoria, nombre, link_imagen, precio, hay_stock, gluten, producto_animal, carnes, lactosa): #admin: inserta un plato nuevo
     query = """
