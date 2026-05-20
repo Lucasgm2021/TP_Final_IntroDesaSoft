@@ -1,8 +1,8 @@
 import db.config as config
 
-QUERY_GET_RESERVAS = "SELECT reserva_mesa.* FROM reserva_mesa"
+QUERY_GET_RESERVAS_MESA = "SELECT reserva_mesa.* FROM reserva_mesa"
 
-QUERY_GET_RESERVA_ID_QR = "SELECT * FROM reserva_mesa WHERE uuid_qr = :uuid_qr"
+QUERY_GET_RESERVA_MESA_ID_QR = "SELECT * FROM reserva_mesa WHERE uuid_qr = :uuid_qr"
 
 QUERY_COUNT_RESERVAS = "SELECT COUNT(*) as total FROM reserva"
 
@@ -51,21 +51,23 @@ INSERT INTO reserva_mesa
 VALUES (:id_reserva,:id_mesa,TRUE,:fecha,:hora_reserva,:comensales,:uuid_qr,:qr_expiracion)
 """
 
-QUERY_GET_RESERVA_ID = "SELECT * FROM reserva_mesa WHERE id_reserva = :id_reserva"
+QUERY_GET_RESERVA_MESA_ID = "SELECT * FROM reserva_mesa WHERE id_reserva = :id_reserva"
+
+QUERY_GET_RESERVA_ID = "SELECT * FROM reserva WHERE id_reserva = :id_reserva"
 
 QUERY_UPDATE_ESTADO_QR = """
 UPDATE reserva_mesa
 SET estado_reserva = :estado_reserva
 """
 
-QUERY_UPDATE_RESERVA = """
+QUERY_UPDATE_RESERVA_MESA = """
 UPDATE reserva_mesa
 SET """
 
 QUERY_UPDATE_CONTADORES_RESERVA = "UPDATE usuarios"
 
 def obtener_reservas(data,limit=None,offset=None):
-    query = QUERY_GET_RESERVAS
+    query = QUERY_GET_RESERVAS_MESA
     lista_de_condiciones = []
     params = {}
     for key in data:
@@ -88,10 +90,10 @@ def obtener_reservas(data,limit=None,offset=None):
         params
     )
 
-def obtener_reserva_por_id(id_reserva):
+def obtener_reserva_mesa_por_id(id_reserva):
 
     resultado = config.ejecutar_query_lectura(
-        QUERY_GET_RESERVA_ID,
+        QUERY_GET_RESERVA_MESA_ID,
         params={"id_reserva":id_reserva}
     )
 
@@ -100,7 +102,7 @@ def obtener_reserva_por_id(id_reserva):
 def obtener_reserva_por_qr(uuid_qr):
 
     resultado = config.ejecutar_query_lectura(
-        QUERY_GET_RESERVA_ID_QR,
+        QUERY_GET_RESERVA_MESA_ID_QR,
         params={"uuid_qr":uuid_qr}
     )
     return resultado[0] if resultado else None
@@ -142,8 +144,11 @@ def obtener_total_mesas_en_uso():
     resultado = config.ejecutar_query_lectura(QUERY_COUNT_MESAS_EN_USO)
     return resultado[0]["total"]
 
-def insertar_reserva(id_usuario):
+def obtener_reserva_por_id(id_reserva):
+    resultado = config.ejecutar_query_lectura(QUERY_GET_RESERVA_ID,{"id_reserva":id_reserva})
+    return resultado[0] if resultado else None
 
+def insertar_reserva(id_usuario):
     return config.ejecutar_query_escritura(
         QUERY_INSERT_RESERVA,
         params={"id_usuario":id_usuario})
@@ -156,7 +161,7 @@ def insertar_reserva_mesa(id_reserva,id_mesa,interior,fecha,hora_reserva,comensa
     )
 
 def actualizar_reserva(id_reserva,data):
-    query = QUERY_UPDATE_RESERVA
+    query = QUERY_UPDATE_RESERVA_MESA
     lista_de_datos_a_modificar = []
     params = {}
     for key in data:
@@ -173,7 +178,6 @@ def actualizar_reserva(id_reserva,data):
     )
 
 def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None):
-    print(id_qr_reserva,estado_reserva,estado_qr)
     params = {}
     params["estado_reserva"]=estado_reserva
     query = QUERY_UPDATE_ESTADO_QR
@@ -192,7 +196,7 @@ def actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=None, dif
     params = {}
     valores_a_modificar = []
     if diferencia_total:
-        valores_a_modificar.append(" reserva = reserva + :diferencia_total")
+        valores_a_modificar.append(" reservas = reservas + :diferencia_total")
         params["diferencia_total"] = diferencia_total
 
     if diferencia_cancelar:
