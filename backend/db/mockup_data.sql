@@ -1,3 +1,24 @@
+DELETE FROM usuarios WHERE email != 'admin@puertohermoso.com';
+
+DELETE FROM mesa;
+
+DELETE FROM reserva;
+
+DELETE FROM reserva_mesa;
+
+DELETE FROM reseña;
+
+DELETE FROM plato;
+
+DELETE FROM servicios_extra;
+ALTER TABLE usuarios AUTO_INCREMENT = 1;
+ALTER TABLE reserva AUTO_INCREMENT = 1;
+ALTER TABLE mesa AUTO_INCREMENT = 1;
+
+ALTER TABLE plato AUTO_INCREMENT = 1;
+ALTER TABLE reseña AUTO_INCREMENT = 1;
+ALTER TABLE servicios_extra AUTO_INCREMENT = 1;
+
 
 -- =========================
 -- USUARIOS
@@ -161,64 +182,32 @@ VALUES
 
 -- reservas pasadas
 INSERT INTO reserva (
-    id_usuario,
-    interior,
-    fecha,
-    codigo_qr,
-    comensales
+    id_usuario
 )
 VALUES
 (
-    2,
-    TRUE,
-    DATE_SUB(NOW(), INTERVAL 10 DAY),
-    'QR-RES-1001',
     2
 ),
 (
-    2,
-    FALSE,
-    DATE_SUB(NOW(), INTERVAL 5 DAY),
-    'QR-RES-1002',
+    2
+),
+(
+    3
+),
+(
     4
-),
-(
-    3,
-    TRUE,
-    DATE_SUB(NOW(), INTERVAL 2 DAY),
-    'QR-RES-1003',
-    2
-),
-(
-    4,
-    FALSE,
-    DATE_SUB(NOW(), INTERVAL 15 DAY),
-    'QR-RES-1004',
-    6
 );
 
 -- reservas futuras
 INSERT INTO reserva (
-    id_usuario,
-    interior,
-    fecha,
-    codigo_qr,
-    comensales
+    id_usuario
 )
 VALUES
 (
-    2,
-    TRUE,
-    DATE_ADD(NOW(), INTERVAL 5 DAY),
-    'QR-RES-2001',
     2
 ),
 (
-    3,
-    FALSE,
-    DATE_ADD(NOW(), INTERVAL 8 DAY),
-    'QR-RES-2002',
-    4
+    3
 );
 
 -- =========================
@@ -226,62 +215,24 @@ VALUES
 -- =========================
 
 INSERT INTO reserva_mesa (
-    id_reserva,
-    id_mesa,
-    estado,
-    reseñada,
-    hora_reserva,
-    fecha
-)
-VALUES
-(
-    1,
-    1,
-    'finalizada',
-    TRUE,
-    DATE_SUB(NOW(), INTERVAL 10 DAY),
-    DATE_SUB(NOW(), INTERVAL 10 DAY)
-),
-(
-    2,
-    3,
-    'finalizada',
-    FALSE,
-    DATE_SUB(NOW(), INTERVAL 5 DAY),
-    DATE_SUB(NOW(), INTERVAL 5 DAY)
-),
-(
-    3,
-    2,
-    'finalizada',
-    FALSE,
-    DATE_SUB(NOW(), INTERVAL 2 DAY),
-    DATE_SUB(NOW(), INTERVAL 2 DAY)
-),
-(
-    4,
-    4,
-    'cancelada',
-    FALSE,
-    DATE_SUB(NOW(), INTERVAL 15 DAY),
-    DATE_SUB(NOW(), INTERVAL 15 DAY)
-),
-(
-    5,
-    1,
-    'pendiente',
-    FALSE,
-    DATE_ADD(NOW(), INTERVAL 5 DAY),
-    DATE_ADD(NOW(), INTERVAL 5 DAY)
-),
-(
-    6,
-    3,
-    'pendiente',
-    FALSE,
-    DATE_ADD(NOW(), INTERVAL 8 DAY),
-    DATE_ADD(NOW(), INTERVAL 8 DAY)
-);
+    id_reserva, 
+    id_mesa, 
+    estado_reserva, 
+    pendiente_reseña, 
+    hora_reserva, 
+    fecha, 
+    interior, 
+    uuid_qr, 
+    estado_qr, 
+    qr_expiracion, 
+    comensales
+) VALUES
+(1, 1, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE,  '11111111-1111-1111-1111-111111111111', 'pendiente', '2026-05-21 14:00:00', 2),
+(2, 2, 'pendiente', FALSE, '13:00:00', '2026-05-21', TRUE,  '22222222-2222-2222-2222-222222222222', 'pendiente', '2026-05-21 15:00:00', 4),
+(3, 3, 'pendiente', FALSE, '20:00:00', '2026-05-22', FALSE, '33333333-3333-3333-3333-333333333333', 'pendiente', '2026-05-22 22:00:00', 2),
+(4, 4, 'pendiente', FALSE, '21:00:00', '2026-05-22', TRUE,  '44444444-4444-4444-4444-444444444444', 'pendiente', '2026-05-22 23:00:00', 6),
+(5, 1, 'pendiente', FALSE, '14:00:00', '2026-05-23', FALSE, '55555555-5555-5555-5555-555555555555', 'pendiente', '2026-05-23 16:00:00', 3),
+(6, 2, 'pendiente', FALSE, '22:00:00', '2026-05-24', TRUE,  '66666666-6666-6666-6666-666666666666', 'pendiente', '2026-05-24 00:00:00', 4);
 
 -- =========================
 -- RESEÑAS
@@ -315,27 +266,4 @@ VALUES
     4,
     'Muy buen ambiente y buena comida.',
     'no_revisada'
-);
-
--- =========================
--- EXTRA:
--- reserva múltiple mesas
--- =========================
-
-INSERT INTO reserva_mesa (
-    id_reserva,
-    id_mesa,
-    estado,
-    reseñada,
-    hora_reserva,
-    fecha
-)
-VALUES
-(
-    3,
-    1,
-    'finalizada',
-    FALSE,
-    DATE_SUB(NOW(), INTERVAL 2 DAY),
-    DATE_SUB(NOW(), INTERVAL 2 DAY)
 );
