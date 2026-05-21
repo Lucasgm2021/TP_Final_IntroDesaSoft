@@ -5,6 +5,8 @@ from datetime import datetime,timedelta
 import db.reservas as queries_reservas
 import services.mail as servicios_mail
 from services.messages import error_msg, error_msg_lista,paginacion_msg
+import db.usuarios as queries_usuarios
+
 
 ESTADOS_RESERVA = {"pendiente","confirmada","finalizada"}
 ESTADOS_QR = {"pendiente","usado","expirado"}
@@ -80,12 +82,17 @@ def obtener_cantidades_comensales_posibles(fecha, hora,interior):
     return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
 
 def crear_reserva(data):
-    id_usuario = data.get("id_usuario")
     interior = data.get("interior")
     fecha = data.get("fecha")
     hora = data.get("hora")
     nro_comensales = data.get("nro_comensales")    
     
+    if not "id_usuario" in data:
+        id_usuario = session["id_usuario"]
+    else:
+        if data["id_usuario"] != session["id_usuario"] and not session["es_admin"]:
+            return error_msg(403,"Necesitas permisos de administrador","")
+        id_usuario = data["id_usuario"]
     errores = []
 
     fecha_hora = datetime.strptime(fecha + " " + hora, "%Y-%m-%d %H:%M:%S")
@@ -111,21 +118,17 @@ def crear_reserva(data):
 
     id_mesa = mesa["id_mesa"]
     try:
-        #creo reserva
-        reserva_id = queries_reservas.insertar_reserva(
-            id_usuario
-        )
-
         fecha_hora_mas_30min = fecha_hora + timedelta(minutes=30)
         uuid_qr = str(uuid.uuid4()).replace("-","")
-
-        queries_reservas.insertar_reserva_mesa(
-            reserva_id,
-            id_mesa,interior,fecha,hora,nro_comensales,uuid_qr,qr_expiracion=fecha_hora_mas_30min
+        #creo reserva
+        id_reserva = queries_reservas.insertar_reserva(
+            interior,id_usuario,fecha,hora,nro_comensales,uuid_qr,qr_expiracion=fecha_hora_mas_30min
         )
-    
-        #envío mail. Pendiente servicio de usuarios para obtener mail para enviar notificacion.
-        mail_usuario = "lmino@fi.uba.ar"
+        queries_reservas.insertar_reserva_mesa(
+            id_reserva,id_mesa
+        )
+        #envío mail. 
+        mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
         mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
         datos_mail = {
@@ -136,8 +139,8 @@ def crear_reserva(data):
         servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except:
-        return error_msg(500,"Error creando la reserva",description="Ha ocurrido un error en el servidor.")
-    return {"msg":"Reserva creada exitosamente","id": reserva_id},201
+        return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor.")
+    return {"msg":"Reserva creada exitosamente","id": id_reserva},201
 
 def modificar_reserva(id_reserva,data):
     #validar acciones con permiso admin

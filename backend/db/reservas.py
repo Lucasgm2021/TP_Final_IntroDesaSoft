@@ -207,16 +207,16 @@ def obtener_reserva_por_id(id_reserva):
     resultado = config.ejecutar_query_lectura(QUERY_GET_RESERVA_ID,{"id_reserva":id_reserva})
     return resultado[0] if resultado else None
 
-def insertar_reserva(id_usuario):
+def insertar_reserva(interior,id_usuario,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion):
     return config.ejecutar_query_escritura(
         QUERY_INSERT_RESERVA,
-        params={"id_usuario":id_usuario})
+        params={"interior":interior,"id_usuario":id_usuario,"fecha":fecha,"hora_reserva":hora_reserva,"comensales":comensales,"uuid_qr":uuid_qr,"qr_expiracion":qr_expiracion})
 
-def insertar_reserva_mesa(id_reserva,id_mesa,interior,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion):
+def insertar_reserva_mesa(id_reserva,id_mesa):
 
     return config.ejecutar_query_escritura(
         QUERY_INSERT_RESERVA_MESA,
-        params={"id_reserva":id_reserva,"id_mesa":id_mesa,"fecha":fecha,"hora_reserva":hora_reserva,"comensales":comensales,"uuid_qr":uuid_qr,"qr_expiracion":qr_expiracion}
+        params={"id_reserva":id_reserva,"id_mesa":id_mesa}
     )
 
 def actualizar_reserva(id_reserva,data):
@@ -241,7 +241,7 @@ def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None
     params["estado_reserva"]=estado_reserva
     query = QUERY_UPDATE_ESTADO_QR
     if estado_qr:
-        query += ", estado_qr = :estado_qr, pendiente_reseña = TRUE"
+        query += ", estado_qr = :estado_qr"
         params["estado_qr"]=estado_qr
     query += " WHERE uuid_qr = :uuid_qr"
     params["uuid_qr"]=id_qr_reserva
