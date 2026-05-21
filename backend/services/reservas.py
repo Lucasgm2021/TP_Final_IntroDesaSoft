@@ -12,19 +12,7 @@ MAS_UNO = 1
 CAMPOS_RESERVA_EDITABLES_ADMIN = {"id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales"}
 CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
 
-def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
-    #validar sesion admin
-    if id_usuario and validar_enteros_positivos(id_usuario,"id_usuario",[],es_parametro=True):
-        return error_msg(400,"Parametros invalidos",description="Id usuario debe ser de tipo entero y mayor a cero.")
-
-    #si el usuario no es admin => valido si intenta buscar info de todos los usuarios o de otro usuario en particular.
-    if not session["es_admin"] and (not id_usuario or int(id_usuario) != session["id_usuario"]):
-        return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")     
-        
-    #validar tipos
-    errores = []
-    if not str(offset).isnumeric() or not str(limit).isnumeric() or int(offset) < 0 or int(limit) <= 0:
-        errores.append("offset y limit deben ser un numero, offset 0 o mayor y limit debe ser mayor a 0")
+def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):        
     offset = int(offset)
     limit = int(limit)
     
@@ -34,26 +22,15 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
         data["id_usuario"] = id_usuario    
 
     if fecha:
-        errores = validar_date_time(fecha,"%Y-%m-%d","fecha",errores)
         data["fecha"]=fecha
     
     if hora:
-        errores = validar_date_time(hora,"%H:%M:%S","hora",errores)
         data["hora_reserva"]=hora
         
     if estado:
-        errores = validar_estados("estado_reserva",estado,errores)    
         data["estado_reserva"]=estado
     
-    if errores:
-        errores = [{"message":"Parametros invalidos","description": error} for error in errores]
-        return error_msg_lista(errores,400)
-
     try:
-        total_reservas = len(queries_reservas.obtener_reservas(data=data))
-        if offset >= total_reservas and total_reservas != 0:
-            return error_msg(400,"Parametros invalidos",description="offset no puede ser mayor o igual al total de usuarios")
-        
         reservas = queries_reservas.obtener_reservas(data=data,limit=limit,offset=offset)
         #fecha es datetime.date, hora es datetime.timedelta y qr_expiracion es datetime.datetime
         reservas = [{**reserva, "fecha": reserva["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(reserva["hora_reserva"]), "qr_expiracion": str(reserva["qr_expiracion"])}  for reserva in reservas]
@@ -87,16 +64,6 @@ def obtener_mesas_disponibles():
     return {"mesas_disponibles":mesas_disponibles},200
 
 def obtener_cantidades_comensales_posibles(fecha, hora,interior):
-    errores = []
-    errores = validar_date_time(fecha,"%Y-%m-%d","fecha",errores,obligatorio=True)
-    errores = validar_date_time(hora,"%H:%M:%S","hora",errores,obligatorio=True)    
-    if not interior or interior.lower() not in ("true","false"):
-        errores.append("Interior debe ser true or false.")        
-    
-    if errores:
-        errores = [{"message":"Parametros invalidos","description": error} for error in errores]
-        return error_msg_lista(errores,400)
-
     try: 
         capacidades = queries_reservas.obtener_capacidades_mesas_disponibles(
             fecha,
@@ -113,37 +80,14 @@ def obtener_cantidades_comensales_posibles(fecha, hora,interior):
     return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
 
 def crear_reserva(data):
-    if not data:
-        return error_msg(400,"Body invalido","Debe enviarse JSON")
     id_usuario = data.get("id_usuario")
     interior = data.get("interior")
     fecha = data.get("fecha")
     hora = data.get("hora")
-    nro_comensales = data.get("nro_comensales")
-
-    #validacion de sesion: usuario reserva solo para si mismo y admin puede para cualquiera.
-    if validar_enteros_positivos(id_usuario,"id_usuario",[],es_parametro=False,obligatorio=True):
-        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio y debe ser de tipo entero positivo.")
+    nro_comensales = data.get("nro_comensales")    
     
-    if id_usuario != session["id_usuario"] and not session["es_admin"]:
-        return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")        
-
-    #validacion de tipos.
     errores = []
-    errores = validar_date_time(fecha,"%Y-%m-%d","fecha",errores,obligatorio=True)
-    errores = validar_date_time(hora,"%H:%M:%S","hora",errores,obligatorio=True)  
-    errores = validar_enteros_positivos(nro_comensales,"nro comensales",errores,es_parametro=False,obligatorio=True)
-    if interior is None or not isinstance(interior, bool):
-        errores.append("interior es obligatorio o no fue ingresado como booleano.")
 
-    if errores:
-        errores = [{"message":"Parametros invalidos","description": error} for error in errores]
-        return error_msg_lista(errores,400)        
-
-    #validacion lógica
-    if nro_comensales <= 0:
-        errores.append("Parametros invalidos","nro_comensales debe ser mayor a 0") 
-    
     fecha_hora = datetime.strptime(fecha + " " + hora, "%Y-%m-%d %H:%M:%S")
     if fecha_hora <= datetime.now():
         errores.append("Parametros invalidos","La fecha y hora ingresadas no pueden ser anteriores al instante actual.")  
@@ -182,7 +126,7 @@ def crear_reserva(data):
     
         #envío mail. Pendiente servicio de usuarios para obtener mail para enviar notificacion.
         mail_usuario = "lmino@fi.uba.ar"
-        mail_template = Path(__file__).resolve().parent / "mail_reserva.html"
+        mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
         datos_mail = {
             "qr_data": f"http://localhost:5000/reservas/mostrar_confirmacion?code={uuid_qr}",
@@ -196,54 +140,8 @@ def crear_reserva(data):
     return {"msg":"Reserva creada exitosamente","id": reserva_id},201
 
 def modificar_reserva(id_reserva,data):
-    #validar adjunto, que sean campos validos
-    if not data:
-        return error_msg(400,"Body invalido","Debe enviarse JSON")
-
-    if len(data) > len(CAMPOS_RESERVA_EDITABLES_ADMIN) + 1:
-        return error_msg(400,"Body invalido","No se puede enviar mas claves que los disponibles.")
-
-    for clave in data:
-        if clave == "id_usuario": continue
-        if clave not in CAMPOS_RESERVA_EDITABLES_ADMIN:
-            return error_msg(400,"Body invalido","No se puede enviar una clave que no existe.")
-
     #validar acciones con permiso admin
     id_usuario = data.get("id_usuario")
-    if validar_enteros_positivos(id_usuario,"id_usuario",[],es_parametro=False,obligatorio=True):
-        return error_msg(400,"Parametros invalidos","id_usuario es obligatorio y debe ser entero mayor a cero.")
-
-    if not session["es_admin"]:
-        if id_usuario != session["id_usuario"]:
-            return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion") 
-
-        for clave in data:
-            if clave == "id_usuario": continue
-            if clave not in CAMPOS_RESERVA_EDITABLES_USUARIO:
-                return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")
-            elif clave=="estado_reserva" and data[clave]!= "cancelada":
-                return error_msg(401,"Usuario no autorizado","Debe ser usuario admin para realizar esta accion")                
-        del data["id_usuario"]
-
-    errores = []
-    #Validacion de tipos
-    errores = validar_enteros_positivos(data.get("id_mesa"),"id_mesa",errores,es_parametro=False)
-    errores = validar_estados(data.get("estado_reserva"),"estado_reserva",errores)
-    if data.get("pendiente_reseña") and (not isinstance(data.get("pendiente_reseña"), bool)):
-        errores.append("El estado_reserva ingresado no es valido.")
-
-    errores = validar_date_time(data.get("fecha"),"%Y-%m-%d","fecha",errores)
-    errores = validar_date_time(data.get("hora_reserva"),"%H:%M:%S","hora",errores)
-
-    if data.get("interior") and (not isinstance(data.get("interior"), bool)):
-        errores.append("El interior ingresado no es valido.")
-
-    errores = validar_estados(data.get("estado_qr"),"estado_qr",errores)
-    validar_enteros_positivos(data.get("comensales"),"comensales",errores,es_parametro=False)
-
-    if errores:
-        errores = [{"message":"Parametros invalidos","description": error} for error in errores]
-        return error_msg_lista(errores,400)
 
     try:
         reserva = queries_reservas.obtener_reserva_mesa_por_id(id_reserva)
@@ -255,7 +153,7 @@ def modificar_reserva(id_reserva,data):
             
     try:
         queries_reservas.actualizar_reserva(id_reserva,data)
-        if not session["es_admin"] and reserva["estado_reserva"] == "pendiente":
+        if not session["es_admin"]:
             #usuario comun solo puede cancelar su propia reserva como accion en este endpoint.
             queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_cancelar=MAS_UNO)            
     except:
@@ -266,12 +164,8 @@ def modificar_reserva(id_reserva,data):
 def confirmar_reserva_por_qr(uuid_reserva):
     #validar reserva y qr
     res  = queries_reservas.obtener_reserva_por_qr(uuid_reserva)
-    if not res:
-        return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
-
     if res["estado_qr"] != "pendiente":
         return error_msg(400,"Error: Reserva no valida.",description="El QR ya fue leido o expiró.")
-
 
     if res["qr_expiracion"] < datetime.now():
         return error_msg(400,"Error: Reserva no valida.",description="El QR expiró.")
@@ -301,43 +195,3 @@ def cancelar_reserva_por_mail(uuid_reserva):
     except:
         return error_msg(500,"Error del servidor",description="Ha ocurrido un error en el servidor.")
     return {"msg":"Reserva cancelada exitosamente."},201
-
-def validar_date_time(dato,formato,tipo,errores,obligatorio=False):
-    if obligatorio and not dato:
-        return errores + [f"El campo {tipo} es obligatorio."]
-    if dato:        
-        try:
-            datetime.strptime(dato,formato)
-        except:
-            errores = errores + [f"La {tipo} ingresada no tiene formato correcto."]
-    return errores
-
-def validar_enteros_positivos(valor,tipo,errores,es_parametro,obligatorio=False):
-    if obligatorio and not valor:
-        return errores + [f"El campo {tipo} es obligatorio."]
-        
-    if valor:           
-        if es_parametro:
-            if not valor.isnumeric() or int(valor) <=0:
-                errores = errores + [f"El {tipo} debe ser de tipo entero positivo."]
-                return errores
-        else:
-            if not isinstance(valor, int) or valor <= 0:
-                errores = errores + [f"El {tipo} debe ser de tipo entero positivo."]
-                return errores
-    return errores
-
-def validar_estados(tipo,valor,errores,obligatorio=False):
-    if obligatorio and not valor:
-        return errores + [f"El {tipo} ingresado es obligatorio."] 
-    
-    if valor:
-        if tipo =="estado_reserva":
-            if valor not in ESTADOS_RESERVA:
-                errores = errores + [f"El {tipo} debe ser uno valido."]
-                return errores
-        elif tipo == "estado_qr":
-            if valor not in ESTADOS_QR:
-                errores = errores + [f"El {tipo} debe ser uno valido."]
-                return errores
-    return errores
