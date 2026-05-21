@@ -18,13 +18,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/sesion/login",
+              "raw": "http://localhost:5000/sesion/login",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "sesion",
@@ -54,13 +51,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/sesion/register",
+              "raw": "http://localhost:5000/sesion/register",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "sesion",
@@ -90,13 +84,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/sesion/logout",
+              "raw": "http://localhost:5000/sesion/logout",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"  
               ],
               "path": [
                 "sesion",
@@ -117,13 +108,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/sesion/login",
+              "raw": "http://localhost:5000/sesion/login",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "sesion",
@@ -153,13 +141,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/sesion/perfil",
+              "raw": "http://localhost:5000/sesion/perfil",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "sesion",
@@ -185,13 +170,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/info_frontend/",
+              "raw": "http://localhost:5000/info_frontend/",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "info_frontend",
@@ -221,13 +203,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/info_frontend",
+              "raw": "http://localhost:5000/info_frontend",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "info_frontend"
@@ -247,13 +226,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/info_frontend/:key",
+              "raw": "http://localhost:5000/info_frontend/:key",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "info_frontend",
@@ -279,13 +255,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/info_frontend/:calve",
+              "raw": "http://localhost:5000/info_frontend/:calve",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "info_frontend",
@@ -320,13 +293,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/info_frontend/:clave",
+              "raw": "http://localhost:5000/info_frontend/:clave",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "info_frontend",
@@ -357,13 +327,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/reseñas/",
+              "raw": "http://localhost:5000/reseñas/",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "reseñas",
@@ -384,13 +351,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/reseñas/",
+              "raw": "http://localhost:5000/reseñas/",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "reseñas",
@@ -420,13 +384,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/reseñas/reseñables",
+              "raw": "http://localhost:5000/reseñas/reseñables",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "reseñas",
@@ -447,13 +408,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/reseñas/todas",
+              "raw": "http://localhost:5000/reseñas/todas",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "reseñas",
@@ -474,13 +432,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/reseñas/:id",
+              "raw": "http://localhost:5000/reseñas/:id",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "reseñas",
@@ -520,13 +475,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/menu",
+              "raw": "http://localhost:5000/menu",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "menu"
@@ -546,13 +498,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/menu/:id",
+              "raw": "http://localhost:5000/menu/:id",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "menu",
@@ -578,13 +527,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/menu",
+              "raw": "http://localhost:5000/menu",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "menu"
@@ -613,13 +559,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/menu/:id",
+              "raw": "http://localhost:5000/menu/:id",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "menu",
@@ -654,13 +597,10 @@
             },
             "description": "",
             "url": {
-              "raw": "http://127.0.0.1:5000/menu/:id",
+              "raw": "http://localhost:5000/menu/:id",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1:5000"
+                "localhost:5000"
               ],
               "path": [
                 "menu",
