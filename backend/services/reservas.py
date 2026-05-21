@@ -1,3 +1,4 @@
+import os
 from flask import session
 import uuid
 from pathlib import Path
@@ -76,7 +77,7 @@ def obtener_cantidades_comensales_posibles(fecha, hora,interior):
         return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
 
     if not capacidades:
-        return jsonify({"Msg":"No hay mesas disponibles en esa fecha y hora."}),200
+        return {"Msg":"No hay mesas disponibles en esa fecha y hora."},200
 
     capacidad_maxima = max(capacidades)
     return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
