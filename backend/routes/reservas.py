@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template_string,jsonify
+from flask import Blueprint, request, render_template,jsonify
 from services import reservas as servicios_reservas
 from services.verificaciones import check_usuario_es_admin,check_usuario
 
@@ -60,18 +60,7 @@ def mostrar_confirmacion_reserva():
         return jsonify(respuesta), status
 
     id_qr = request.args.get("code")
-
-    html_page = f"""
-    <h1>CONFIRMACION DE RESERVA</h1>
-    <p>Haga click en el siguiente botón para confirmar la reserva.</p>
-    
-    <form action="http://localhost:5000/reservas/confirmar/{id_qr}" method="POST">
-        <button type="submit" style="padding: 10px 20px; background: green; color: white;">
-            Confirmar reserva
-        </button>
-    </form>
-    """
-    return render_template_string(html_page,id_qr=id_qr),200
+    return render_template("confirmacion_reserva.html",id_qr=id_qr),200
     
 @reservas_bp.route("/mostrar_cancelacion", methods=["GET"])
 def mostrar_cancelacion_reserva():
@@ -81,18 +70,7 @@ def mostrar_cancelacion_reserva():
         return jsonify(respuesta), status
 
     id_qr = request.args.get("code")
-
-    html_page = f"""
-    <h1>CANCELACION DE RESERVA</h1>
-    <p>Haga click en el siguiente botón para cancelar la reserva.</p>
-    
-    <form action="http://localhost:5000/reservas/cancelar/{id_qr}" method="POST">
-        <button type="submit" style="padding: 10px 20px; background: green; color: white;">
-            Cancelar reserva
-        </button>
-    </form>
-    """
-    return render_template_string(html_page,id_qr=id_qr),200
+    return render_template("cancelacion_reserva.html",id_qr=id_qr),200
 
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
