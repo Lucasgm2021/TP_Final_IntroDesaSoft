@@ -76,7 +76,7 @@ CREATE TABLE reserva (
     CONSTRAINT fk_reserva_usuario
         FOREIGN KEY (id_usuario)
         REFERENCES usuarios(id_usuario)
-        ON DELETE SET NULL,
+        ON DELETE SET NULL
 
 );
 
