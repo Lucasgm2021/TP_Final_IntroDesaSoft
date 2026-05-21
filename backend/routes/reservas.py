@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template,jsonify, session
+from flask import Blueprint, request, render_template,jsonify
 from services import reservas as servicios_reservas
 from services.verificaciones import check_usuario_es_admin,check_usuario
 

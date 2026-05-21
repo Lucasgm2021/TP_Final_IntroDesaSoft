@@ -81,7 +81,7 @@ def obtener_usuario_id(id_usuario):
     )
 
     if resultado:
-        return dict(resultado[0]) #deberia haber solo un resultado, el email es unico
+        return dict(resultado[0]) #deberia haber solo un resultado, el id es unico
     else:       
         return None
 

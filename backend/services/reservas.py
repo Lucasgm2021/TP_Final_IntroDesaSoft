@@ -34,6 +34,7 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
         data["estado_reserva"]=estado
     
     try:
+        total_reservas = len(queries_reservas.obtener_reservas(data=data))
         reservas = queries_reservas.obtener_reservas(data=data,limit=limit,offset=offset)
         #fecha es datetime.date, hora es datetime.timedelta y qr_expiracion es datetime.datetime
         reservas = [{**reserva, "fecha": reserva["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(reserva["hora_reserva"]), "qr_expiracion": str(reserva["qr_expiracion"])}  for reserva in reservas]
