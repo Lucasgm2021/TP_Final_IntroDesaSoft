@@ -90,10 +90,11 @@ def modificar_mesa(id_mesa, campos):
 
 def mesa_tiene_reservas_activas(id_mesa):
     query = """
-        SELECT id_reserva
-        FROM reserva_mesa
-        WHERE id_mesa = :id_mesa
-        AND estado_reserva = 'pendiente'
+        SELECT r.id_reserva
+        FROM reserva_mesa rm
+        JOIN reserva r ON r.id_reserva = rm.id_reserva
+        WHERE rm.id_mesa = :id_mesa
+        AND r.estado_reserva = 'pendiente'
     """
 
     resultado = ejecutar_query_lectura(query, {"id_mesa": id_mesa})

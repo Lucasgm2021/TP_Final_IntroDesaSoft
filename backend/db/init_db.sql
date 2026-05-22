@@ -119,7 +119,7 @@ CREATE TABLE reserva_mesa (
     CONSTRAINT fk_reserva_mesa_mesa
         FOREIGN KEY (id_mesa)
         REFERENCES mesa(id_mesa)
-        ON DELETE CASCADE
+        ON DELETE SET NULL
 );
 
 CREATE TABLE reseña (
