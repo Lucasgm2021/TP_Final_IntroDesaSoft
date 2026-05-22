@@ -1,0 +1,84 @@
+ /* Declaraciones */
+
+@font-face {
+    font-family: "JimNightshade";
+    src: url("../fonts/JimNightshade-Regular.ttf");
+    font-weight: 300;
+}
+@font-face {
+    font-family: "ArefRuqaa";
+    src: url("../fonts/ArefRuqaa-Regular.ttf");
+    font-weight: 300;
+}
+@font-face {
+    font-family: "ArefRuqaa";
+    src: url("../fonts/ArefRuqaa-Bold.ttf");
+    font-weight: 900;
+}
+
+ /* marca - globales */
+
+* {
+    font-family: "ArefRuqaa", serif;
+}
+
+body {
+    background: #111;
+    color: white;
+}
+.puerto-hermoso {
+    font-family: "JimNightshade", serif;
+}
+
+ /* Propietarios por tipo (boton, input, div, etc) */
+
+.div-example {
+    background: gray;
+    width: max-content;
+    padding:10px;
+    margin:20px;
+}
+.div-example-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.button-default {
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.button-circle {
+    border: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.button:hover {
+    scale: 1.2;
+    transition: 0.3s;
+}
+.button {
+    transition: 0.3s;
+}
+.input-default {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-weight: bold;
+    box-sizing: border-box;
+    background: #d9d9d9;
+}
+
+ /* genericos */
+
+.dropshadow {
+    box-shadow: 0 5px 12px rgba(0,0,0,0.8);
+}
+.circle {
+    border-radius: 50%;
+}
+
