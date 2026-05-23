@@ -1,0 +1,118 @@
+<head>
+    <title>Reservas | Puerto Hermoso</title>
+
+    <link rel="stylesheet" href="static/css/main.css">
+</head>
+
+<script src="static/js/scripts.js"></script>
+
+<body>
+
+    <div id="contenedor-reservas">
+
+        <h1>Reservar Mesa</h1>
+
+        {% from "componentes/input_comp.html" import input_comp %}
+        {% from "componentes/button1_comp.html" import button1_comp %}
+        {% from "componentes/button3_comp.html" import button3_comp %}
+
+        <div class="fila-reserva">
+
+            <div class="div-example">
+                {{ input_comp(
+                    name="fecha",
+                    type="date",
+                    label="Fecha de reserva",
+                    placeholder="",
+                    height="40px",
+                    width="250px"
+                ) }}
+            </div>
+
+            <div class="div-example">
+                {{ input_comp(
+                    name="hora",
+                    type="time",
+                    label="Horario",
+                    placeholder="",
+                    height="40px",
+                    width="250px"
+                ) }}
+            </div>
+
+        </div>
+
+        <div class="fila-reserva">
+
+            <h2>Ubicación</h2>
+
+            <div class="div-example">
+
+                {{ button3_comp(
+                    text="Interior",
+                    height=50,
+                    acceptordeny="accept",
+                    func=""
+                ) }}
+
+            </div>
+
+            <div class="div-example">
+
+                {{ button3_comp(
+                    text="Exterior",
+                    height=50,
+                    acceptordeny="deny",
+                    func=""
+                ) }}
+
+            </div>
+
+        </div>
+
+        <div class="fila-reserva">
+
+            <div class="div-example">
+                {{ input_comp(
+                    name="comensales",
+                    type="number",
+                    label="Cantidad de comensales",
+                    placeholder="1",
+                    height="40px",
+                    width="250px"
+                ) }}
+            </div>
+
+        </div>
+
+        <div class="fila-reserva">
+
+            <div class="div-example">
+
+                {{ button1_comp(
+                    text="VALIDAR DISPONIBILIDAD",
+                    height=55,
+                    func=""
+                ) }}
+
+            </div>
+
+        </div>
+
+        <div class="fila-reserva">
+
+            <div class="div-example">
+
+                {{ button1_comp(
+                    text="CONFIRMAR RESERVA",
+                    height=60,
+                    func=""
+                ) }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
