@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear reserva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
-<body>
-    <h1>Hola mundo!</h1>
+<body id="body-creacion-reserva">
     <!-- Flask flash sintaxis-->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -17,26 +17,73 @@
         </div>
         {% endif %}
     {% endwith %}
-    <form action="{{ url_for('reservas.crear_reserva_form')}}" method="post">
-        <div style="display: flex;flex-direction: column; width: 250px;user-select: none;"> 
-            <label for="hora"></label><input type="time" name="hora" required>
-            <label for="fecha"></label><input type="date" name="fecha" required>
-            <label for="nro_comensales"></label><input type="number" name="nro_comensales" min="0" required>
+    {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button3_comp.html" import button3_comp %}
+    {% from "componentes/mesas_comp.html" import mesas_comp %}
+    <form id="form-crear-reserva" action="{{ url_for('reservas.crear_reserva_form')}}" method="post">
+        <div> 
+            <h1>Puerto Hermoso</h1>
+            {{ input_comp(
+                name="hora",
+                type="time",
+                label="Horario",
+                placeholder="",
+                height="40px",
+                width="250px"
+            ) }}
+            {{ input_comp(
+                name="fecha",
+                type="date",
+                label="Fecha de reserva",
+                placeholder="",
+                height="40px",
+                width="250px"
+            ) }}
+            {{ input_comp(
+                name="comensales",
+                type="number",
+                label="Cantidad de comensales",
+                placeholder="1",
+                height="40px",
+                width="250px"
+            ) }}
         </div>
-        <label for="interior">Interior</label>
-        <input type="radio" id="interior" name="interior" value="true" required>            
-        <label for="exterior">Exterior</label>
-        <input type="radio" id="exterior" name="interior" value="false" required>
+        <div>
+            {{ button3_comp(
+                text="Interior",
+                height=50,
+                acceptordeny="accept",
+                func=""
+            ) }}
 
-        <div style="display: flex;flex-direction: column; width: 180px;user-select: none;"> 
-            <label for="mesas_disponibles">Elija una mesa disponible</label>
-            <select name="mesas_disponibles" id="mesas_disponibles" required>
-                <option value="" selected disabled hidden>Elije una mesa</option>
-                <option value="Mesa 101">Mesa 101</option>
-                <option value="Mesa 102">Mesa 102</option>
-            </select>
-            <input type="submit" value="submit form">
+            {{ button3_comp(
+                text="Exterior",
+                height=50,
+                acceptordeny="accept",
+                func=""
+            ) }}
         </div>
+        <div>
+            {{ button1_comp(
+                text="VALIDAR DISPONIBILIDAD",
+                height=55,
+                func=""
+            ) }}
+        </div>
+        {{ mesas_comp(
+        endpoint="mesas/",
+        id="mesas-principal",
+        width="250px"
+        ) }}
+        {{ input_comp(
+            name="Confirmar",
+            type="submit",
+            label="",
+            value="Confirmar",
+            width="250px"
+        ) }}
     </form>
+    
 </body>
 </html>

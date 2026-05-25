@@ -25,3 +25,7 @@ def crear_reserva_form():
         for e in resultado.get('errores', ['Error desconocido.']):
             flash(e, 'error')
     return redirect(url_for('reservas.crear_reserva_form'))
+
+@reserva_bp.route("/example", methods=["GET"])
+def ejemplo():
+    return render_template("examples/reservas.html")

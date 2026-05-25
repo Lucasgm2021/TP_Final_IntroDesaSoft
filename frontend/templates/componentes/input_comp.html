@@ -44,7 +44,7 @@
             value="{{ value }}"
 
             placeholder="{{ placeholder }}"
-
+            {% if type == "number" %} min="1" {% endif %}
             style="
                 height: {{ height }};
 
@@ -55,6 +55,7 @@
                 font-size: calc({{ height }} * 0.5);
 
             "
+            required
     >
 
 </div>
