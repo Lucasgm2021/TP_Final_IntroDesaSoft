@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Mis Reservas | Puerto Hermoso</title>
+
+    <link rel="stylesheet" href="static/css/main.css">
+</head>
+
+<body>
+
+    <div id="contenedor-mis-reservas">
+
+        <div class="header-reservas">
+
+            <h1>Mis Reservas</h1>
+
+            <div class="acciones-header">
+
+                <a href="/reservas/nueva">
+
+                    <button class="boton-accion">
+                        NUEVA RESERVA
+                    </button>
+
+                </a>
+
+                <a href="/logout">
+
+                    <button class="boton-logout">
+                        CERRAR SESIÓN
+                    </button>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="lista-reservas">
+
+            {% for reserva in reservas %}
+
+            <div class="card-reserva">
+
+                <div class="card-header">
+
+                    <h2>
+                        Reserva #{{ reserva.id_reserva }}
+                    </h2>
+
+                    <div class="estado-container">
+
+                        <span class="estado-label">
+                            Estado:
+                        </span>
+
+                        <span class="estado-reserva estado-{{ reserva.estado_reserva }}">
+                            {{ reserva.estado_reserva.upper() }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="info-reserva">
+
+                    <p>
+                        <strong>Fecha:</strong>
+                        {{ reserva.fecha }}
+                    </p>
+
+                    <p>
+                        <strong>Horario:</strong>
+                        {{ reserva.hora_reserva }}
+                    </p>
+
+                    <p>
+                        <strong>Comensales:</strong>
+                        {{ reserva.comensales }}
+                    </p>
+
+                    <p>
+                        <strong>Ubicación:</strong>
+
+                        {% if reserva.interior %}
+                            Interior
+                        {% else %}
+                            Exterior
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Estado QR:</strong>
+                        {{ reserva.estado_qr }}
+                    </p>
+
+                    <p>
+                        <strong>QR:</strong>
+                        {{ reserva.uuid_qr }}
+                    </p>
+
+                    <p>
+                        <strong>Creada:</strong>
+                        {{ reserva.created_at }}
+                    </p>
+
+                </div>
+
+                {% if reserva.estado_reserva == "pendiente" %}
+
+                <div class="acciones-reserva">
+
+                    <form
+                        action="/reservas/cancelar/{{ reserva.id_reserva }}"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="boton-cancelar"
+                        >
+                            CANCELAR RESERVA
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</body>

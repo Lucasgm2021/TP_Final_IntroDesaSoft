@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Administración de Reservas | Puerto Hermoso</title>
+
+    <link rel="stylesheet" href="static/css/main.css">
+</head>
+
+<body>
+
+    <div id="contenedor-admin-reservas">
+
+        <div class="sidebar-admin">
+
+            <h1>ADMIN</h1>
+
+            <nav class="menu-admin">
+
+                <a href="/admin/home">
+                    <button class="boton-admin">
+                        HOME
+                    </button>
+                </a>
+
+                <a href="/admin/reservas">
+                    <button class="boton-admin boton-activo">
+                        RESERVAS
+                    </button>
+                </a>
+
+                <a href="/admin/configuracion">
+                    <button class="boton-admin">
+                        CONFIGURACIÓN IN-PAGE
+                    </button>
+                </a>
+
+                <a href="/admin/resenas">
+                    <button class="boton-admin">
+                        RESEÑAS
+                    </button>
+                </a>
+
+                <a href="/admin/menu">
+                    <button class="boton-admin">
+                        MENÚ
+                    </button>
+                </a>
+
+                <a href="/admin/usuarios">
+                    <button class="boton-admin">
+                        USUARIOS
+                    </button>
+                </a>
+
+                <a href="/logout">
+                    <button class="boton-logout">
+                        CERRAR SESIÓN
+                    </button>
+                </a>
+
+            </nav>
+
+        </div>
+
+        <div class="contenido-admin">
+
+            <div class="header-admin">
+
+                <h1>Reservas de Usuarios</h1>
+
+            </div>
+
+            <div class="tabla-reservas-container">
+
+                <table class="tabla-reservas">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Comensales</th>
+                            <th>Ubicación</th>
+                            <th>Estado Reserva</th>
+                            <th>Estado QR</th>
+                            <th>Reseñada</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for reserva in reservas %}
+
+                        <tr>
+
+                            <td>
+                                {{ reserva.id_reserva }}
+                            </td>
+
+                            <td>
+                                {{ reserva.id_usuario }}
+                            </td>
+
+                            <td>
+                                {{ reserva.fecha }}
+                            </td>
+
+                            <td>
+                                {{ reserva.hora_reserva }}
+                            </td>
+
+                            <td>
+                                {{ reserva.comensales }}
+                            </td>
+
+                            <td>
+
+                                {% if reserva.interior %}
+                                    Interior
+                                {% else %}
+                                    Exterior
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <span class="estado-reserva estado-{{ reserva.estado_reserva }}">
+                                    {{ reserva.estado_reserva.upper() }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="estado-qr estado-{{ reserva.estado_qr }}">
+                                    {{ reserva.estado_qr.upper() }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                {% if reserva.reseñada %}
+                                    Sí
+                                {% else %}
+                                    No
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
