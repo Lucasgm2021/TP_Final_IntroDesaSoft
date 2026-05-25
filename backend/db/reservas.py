@@ -1,54 +1,112 @@
 import db.config as config
 
-QUERY_GET_RESERVAS_MESA = "SELECT reserva_mesa.* FROM reserva_mesa"
+QUERY_GET_RESERVAS = """
+SELECT
+    reserva.*,
+    reserva_mesa.id_mesa
+FROM reserva
+LEFT JOIN reserva_mesa
+    ON reserva.id_reserva = reserva_mesa.id_reserva
+"""
 
-QUERY_GET_RESERVA_MESA_ID_QR = "SELECT * FROM reserva_mesa WHERE uuid_qr = :uuid_qr"
+QUERY_GET_RESERVA_ID_QR = """
+SELECT
+    reserva.*,
+    reserva_mesa.id_mesa
+FROM reserva
+LEFT JOIN reserva_mesa
+    ON reserva.id_reserva = reserva_mesa.id_reserva
+WHERE reserva.uuid_qr = :uuid_qr
+"""
 
 QUERY_COUNT_RESERVAS = "SELECT COUNT(*) as total FROM reserva"
 
 QUERY_COUNT_MESAS = " SELECT COUNT(*) as total FROM mesa"
 
-QUERY_COUNT_MESAS_EN_USO = """SELECT COUNT(*) as total FROM reserva_mesa
-WHERE fecha = DATE(NOW()) and hora_reserva = CONCAT(HOUR(NOW()), ':00:00') and estado_reserva = 'finalizada'
+QUERY_COUNT_MESAS_EN_USO = """
+SELECT COUNT(*) as total
+FROM reserva_mesa
+JOIN reserva
+    ON reserva_mesa.id_reserva = reserva.id_reserva
+WHERE reserva.fecha = CURRENT_DATE()
+AND reserva.hora_reserva = CONCAT(HOUR(NOW()), ':00:00')
+AND reserva.estado_reserva IN ('pendiente')
 """
 
 QUERY_MESAS_DISPONIBLES = """
 SELECT capacidad
 FROM mesa
 WHERE id_mesa NOT IN (
-    SELECT id_mesa
+
+    SELECT reserva_mesa.id_mesa
     FROM reserva_mesa
-    WHERE fecha = :fecha
-    AND hora_reserva = :hora_reserva
-    AND estado_reserva IN ('pendiente','confirmada')
-) and funcional = true and interior = :interior
+
+    JOIN reserva
+        ON reserva_mesa.id_reserva = reserva.id_reserva
+
+    WHERE reserva.fecha = :fecha
+    AND reserva.hora_reserva = :hora_reserva
+    AND reserva.estado_reserva IN ('pendiente')
+
+)
+
+AND funcional = TRUE
+AND interior = :interior
 """
 
 QUERY_MESA_DISPONIBLE = """
 SELECT id_mesa, capacidad
 FROM mesa
-WHERE capacidad >= :capacidad and funcional = true and interior = :interior
+
+WHERE capacidad >= :capacidad
+AND funcional = TRUE
+AND interior = :interior
+
 AND id_mesa NOT IN (
-    SELECT id_mesa
+
+    SELECT reserva_mesa.id_mesa
     FROM reserva_mesa
-    WHERE fecha = :fecha
-    AND hora_reserva = :hora_reserva
-    AND estado_reserva IN ('pendiente','confirmada')
+
+    JOIN reserva
+        ON reserva_mesa.id_reserva = reserva.id_reserva
+
+    WHERE reserva.fecha = :fecha
+    AND reserva.hora_reserva = :hora_reserva
+    AND reserva.estado_reserva IN ('pendiente')
+
 )
+
 ORDER BY capacidad, id_mesa ASC
 LIMIT 1
 """
 
 QUERY_INSERT_RESERVA = """
-INSERT INTO reserva
-(id_usuario)
-VALUES (:id_usuario)
+INSERT INTO reserva (
+    id_usuario,
+    estado_reserva,
+    hora_reserva,
+    fecha,
+    interior,
+    uuid_qr,
+    qr_expiracion,
+    comensales
+)
+VALUES (
+    :id_usuario,
+    'pendiente',
+    :hora_reserva,
+    :fecha,
+    :interior,
+    :uuid_qr,
+    :qr_expiracion,
+    :comensales
+)
 """
 
 QUERY_INSERT_RESERVA_MESA = """
 INSERT INTO reserva_mesa
-(id_reserva,id_mesa,interior,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion)
-VALUES (:id_reserva,:id_mesa,TRUE,:fecha,:hora_reserva,:comensales,:uuid_qr,:qr_expiracion)
+(id_reserva,id_mesa)
+VALUES (:id_reserva,:id_mesa)
 """
 
 QUERY_GET_RESERVA_MESA_ID = "SELECT * FROM reserva_mesa WHERE id_reserva = :id_reserva"
@@ -56,18 +114,19 @@ QUERY_GET_RESERVA_MESA_ID = "SELECT * FROM reserva_mesa WHERE id_reserva = :id_r
 QUERY_GET_RESERVA_ID = "SELECT * FROM reserva WHERE id_reserva = :id_reserva"
 
 QUERY_UPDATE_ESTADO_QR = """
-UPDATE reserva_mesa
+UPDATE reserva
 SET estado_reserva = :estado_reserva
 """
 
-QUERY_UPDATE_RESERVA_MESA = """
-UPDATE reserva_mesa
-SET """
+QUERY_UPDATE_RESERVA = """
+UPDATE reserva
+SET
+"""
 
 QUERY_UPDATE_CONTADORES_RESERVA = "UPDATE usuarios"
 
 def obtener_reservas(data,limit=None,offset=None):
-    query = QUERY_GET_RESERVAS_MESA
+    query = QUERY_GET_RESERVAS
     lista_de_condiciones = []
     params = {}
     for key in data:
@@ -102,7 +161,7 @@ def obtener_reserva_mesa_por_id(id_reserva):
 def obtener_reserva_por_qr(uuid_qr):
 
     resultado = config.ejecutar_query_lectura(
-        QUERY_GET_RESERVA_MESA_ID_QR,
+        QUERY_GET_RESERVA_ID_QR,
         params={"uuid_qr":uuid_qr}
     )
     return resultado[0] if resultado else None
@@ -148,20 +207,20 @@ def obtener_reserva_por_id(id_reserva):
     resultado = config.ejecutar_query_lectura(QUERY_GET_RESERVA_ID,{"id_reserva":id_reserva})
     return resultado[0] if resultado else None
 
-def insertar_reserva(id_usuario):
+def insertar_reserva(interior,id_usuario,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion):
     return config.ejecutar_query_escritura(
         QUERY_INSERT_RESERVA,
-        params={"id_usuario":id_usuario})
+        params={"interior":interior,"id_usuario":id_usuario,"fecha":fecha,"hora_reserva":hora_reserva,"comensales":comensales,"uuid_qr":uuid_qr,"qr_expiracion":qr_expiracion})
 
-def insertar_reserva_mesa(id_reserva,id_mesa,interior,fecha,hora_reserva,comensales,uuid_qr,qr_expiracion):
+def insertar_reserva_mesa(id_reserva,id_mesa):
 
     return config.ejecutar_query_escritura(
         QUERY_INSERT_RESERVA_MESA,
-        params={"id_reserva":id_reserva,"id_mesa":id_mesa,"fecha":fecha,"hora_reserva":hora_reserva,"comensales":comensales,"uuid_qr":uuid_qr,"qr_expiracion":qr_expiracion}
+        params={"id_reserva":id_reserva,"id_mesa":id_mesa}
     )
 
 def actualizar_reserva(id_reserva,data):
-    query = QUERY_UPDATE_RESERVA_MESA
+    query = QUERY_UPDATE_RESERVA
     lista_de_datos_a_modificar = []
     params = {}
     for key in data:
@@ -182,7 +241,7 @@ def actualizar_estado_reserva_por_qr(id_qr_reserva,estado_reserva,estado_qr=None
     params["estado_reserva"]=estado_reserva
     query = QUERY_UPDATE_ESTADO_QR
     if estado_qr:
-        query += ", estado_qr = :estado_qr, pendiente_reseña = TRUE"
+        query += ", estado_qr = :estado_qr"
         params["estado_qr"]=estado_qr
     query += " WHERE uuid_qr = :uuid_qr"
     params["uuid_qr"]=id_qr_reserva
@@ -203,6 +262,6 @@ def actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=None, dif
         valores_a_modificar.append(" canceladas = canceladas + :diferencia_cancelar")
         params["diferencia_cancelar"] = diferencia_cancelar
 
-    query += " and ".join(valores_a_modificar) + " WHERE id_usuario = :id_usuario"
+    query += ", ".join(valores_a_modificar) + " WHERE id_usuario = :id_usuario"
     params["id_usuario"] = id_usuario
     return config.ejecutar_query_escritura(query,params)
