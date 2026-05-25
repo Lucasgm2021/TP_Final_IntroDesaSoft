@@ -19,9 +19,9 @@
     {% endwith %}
     <form action="{{ url_for('reservas.crear_reserva_form')}}" method="post">
         <div style="display: flex;flex-direction: column; width: 250px;user-select: none;"> 
-            <label for="hora_reserva"></label><input type="time" name="hora_reserva" required>
-            <label for="dia_reserva"></label><input type="date" name="dia_reserva" required>
-            <label for="comensales"></label><input type="number" name="comensales" min="0" required>
+            <label for="hora"></label><input type="time" name="hora" required>
+            <label for="fecha"></label><input type="date" name="fecha" required>
+            <label for="nro_comensales"></label><input type="number" name="nro_comensales" min="0" required>
         </div>
         <label for="interior">Interior</label>
         <input type="radio" id="interior" name="interior" value="true" required>            

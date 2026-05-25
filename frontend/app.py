@@ -32,23 +32,15 @@ def login():
         
         # 3. Turn it into a malleable Flask Response object
         flask_response = make_response(redireccion)
-        expires_date = datetime.now() + timedelta(hours=24)
 
         for name, value in result["cookies"].items():
             flask_response.set_cookie(
                 name, 
-                value, 
-                expires=expires_date,  # <-- Keeps it alive across tabs for 24 hours!
-                httponly=True,
-                samesite="Lax",
-                path="/"
-            )
-        print("flask response:", flask_response,flask_response.headers)
+                value)
         return flask_response
     else:
         # Login failed, show error messages
         for e in result.get('errores', ['Error al logear.']):
-            print(e,type(e))
             flash(e, 'error')
 
     return redirect(url_for("login"))

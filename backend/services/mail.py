@@ -13,7 +13,7 @@ def enviar_mail_con_qr(mail_destino,asunto,mail_data,ruta_template):
 
     mail_restaurante = os.getenv("MAIL_ACCOUNT")
     app_password = os.getenv("MAIL_PASS")
-
+    print("app password",app_password)
     msg = MIMEMultipart("related")
     msg["From"] = mail_restaurante
     msg["To"] = mail_destino

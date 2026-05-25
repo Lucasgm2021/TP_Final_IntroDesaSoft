@@ -10,7 +10,6 @@ def login(email,password):
             "email": email,
             "password": password
         }, timeout=10)
-        print("respuesta de backend:",backend_res,backend_res.status_code,"cookies:",backend_res.cookies.items())
         if backend_res.status_code == 201:
             cookies_dict = backend_res.cookies.get_dict()
             # Put the cookies in our return payload so the route can see them
@@ -31,10 +30,8 @@ def login(email,password):
 
 
 def obtener_perfil(cookies):
-    print("cookies:",cookies)
     try:
         response = requests.get(f"{API_BASE_URL}/sesion/perfil", timeout=10,cookies=cookies)
-        print("respuesta de backend en obtener perfil:",response,response.status_code,type(response.status_code))
         if response.status_code == 200:
             return response.json()
         try:
