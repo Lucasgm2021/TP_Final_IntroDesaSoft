@@ -1,34 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Mis Reservas | Puerto Hermoso</title>
 
-    <link rel="stylesheet" href="static/css/main.css">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}"
+    >
 </head>
 
-<body>
+<body id="body-mis-reservas">
+
+    <!-- Flask flash sintaxis -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+
+        <div class="flash-container">
+
+            {% for category, message in messages %}
+
+            <div class="flash flash--{{ category }}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+    {% endwith %}
+
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button3_comp.html" import button3_comp %}
 
     <div id="contenedor-mis-reservas">
 
-        <div class="header-reservas">
+        <div id="header-mis-reservas">
 
-            <h1>Mis Reservas</h1>
+            <h1>Puerto Hermoso</h1>
 
-            <div class="acciones-header">
+            <div id="acciones-mis-reservas">
 
-                <a href="/reservas/nueva">
+                <a href="{{ url_for('reservas.crear_reserva_form') }}">
 
-                    <button class="boton-accion">
-                        NUEVA RESERVA
-                    </button>
+                    {{ button1_comp(
+                        text="NUEVA RESERVA",
+                        height=55,
+                        func=""
+                    ) }}
 
                 </a>
 
-                <a href="/logout">
+                <a href="{{ url_for('auth.logout') }}">
 
-                    <button class="boton-logout">
-                        CERRAR SESIÓN
-                    </button>
+                    {{ button3_comp(
+                        text="CERRAR SESIÓN",
+                        height=50,
+                        acceptordeny="deny",
+                        func=""
+                    ) }}
 
                 </a>
 
@@ -36,13 +73,13 @@
 
         </div>
 
-        <div class="lista-reservas">
+        <div id="lista-reservas">
 
             {% for reserva in reservas %}
 
             <div class="card-reserva">
 
-                <div class="card-header">
+                <div class="card-header-reserva">
 
                     <h2>
                         Reserva #{{ reserva.id_reserva }}
@@ -66,45 +103,81 @@
 
                 <div class="info-reserva">
 
-                    <p>
-                        <strong>Fecha:</strong>
-                        {{ reserva.fecha }}
-                    </p>
+                    <div class="dato-reserva">
 
-                    <p>
-                        <strong>Horario:</strong>
-                        {{ reserva.hora_reserva }}
-                    </p>
+                        <strong>Fecha</strong>
 
-                    <p>
-                        <strong>Comensales:</strong>
-                        {{ reserva.comensales }}
-                    </p>
+                        <span>
+                            {{ reserva.fecha }}
+                        </span>
 
-                    <p>
-                        <strong>Ubicación:</strong>
+                    </div>
 
-                        {% if reserva.interior %}
-                            Interior
-                        {% else %}
-                            Exterior
-                        {% endif %}
-                    </p>
+                    <div class="dato-reserva">
 
-                    <p>
-                        <strong>Estado QR:</strong>
-                        {{ reserva.estado_qr }}
-                    </p>
+                        <strong>Horario</strong>
 
-                    <p>
-                        <strong>QR:</strong>
-                        {{ reserva.uuid_qr }}
-                    </p>
+                        <span>
+                            {{ reserva.hora_reserva }}
+                        </span>
 
-                    <p>
-                        <strong>Creada:</strong>
-                        {{ reserva.created_at }}
-                    </p>
+                    </div>
+
+                    <div class="dato-reserva">
+
+                        <strong>Comensales</strong>
+
+                        <span>
+                            {{ reserva.comensales }}
+                        </span>
+
+                    </div>
+
+                    <div class="dato-reserva">
+
+                        <strong>Ubicación</strong>
+
+                        <span>
+
+                            {% if reserva.interior %}
+                                Interior
+                            {% else %}
+                                Exterior
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-reserva">
+
+                        <strong>Estado QR</strong>
+
+                        <span>
+                            {{ reserva.estado_qr }}
+                        </span>
+
+                    </div>
+
+                    <div class="dato-reserva">
+
+                        <strong>UUID QR</strong>
+
+                        <span>
+                            {{ reserva.uuid_qr }}
+                        </span>
+
+                    </div>
+
+                    <div class="dato-reserva">
+
+                        <strong>Creada</strong>
+
+                        <span>
+                            {{ reserva.created_at }}
+                        </span>
+
+                    </div>
 
                 </div>
 
@@ -113,16 +186,16 @@
                 <div class="acciones-reserva">
 
                     <form
-                        action="/reservas/cancelar/{{ reserva.id_reserva }}"
+                        action="{{ url_for('reservas.cancelar_reserva', id_reserva=reserva.id_reserva) }}"
                         method="POST"
                     >
 
-                        <button
-                            type="submit"
-                            class="boton-cancelar"
-                        >
-                            CANCELAR RESERVA
-                        </button>
+                        {{ button3_comp(
+                            text="CANCELAR RESERVA",
+                            height=50,
+                            acceptordeny="deny",
+                            func=""
+                        ) }}
 
                     </form>
 
@@ -139,3 +212,4 @@
     </div>
 
 </body>
+</html>

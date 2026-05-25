@@ -1,124 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Administración de Reservas | Puerto Hermoso</title>
+    <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="static/css/main.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Reservas Admin | Puerto Hermoso</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}"
+    >
 </head>
 
-<body>
+<body id="body-admin-reservas">
 
-    <div id="contenedor-admin-reservas">
+    <!-- Flask flash sintaxis -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
 
-        <div class="sidebar-admin">
+        <div class="flash-container">
 
-            <h1>ADMIN</h1>
+            {% for category, message in messages %}
 
-            <nav class="menu-admin">
+            <div class="flash flash--{{ category }}">
+                {{ message }}
+            </div>
 
-                <a href="/admin/home">
-                    <button class="boton-admin">
-                        HOME
-                    </button>
-                </a>
-
-                <a href="/admin/reservas">
-                    <button class="boton-admin boton-activo">
-                        RESERVAS
-                    </button>
-                </a>
-
-                <a href="/admin/configuracion">
-                    <button class="boton-admin">
-                        CONFIGURACIÓN IN-PAGE
-                    </button>
-                </a>
-
-                <a href="/admin/resenas">
-                    <button class="boton-admin">
-                        RESEÑAS
-                    </button>
-                </a>
-
-                <a href="/admin/menu">
-                    <button class="boton-admin">
-                        MENÚ
-                    </button>
-                </a>
-
-                <a href="/admin/usuarios">
-                    <button class="boton-admin">
-                        USUARIOS
-                    </button>
-                </a>
-
-                <a href="/logout">
-                    <button class="boton-logout">
-                        CERRAR SESIÓN
-                    </button>
-                </a>
-
-            </nav>
+            {% endfor %}
 
         </div>
 
-        <div class="contenido-admin">
+        {% endif %}
+    {% endwith %}
 
-            <div class="header-admin">
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button3_comp.html" import button3_comp %}
+
+    <div id="contenedor-admin-reservas">
+
+        <!-- Sidebar -->
+
+        <div id="sidebar-admin">
+
+            <h1>Puerto Hermoso</h1>
+
+            <div id="sidebar-buttons">
+
+                <a href="{{ url_for('admin.home') }}">
+
+                    {{ button1_comp(
+                        text="HOME",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="{{ url_for('admin.reservas') }}">
+
+                    {{ button1_comp(
+                        text="RESERVAS",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="{{ url_for('admin.configuracion') }}">
+
+                    {{ button1_comp(
+                        text="CONFIGURACIÓN IN-PAGE",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="{{ url_for('admin.resenas') }}">
+
+                    {{ button1_comp(
+                        text="RESEÑAS",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="{{ url_for('admin.menu') }}">
+
+                    {{ button1_comp(
+                        text="MENÚ",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="{{ url_for('admin.usuarios') }}">
+
+                    {{ button1_comp(
+                        text="USUARIOS",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="{{ url_for('auth.logout') }}">
+
+                    {{ button3_comp(
+                        text="CERRAR SESIÓN",
+                        height=50,
+                        acceptordeny="deny",
+                        func=""
+                    ) }}
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- Contenido -->
+
+        <div id="contenido-admin-reservas">
+
+            <div id="header-admin-reservas">
 
                 <h1>Reservas de Usuarios</h1>
 
             </div>
 
-            <div class="tabla-reservas-container">
+            <div id="lista-admin-reservas">
 
-                <table class="tabla-reservas">
+                {% for reserva in reservas %}
 
-                    <thead>
+                <div class="card-admin-reserva">
 
-                        <tr>
+                    <div class="card-header-admin">
 
-                            <th>ID</th>
-                            <th>Usuario</th>
-                            <th>Fecha</th>
-                            <th>Horario</th>
-                            <th>Comensales</th>
-                            <th>Ubicación</th>
-                            <th>Estado Reserva</th>
-                            <th>Estado QR</th>
-                            <th>Reseñada</th>
+                        <h2>
+                            Reserva #{{ reserva.id_reserva }}
+                        </h2>
 
-                        </tr>
+                        <div class="estado-container">
 
-                    </thead>
+                            <span class="estado-label">
+                                Estado:
+                            </span>
 
-                    <tbody>
+                            <span class="estado-reserva estado-{{ reserva.estado_reserva }}">
+                                {{ reserva.estado_reserva.upper() }}
+                            </span>
 
-                        {% for reserva in reservas %}
+                        </div>
 
-                        <tr>
+                    </div>
 
-                            <td>
-                                {{ reserva.id_reserva }}
-                            </td>
+                    <hr>
 
-                            <td>
+                    <div class="info-admin-reserva">
+
+                        <div class="dato-admin-reserva">
+
+                            <strong>Usuario</strong>
+
+                            <span>
                                 {{ reserva.id_usuario }}
-                            </td>
+                            </span>
 
-                            <td>
+                        </div>
+
+                        <div class="dato-admin-reserva">
+
+                            <strong>Fecha</strong>
+
+                            <span>
                                 {{ reserva.fecha }}
-                            </td>
+                            </span>
 
-                            <td>
+                        </div>
+
+                        <div class="dato-admin-reserva">
+
+                            <strong>Horario</strong>
+
+                            <span>
                                 {{ reserva.hora_reserva }}
-                            </td>
+                            </span>
 
-                            <td>
+                        </div>
+
+                        <div class="dato-admin-reserva">
+
+                            <strong>Comensales</strong>
+
+                            <span>
                                 {{ reserva.comensales }}
-                            </td>
+                            </span>
 
-                            <td>
+                        </div>
+
+                        <div class="dato-admin-reserva">
+
+                            <strong>Ubicación</strong>
+
+                            <span>
 
                                 {% if reserva.interior %}
                                     Interior
@@ -126,25 +217,35 @@
                                     Exterior
                                 {% endif %}
 
-                            </td>
+                            </span>
 
-                            <td>
+                        </div>
 
-                                <span class="estado-reserva estado-{{ reserva.estado_reserva }}">
-                                    {{ reserva.estado_reserva.upper() }}
-                                </span>
+                        <div class="dato-admin-reserva">
 
-                            </td>
+                            <strong>Estado QR</strong>
 
-                            <td>
+                            <span>
+                                {{ reserva.estado_qr }}
+                            </span>
 
-                                <span class="estado-qr estado-{{ reserva.estado_qr }}">
-                                    {{ reserva.estado_qr.upper() }}
-                                </span>
+                        </div>
 
-                            </td>
+                        <div class="dato-admin-reserva">
 
-                            <td>
+                            <strong>UUID QR</strong>
+
+                            <span>
+                                {{ reserva.uuid_qr }}
+                            </span>
+
+                        </div>
+
+                        <div class="dato-admin-reserva">
+
+                            <strong>Reseñada</strong>
+
+                            <span>
 
                                 {% if reserva.reseñada %}
                                     Sí
@@ -152,15 +253,61 @@
                                     No
                                 {% endif %}
 
-                            </td>
+                            </span>
 
-                        </tr>
+                        </div>
 
-                        {% endfor %}
+                        <div class="dato-admin-reserva">
 
-                    </tbody>
+                            <strong>Creada</strong>
 
-                </table>
+                            <span>
+                                {{ reserva.created_at }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    {% if reserva.estado_reserva == "pendiente" %}
+
+                    <div class="acciones-admin-reserva">
+
+                        <form
+                            action="{{ url_for('admin.cancelar_reserva', id_reserva=reserva.id_reserva) }}"
+                            method="POST"
+                        >
+
+                            {{ button3_comp(
+                                text="CANCELAR",
+                                height=45,
+                                acceptordeny="deny",
+                                func=""
+                            ) }}
+
+                        </form>
+
+                        <form
+                            action="{{ url_for('admin.finalizar_reserva', id_reserva=reserva.id_reserva) }}"
+                            method="POST"
+                        >
+
+                            {{ button3_comp(
+                                text="FINALIZAR",
+                                height=45,
+                                acceptordeny="accept",
+                                func=""
+                            ) }}
+
+                        </form>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
 
             </div>
 
@@ -169,3 +316,4 @@
     </div>
 
 </body>
+</html>
