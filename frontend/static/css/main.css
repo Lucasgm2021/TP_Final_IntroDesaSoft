@@ -84,8 +84,8 @@ body {
 
 #form-crear-reserva {
     gap: 20px;
-    width: 400px;
     margin: 0 auto;
+    width: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -98,4 +98,12 @@ body {
 
 #body-creacion-reserva {
     background-image: url("../images/background.png");
+    /*background-size: 100% 100%;   */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Keeps image fixed during scroll */
+    background-position: center;
+    background-size: cover; /* Scales to cover entire screen */ 
 }

@@ -29,3 +29,11 @@ def crear_reserva_form():
 @reserva_bp.route("/example", methods=["GET"])
 def ejemplo():
     return render_template("examples/reservas.html")
+
+@reserva_bp.route("/mis_reservas", methods=["GET"])
+def mis_reservas():
+    return render_template("mis_reservas.html")
+
+@reserva_bp.route("/reservas_admin", methods=["GET"])
+def reservas_admin():
+    return render_template("reservas_admin.html")
