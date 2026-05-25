@@ -18,37 +18,44 @@
         {% endif %}
     {% endwith %}
     {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/circle_comp.html" import circle_comp %}
     {% from "componentes/button1_comp.html" import button1_comp %}
     {% from "componentes/button3_comp.html" import button3_comp %}
     {% from "componentes/mesas_comp.html" import mesas_comp %}
     <form id="form-crear-reserva" action="{{ url_for('reservas.crear_reserva_form')}}" method="post">
-        <div> 
+        <div id="form-crear-reserva-title"> 
+            {{ circle_comp(
+                text="<",
+                size=40,
+                type=3,
+                func=""
+            ) }}
             <h1>Puerto Hermoso</h1>
-            {{ input_comp(
-                name="hora",
-                type="time",
-                label="Horario",
-                placeholder="",
-                height="40px",
-                width="250px"
-            ) }}
-            {{ input_comp(
-                name="fecha",
-                type="date",
-                label="Fecha de reserva",
-                placeholder="",
-                height="40px",
-                width="250px"
-            ) }}
-            {{ input_comp(
-                name="comensales",
-                type="number",
-                label="Cantidad de comensales",
-                placeholder="1",
-                height="40px",
-                width="250px"
-            ) }}
         </div>
+        {{ input_comp(
+            name="hora",
+            type="time",
+            label="Horario",
+            placeholder="",
+            height="40px",
+            width="250px"
+        ) }}
+        {{ input_comp(
+            name="fecha",
+            type="date",
+            label="Fecha de reserva",
+            placeholder="",
+            height="40px",
+            width="250px"
+        ) }}
+        {{ input_comp(
+            name="comensales",
+            type="number",
+            label="Cantidad de comensales",
+            placeholder="1",
+            height="40px",
+            width="250px"
+        ) }}
         <div>
             {{ button3_comp(
                 text="Interior",
