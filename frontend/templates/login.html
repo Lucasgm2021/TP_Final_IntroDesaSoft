@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+        <!-- Flask flash sintaxis-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-container">
+            {% for category, message in messages %}
+            <div class="flash flash--{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    <h1>Login</h1>
+    <form action="{{ url_for('login')}}" method="post">
+        <div style="display: flex;flex-direction: column; width: 250px;user-select: none;"> 
+            <label for="email">mail</label><input type="email" name="email" required>
+            <label for="password">Password</label><input type="password" name="password" required>
+            <input type="submit" value="submit form">
+        </div>
+    </form>
+</body>
+</html>

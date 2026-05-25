@@ -16,10 +16,22 @@ from routes.sesion_usuario import sesion_usuario_bp
 #from routes.estadisticas import estadisticas_bp
 from routes.mesas import mesas_bp
 
+"""
+# 1. Allow cookies to travel from Port 5000 (Back) to Port 5001 (Front)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5001"}}, supports_credentials=True)
 
-
+# 2. Relax cookie security rules for local cross-port development
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = False  # Keep False because we are using HTTP, not HTTPS
+"""
 
 app = Flask(__name__)
+# 1. Restrict origins to your frontend port and enable credentials (cookies)
+CORS(app, origins=["http://localhost:5001"], supports_credentials=True)
+
+# 2. Tell the browser it's allowed to send this Session ID cookie across ports
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False  # Keep False for HTTP localhost development
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
@@ -27,6 +39,8 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@localhost:3306/restaurante"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
+# Inside your BACKEND app configuration file:
+app.config["SESSION_COOKIE_NAME"] = "backend_session"
 
 app.json.sort_keys = False
 
@@ -36,7 +50,6 @@ app.config["SESSION_SQLALCHEMY"] = db
 
 Session(app)
 
-CORS(app)
 @app.route("/")
 def index():
     return "Backend encendido"
