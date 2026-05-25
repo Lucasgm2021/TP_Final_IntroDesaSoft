@@ -103,6 +103,14 @@ def crear_reserva():
     res,status = servicios_reservas.crear_reserva(data)
     return jsonify(res),status
 
+#POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
+@reservas_bp.route("/prueba", methods=["POST"])
+def crear_reserva_prueba():
+    data = request.get_json()
+    
+    print("data:",data)
+    return jsonify({"msg":"facilito el tutorial","data":data}),201
+
 @reservas_bp.route("/confirmar/<uuid_reserva>",methods=["POST"])
 def confirmar_reserva(uuid_reserva):
     es_admin, error = check_usuario_es_admin()
