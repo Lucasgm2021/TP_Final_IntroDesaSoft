@@ -30,7 +30,7 @@ INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (205, 4, FALSE, TRUE), (206, 6, FALSE, TRUE), (207, 6, FALSE, TRUE), (208, 8, FALSE, TRUE),
 (209, 2, FALSE, TRUE), (210, 4, FALSE, TRUE);
 
-INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, reseñada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
+INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, resenada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
 (1, 1, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000001', 'pendiente', '2026-05-21 14:00:00', 2),
 (2, 2, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000002', 'pendiente', '2026-05-21 14:00:00', 4),
 (3, 3, 'pendiente', FALSE, '13:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000003', 'pendiente', '2026-05-21 15:00:00', 2),

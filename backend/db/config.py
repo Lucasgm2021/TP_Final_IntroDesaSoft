@@ -2,9 +2,8 @@ from sqlalchemy import create_engine, text
 
 # mysql+pymysql://usuario:password@host/db
 engine = create_engine(
-    "mysql+pymysql://root:1234@localhost/restaurante",
-    echo=False,
-    future=True
+   "mysql+pymysql://root:1234@db:3306/restaurante?charset=utf8mb4",
+    echo=False
 )
 
 

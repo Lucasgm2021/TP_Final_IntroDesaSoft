@@ -1,5 +1,5 @@
-from dotenv import load_dotenv
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -22,7 +22,10 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@localhost:3306/restaurante"
+
+# FIXED: Changed 'localhost' to 'db' and added utf8mb4 support
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@db:3306/restaurante?charset=utf8mb4"
+
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
@@ -50,4 +53,4 @@ app.register_blueprint(reservas_bp, url_prefix="/reservas")
 #app.register_blueprint(estadisticas_bp, url_prefix="/estadisticas")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)

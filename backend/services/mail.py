@@ -10,10 +10,10 @@ import os
 def enviar_mail_con_qr(mail_destino,asunto,mail_data,ruta_template):
     #Envia un mail en base a un template html, insertando pares clave valor en el mismo. 
     #SOLO soporta una imagen, en este caso el QR.
-
+    print(os.getenv)
     mail_restaurante = os.getenv("MAIL_ACCOUNT")
     app_password = os.getenv("MAIL_PASS")
-
+    print("os variables:",mail_restaurante,app_password)
     msg = MIMEMultipart("related")
     msg["From"] = mail_restaurante
     msg["To"] = mail_destino

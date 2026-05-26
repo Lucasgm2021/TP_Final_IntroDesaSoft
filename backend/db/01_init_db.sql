@@ -53,7 +53,7 @@ CREATE TABLE reserva (
         'finalizada'
     ) DEFAULT 'pendiente' NOT NULL, 
 
-    reseñada BOOLEAN DEFAULT FALSE NOT NULL,
+    resenada BOOLEAN DEFAULT FALSE NOT NULL,
 
     hora_reserva TIME NOT NULL,
 
@@ -120,11 +120,11 @@ CREATE TABLE reserva_mesa (
     CONSTRAINT fk_reserva_mesa_mesa
         FOREIGN KEY (id_mesa)
         REFERENCES mesa(id_mesa)
-        ON DELETE SET NULL
+        ON DELETE CASCADE
 );
 
-CREATE TABLE reseña (
-    id_reseña INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE resena (
+    id_resena INT PRIMARY KEY AUTO_INCREMENT,
 
     id_usuario INT,
     id_reserva INT,
@@ -142,12 +142,12 @@ CREATE TABLE reseña (
         'aprobada'
     ) DEFAULT 'no_revisada',
 
-    CONSTRAINT fk_reseña_usuario
+    CONSTRAINT fk_resena_usuario
         FOREIGN KEY (id_usuario)
         REFERENCES usuarios(id_usuario)
         ON DELETE SET NULL,
 
-    CONSTRAINT fk_reseña_reserva
+    CONSTRAINT fk_resena_reserva
         FOREIGN KEY (id_reserva)
         REFERENCES reserva(id_reserva)
         ON DELETE CASCADE
@@ -178,7 +178,7 @@ VALUES
 ),
 (
     'historia',
-    'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeño sueño familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas.
+    'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeno sueno familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas.
 Hoy, tres generaciones después, mantenemos intacta la esencia que nos dio origen: la calidez del trato familiar y el respeto por la cocina bien hecha. Somos la historia viva de un barrio que amamos, evolucionando con el tiempo pero conservando siempre el corazón en nuestros fuegos.
 Medio siglo de familia, encuentros y pasión por la mesa.'
 );

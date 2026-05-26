@@ -1,0 +1,20 @@
+# 1. Use the same lightweight Python image
+FROM python:3.11-slim
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy backend requirements (Flask, Requests)
+COPY requirements.txt .
+
+# 4. Install backend-specific libraries
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 5. Copy the rest of your backend application code
+COPY . .
+
+# 6. Document that the backend container listens on port 5000
+EXPOSE 5000
+
+# 7. Start the backend Flask application
+CMD ["python", "app.py"]
