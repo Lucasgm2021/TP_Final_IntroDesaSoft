@@ -70,7 +70,6 @@ def menu():
             "id": plato["id_plato"],
 
             "cells": [
-
                 plato["id_plato"],
                 plato["nombre"],
                 plato["id_categoria"],
@@ -182,4 +181,78 @@ def reseñas():
     return render_template(
         "dashboard/reseñas.html",
         resenias=resenias
+    )
+
+
+@dashboard_bp.route("/usuarios")
+def usuarios():
+
+    if not usuario_es_admin():
+        return redirect("/")
+
+    data = session.get("usuario") or ''
+
+    response = requests.get(
+        f'http://localhost:5005/usuarios',
+        cookies={'session': data}
+    )
+
+    users = response.json()["data"]
+
+    usuarios_data = []
+
+    for usuario in users:
+        usuarios_data.append({
+
+            "id": usuario["id_usuario"],
+
+            "cells": [
+                usuario["id_usuario"],
+                usuario["email"],
+                'Si' if usuario["es_admin"] == 1 else 'No',
+
+            ]
+        })
+
+
+
+    return render_template(
+        "dashboard/usuarios.html",
+        usuarios=usuarios_data
+    )
+
+@dashboard_bp.route("/configuracion/")
+def configuracion():
+
+    if not usuario_es_admin():
+        return redirect("/")
+
+    data = session.get("usuario") or ''
+
+    response = requests.get(
+        f'http://localhost:5005/info_frontend',
+        cookies={'session': data}
+    )
+
+    informacion = response.json()["data"]
+
+    infos = []
+
+    for info in informacion:
+        infos.append({
+
+            "id": info["clave"],
+
+            "cells": [
+                info["clave"],
+                info["valor"],
+
+            ]
+        })
+
+
+
+    return render_template(
+        "dashboard/info-dash.html",
+        infodash=infos
     )

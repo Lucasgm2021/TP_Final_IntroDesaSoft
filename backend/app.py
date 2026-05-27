@@ -4,7 +4,6 @@ load_dotenv()
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
-from flask_cors import CORS
 
 from datetime import timedelta
 from routes.usuarios import usuarios_bp
@@ -37,7 +36,7 @@ app.config["SESSION_SQLALCHEMY"] = db
 Session(app)
 CORS(app)
 
-CORS(app)
+
 @app.route("/")
 def index():
     return "Backend encendido"
