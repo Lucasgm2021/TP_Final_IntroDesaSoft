@@ -7,7 +7,9 @@
     placeholder="********",
 
     width="400px",
-    height="60px"
+    height="60px",
+
+    required=False
 ) %}
     {% set min_width = height|replace("px", "")|int * ((placeholder|length * 0.25) + 2) %}
 
@@ -37,6 +39,9 @@
     </label>
 
     <input
+            {% if required %}
+                required
+            {% endif %}
             class="dropshadow input-default"
             type="{{ type }}"
             name="{{ name }}"

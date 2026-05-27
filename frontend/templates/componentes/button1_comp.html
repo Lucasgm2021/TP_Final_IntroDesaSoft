@@ -1,8 +1,10 @@
 {% macro button1_comp(
     text="CONFIRMAR RESERVA",
     height=100,
-    func = ""
-) %}
+    func = "",
+    type = ""
+    )
+        %}
 
 {% set width = height * 2.5 %}
 
@@ -15,7 +17,9 @@
         background: #6f5143;
         font-size: calc({{ height }}px * 0.25);
     "
-    onclick={{ func }}
+    type = {{ type }},
+    onclick= {{ func }}
+
 >
 
     {{ text }}

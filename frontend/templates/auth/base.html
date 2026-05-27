@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Puerto Hermoso
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}"
+    >
+
+</head>
+
+<body class="auth-body"
+      style="background-image: url('/static/images/inicio/background_img.png'); );">
+
+    <div class="auth-overlay"></div>
+
+    <main class="auth-layout">
+
+        <section class="auth-card dropshadow">
+
+            <div class="auth-header">
+                {% from "componentes/circle_comp.html" import circle_comp %}
+                {{ circle_comp(size=50,type=3, func="window.location.href='/'",text="<")}}
+
+                <h1 class="puerto-hermoso">
+                    PUERTO
+                    <br>
+                    HERMOSO
+                </h1>
+
+            </div>
+
+            <div class="auth-content">
+
+                {% block content %}
+                {% endblock %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

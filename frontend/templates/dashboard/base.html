@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>Dashboard P.H</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="{{ url_for('static',filename='js/scripts.js') }}"></script>
 </head>
 
 <body class="body-dashboard">
@@ -60,8 +61,8 @@
                 <div class="sidebar-btn-wrapper">
                     {{ navbtn_comp(
                         text="Reseñas",
-                        selected=request.endpoint == "dashboard.resenas",
-                        func="window.location.href='/dashboard/resenas'"
+                        selected=request.endpoint == "dashboard.reseñas",
+                        func="window.location.href='/dashboard/reseñas'"
                     ) }}
                 </div>
 
@@ -89,7 +90,7 @@
 
             {{ navbtn_comp(
                 text="Cerrar Sesion",
-                func="window.location.href='/logout'"
+                func="window.location.href='../auth/logout'"
             ) }}
 
         </div>
