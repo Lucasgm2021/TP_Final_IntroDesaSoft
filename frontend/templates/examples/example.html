@@ -50,10 +50,10 @@
             <h1>button3_comp</h1>
                 {% from "componentes/button3_comp.html" import button3_comp %}
             <div class="div-example">
-                {{ button3_comp(text="SI COMPRAR PORSCHE", height=50,acceptordeny= "accept", func="comprar_porsche()")}}
+                {{ button3_comp(text="SI COMPRAR PORSCHE", height=50,type=1, func="comprar_porsche()")}}
             </div>
             <div class="div-example">
-                {{ button3_comp(text="NO COMPRAR PORSCHE", height=50,acceptordeny= "deny", func="comprar_porsche()")}}
+                {{ button3_comp(text="NO COMPRAR PORSCHE", height=50,type=2, func="comprar_porsche()")}}
             </div>
         </div>
         <hr>
@@ -79,6 +79,116 @@
                 id="mesas-principal"
                 ) }}
             </div>
+        </div>
+        <div class="div-example-row">
+            <h1>navbtn_comp</h1>
+            {% from "componentes/navbtn_comp.html" import navbtn_comp %}
+
+            <div class="div-example">
+                {{ navbtn_comp(text="Home", height=48, selected=true) }}
+            </div>
+
+            <div class="div-example">
+                {{ navbtn_comp(text="Reservas", height=48, selected=false) }}
+            </div>
+
+
+            <div class="div-example">
+                {{ navbtn_comp(text="Menu", height=48, selected=false, func="irAMenu()") }}
+            </div>
+
+
+            <div class="div-example">
+                {{ navbtn_comp(text="Usuarios", height=36, selected=false) }}
+            </div>
+        </div>
+        <hr>
+
+        <div class="div-example-row">
+            <h1>tabla_comp</h1>
+            {% from "componentes/tabla_comp.html" import tabla_comp %}
+
+            <div class="div-example">
+                <h3>Sin acciones</h3>
+                {{ tabla_comp(
+                    id="tabla-sin-acciones",
+                    columns=["Nombre", "Fecha", "Mesa", "Comensales"],
+                    rows=[
+                        { "id": "1", "cells": ["Ana García",   "20-5-26", "Mesa 3", "4"] },
+                        { "id": "2", "cells": ["Luis Pérez",   "21-5-26", "Mesa 1", "2"] },
+                        { "id": "3", "cells": ["Marta López",  "22-5-26", "Mesa 7", "6"] },
+                        { "id": "4", "cells": ["Carlos Ruiz",  "22-5-26", "Mesa 2", "3"] }
+                    ],
+                    row_height=50
+                ) }}
+            </div>
+
+            <div class="div-example">
+                <h3>Solo check (ej: aprobar reseña)</h3>
+                {{ tabla_comp(
+                    id="tabla-check",
+                    columns=["Usuario", "Estrellas", "Comentario"],
+                    rows=[
+                        { "id": "10", "cells": ["juanita92",  "★★★★★", "Excelente trato"] },
+                        { "id": "11", "cells": ["pepe_palma", "★★★☆☆", "Buena comida"] },
+                        { "id": "12", "cells": ["momo_123",   "★★★★☆", "Muy recomendable"] }
+                    ],
+                    row_height=50,
+                    show_check=true
+                ) }}
+            </div>
+
+            <div class="div-example">
+                <h3>Delete + Edit (ej: menu)</h3>
+                {{ tabla_comp(
+                    id="tabla-delete-edit",
+                    columns=["ID", "Plato", "Categoría", "Precio"],
+                    rows=[
+                        { "id": "101", "cells": ["101", "Milanesa napolitana", "Principal", "$1800"] },
+                        { "id": "102", "cells": ["102", "Empanadas x6",        "Entrada",   "$950"]  },
+                        { "id": "103", "cells": ["103", "Tiramisú",            "Postre",    "$700"]  }
+                    ],
+                    row_height=50,
+                    show_delete=true,
+                    show_edit=true,
+                    func_delete="eliminarPlato",
+                    func_edit="editarPlato"
+                ) }}
+            </div>
+
+            <div class="div-example">
+                <h3>Check + Delete + Edit (ej: usuarios)</h3>
+                {{ tabla_comp(
+                    id="tabla-full-acciones",
+                    columns=["ID", "Email", "Rol"],
+                    rows=[
+                        { "id": "u1", "cells": ["U001", "admin@resto.com",  "Admin"]    },
+                        { "id": "u2", "cells": ["U002", "mozo1@resto.com",  "Empleado"] },
+                        { "id": "u3", "cells": ["U003", "mozo2@resto.com",  "Empleado"] }
+                    ],
+                    row_height=50,
+                    show_check=true,
+                    show_delete=true,
+                    show_edit=true,
+                    func_delete="eliminarUsuario",
+                    func_edit="editarUsuario"
+                ) }}
+            </div>
+
+            <div class="div-example">
+                <h3>Colores custom + sin datos</h3>
+                {{ tabla_comp(
+                    id="tabla-vacia",
+                    columns=["Columna A", "Columna B", "Columna C"],
+                    rows=[],
+                    row_height=50,
+                    color_a="#D9D9D9",
+                    color_b="#CCB499",
+                    show_edit=true,
+                    func_edit="editarFila"
+                ) }}
+            </div>
+
         </div>
     </div>
 

@@ -1,0 +1,198 @@
+{% macro tabla_comp(
+    id="tabla",
+    columns=[],
+    rows=[],
+    row_height=50,
+
+    color_a="#D9D9D9",
+    color_b="#CCB499",
+    color_header="#3A424D",
+    color_text="#000000",
+    color_border="#3A424D",
+
+    show_check=false,
+    show_delete=false,
+    show_edit=false,
+
+    func_delete="",
+    func_edit="",
+
+    checkmark_text="Acep"
+) %}
+
+{% set btn_size = (row_height * 0.6) | int %}
+{% set n_actions = (1 if show_check else 0) + (1 if show_delete else 0) + (1 if show_edit else 0) %}
+{% set col_actions_w = (n_actions * btn_size) + (n_actions * 6) + 20 %}
+
+{% set grid_template %}
+repeat({{ columns | length }}, 1fr)
+{{ col_actions_w ~ 'px' if n_actions > 0 else '' }}
+{% endset %}
+
+<div
+    id="{{ id }}"
+    class="table dropshadow"
+    style="
+        border-radius: calc({{ row_height }}px * 0.2);
+    "
+>
+
+    <div
+        class="table-grid table-header"
+        style="
+            grid-template-columns: {{ grid_template }};
+            background: {{ color_header }};
+            border-color: {{ color_border }};
+        "
+    >
+
+        {% for col in columns %}
+        <div
+            class="table-cell"
+            style="
+                height: calc({{ row_height }}px * 0.8);
+                font-size: calc({{ row_height }}px * 0.3);
+                color: {{ color_text }};
+                border-color: {{ color_border }};
+            "
+        >
+            {{ col }}
+        </div>
+        {% endfor %}
+
+        {% if n_actions > 0 %}
+        <div
+            class="table-actions"
+            style="
+                height: calc({{ row_height }}px * 0.78);
+            "
+        >
+
+            {% if show_check %}
+                {{ checkmark_text }}
+            {% endif %}
+
+            {% if show_delete %}
+            <div
+                class="button-icon"
+                style="
+                    width: {{ btn_size }}px;
+                    height: {{ btn_size }}px;
+                    background: #555e6e;
+                    border-radius: 5px;
+                "
+            >
+                X
+            </div>
+            {% endif %}
+
+            {% if show_edit %}
+            <div
+                class="button-icon"
+                style="
+                    width: {{ btn_size }}px;
+                    height: {{ btn_size }}px;
+                    background: #555e6e;
+                    border-radius: 5px;
+                "
+            >
+                ✏️
+            </div>
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% for row in rows %}
+
+    <div
+        class="table-grid table-row"
+        style="
+            grid-template-columns: {{ grid_template }};
+            background: {{ color_a if loop.index is odd else color_b }};
+            border-color: {{ color_border }};
+        "
+    >
+
+        {% for cell in row.cells %}
+        <div
+            class="table-cell"
+            style="
+                height: {{ row_height }}px;
+                font-size: calc({{ row_height }}px * 0.28);
+                color: {{ color_text }};
+                border-color: {{ color_border }};
+            "
+        >
+            {{ cell }}
+        </div>
+        {% endfor %}
+
+        {% if n_actions > 0 %}
+        <div
+            class="table-actions"
+            style="
+                height: {{ row_height }}px;
+            "
+        >
+
+            {% if show_check %}
+            <input type="checkbox">
+            {% endif %}
+
+            {% if show_delete %}
+            <button
+                class="button-icon button-delete"
+                onclick="{{ func_delete }}('{{ row.id }}')"
+
+                style="
+                    width: {{ btn_size }}px;
+                    height: {{ btn_size }}px;
+                    border-radius: 5px;
+                "
+            >
+                X
+            </button>
+            {% endif %}
+
+            {% if show_edit %}
+            <button
+                class="button-icon button-edit"
+                onclick="{{ func_edit }}('{{ row.id }}')"
+
+                style="
+                    width: {{ btn_size }}px;
+                    height: {{ btn_size }}px;
+                    border-radius: 5px;
+                "
+            >
+                ✎
+            </button>
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+    {% if not rows %}
+    <div
+        class="table-empty"
+        style="
+            height: calc({{ row_height }}px * 3);
+            background: {{ color_a }};
+            font-size: calc({{ row_height }}px * 0.3);
+            color: #8a9ab5;
+        "
+    >
+        Sin datos
+    </div>
+    {% endif %}
+
+</div>
+
+{% endmacro %}

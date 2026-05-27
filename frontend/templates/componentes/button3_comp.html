@@ -1,11 +1,11 @@
 {% macro button3_comp(
     text="CONFIRMAR RESERVA",
     height=100,
-    acceptordeny= "accept",
+    type= 1,
     func = ""
 ) %}
 
-    {% if acceptordeny == "accept" %}
+    {% if type == 1 %}
         {% set color = "#7CC96C" %}
     {% else %}
         {% set color = "#CF4444" %}
