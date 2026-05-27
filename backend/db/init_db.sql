@@ -46,10 +46,38 @@ CREATE TABLE reserva (
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    
+    estado_reserva ENUM(
+        'pendiente',
+        'cancelada',
+        'finalizada'
+    ) DEFAULT 'pendiente' NOT NULL, 
+
+    reseñada BOOLEAN DEFAULT FALSE NOT NULL,
+
+    hora_reserva TIME NOT NULL,
+
+    fecha DATE DEFAULT (CURRENT_DATE) NOT NULL,
+
+    interior BOOLEAN DEFAULT TRUE NOT NULL,
+
+    uuid_qr CHAR(36) not null UNIQUE,
+
+    estado_qr ENUM(
+        'pendiente',
+        'usado',
+        'expirado'
+    ) DEFAULT 'pendiente',
+ 
+    qr_expiracion TIMESTAMP NOT NULL,
+    
+    comensales INT NOT NULL,
+
     CONSTRAINT fk_reserva_usuario
         FOREIGN KEY (id_usuario)
         REFERENCES usuarios(id_usuario)
         ON DELETE SET NULL
+
 );
 
 CREATE TABLE configuracion (
@@ -82,33 +110,6 @@ CREATE TABLE mesa (
 CREATE TABLE reserva_mesa (
     id_reserva INT,
     id_mesa INT,
-
-    estado_reserva ENUM(
-        'pendiente',
-        'cancelada',
-        'finalizada'
-    ) DEFAULT 'pendiente' NOT NULL, 
-
-    reseñada BOOLEAN DEFAULT FALSE NOT NULL,
-
-    hora_reserva TIME NOT NULL,
-
-    fecha DATE DEFAULT (CURRENT_DATE) NOT NULL,
-
-    interior BOOLEAN DEFAULT TRUE NOT NULL,
-
-    uuid_qr CHAR(36) not null UNIQUE,
-
-    estado_qr ENUM(
-        'pendiente',
-        'usado',
-        'expirado'
-    ) DEFAULT 'pendiente',
- 
-    qr_expiracion TIMESTAMP NOT NULL,
-    
-    comensales INT NOT NULL,
-
     PRIMARY KEY (id_reserva, id_mesa),
 
     CONSTRAINT fk_reserva_mesa_reserva
@@ -119,7 +120,7 @@ CREATE TABLE reserva_mesa (
     CONSTRAINT fk_reserva_mesa_mesa
         FOREIGN KEY (id_mesa)
         REFERENCES mesa(id_mesa)
-        ON DELETE CASCADE
+        ON DELETE SET NULL
 );
 
 CREATE TABLE reseña (

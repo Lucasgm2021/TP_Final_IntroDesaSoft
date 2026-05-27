@@ -68,6 +68,22 @@ def obtener_usuario_email(email):
     else:       
         return None
 
+def obtener_usuario_id(id_usuario):
+    query = """
+        SELECT id_usuario, email, es_admin
+        FROM usuarios
+        WHERE id_usuario = :id_usuario
+    """
+
+    resultado = ejecutar_query_lectura(
+        query,
+        {"id_usuario": id_usuario}
+    )
+
+    if resultado:
+        return dict(resultado[0]) #deberia haber solo un resultado, el id es unico
+    else:       
+        return None
 
 def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contraseña):#usado por cliente
     query = """
