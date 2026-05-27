@@ -2,7 +2,7 @@
 {% block content %}
 {% if error %}
 
-<p>
+<p class="error">
     {{ error }}
 </p>
 
@@ -16,12 +16,15 @@
    ">
         {% from "componentes/input_comp.html" import input_comp %}
         {% from "componentes/button1_comp.html" import button1_comp %}
+        {% from "componentes/button3_comp.html" import button3_comp %}
 
-        {{ input_comp(required=true,name="email",type="email",label="Email",placeholder="ejemplo@gmail.com",height="30px",width="500px") }}
+        {{ input_comp(required=true,name="email",type="email",label="Email",placeholder="ejemplo@gmail.com",height="40px",width="500px") }}
         <br><br>
-        {{ input_comp(required=true,name="password",type="password",label="Contraseña",placeholder="********",height="30px",width="500px") }}
+        {{ input_comp(required=true,name="password",type="password",label="Contraseña",placeholder="********",height="40px",width="500px") }}
         <br><br>
-        {{ button1_comp(text="Registrarse", height=50,type="submit")}}
+        {{ input_comp(required=true,name="password",type="password",label="Repeti tu contr.",placeholder="********",height="40px",width="500px") }}
+        <br><br>
+        {{ button1_comp(text="Registrarse", height=70,type="submit")}}
     </form>
     <div style="display: flex;
         flex-direction: column;
@@ -29,6 +32,6 @@
     <h3>
         ¿Ya tenes una cuenta?
     </h3>
-        {{ button1_comp(text="Iniciar sesion",height=50,func="window.location.href='/auth/login'")}}
+        {{ button3_comp(text="Iniciar sesion",height=50,func="window.location.href='/auth/login'")}}
     </div>
 {% endblock %}

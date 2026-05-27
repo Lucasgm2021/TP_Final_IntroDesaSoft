@@ -35,7 +35,7 @@ def register():
         session['usuario'] = resp.cookies.get('session')
         return redirect('profile')
     else:
-        return render_template('auth/login.html', error="Email ya utilizado")
+        return render_template('auth/register.html', error="Email ya utilizado")
 
 
 @auth_front_bp.route("/login", methods=["GET","POST"])

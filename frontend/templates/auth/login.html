@@ -2,7 +2,7 @@
 {% block content %}
 {% if error %}
 
-<p>
+<p class="error">
     {{ error }}
 </p>
 
@@ -16,6 +16,8 @@
    ">
         {% from "componentes/input_comp.html" import input_comp %}
         {% from "componentes/button1_comp.html" import button1_comp %}
+        {% from "componentes/button3_comp.html" import button3_comp %}
+
 
         {{ input_comp(required=true,name="email",type="email",label="Email",placeholder="ejemplo@gmail.com",height="30px",width="500px") }}
         <br><br>
@@ -24,4 +26,12 @@
 
         {{ button1_comp(text="Iniciar sesion", height=70,type="submit")}}
     </form>
+    <div style="display: flex;
+        flex-direction: column;
+        align-items: center">
+    <h3>
+        ¿Todavia no tenes cuenta?
+    </h3>
+        {{ button3_comp(text="Registrate",height=50,func="window.location.href='/auth/register'")}}
+    </div>
 {% endblock %}
