@@ -1,0 +1,34 @@
+{% extends "auth/base.html" %}
+{% block content %}
+{% if error %}
+
+<p>
+    {{ error }}
+</p>
+
+{% endif %}
+    <form method="POST" style="
+        width: 100%;
+        height: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+   ">
+        {% from "componentes/input_comp.html" import input_comp %}
+        {% from "componentes/button1_comp.html" import button1_comp %}
+
+        {{ input_comp(required=true,name="email",type="email",label="Email",placeholder="ejemplo@gmail.com",height="30px",width="500px") }}
+        <br><br>
+        {{ input_comp(required=true,name="password",type="password",label="Contraseña",placeholder="********",height="30px",width="500px") }}
+        <br><br>
+        {{ button1_comp(text="Registrarse", height=50,type="submit")}}
+    </form>
+    <div style="display: flex;
+        flex-direction: column;
+        align-items: center">
+    <h3>
+        ¿Ya tenes una cuenta?
+    </h3>
+        {{ button1_comp(text="Iniciar sesion",height=50,func="window.location.href='/auth/login'")}}
+    </div>
+{% endblock %}

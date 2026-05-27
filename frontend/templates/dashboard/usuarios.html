@@ -3,20 +3,20 @@
 {% block content %}
 
 <h1>
-    RESERVAS
+    USUARIOS
 </h1>
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
-
+    
     {{ tabla_comp(
         id="tabla-delete-edit",
-        columns=["ID", "Id_usuario","Estado","Hora","Fecha","Ubicacion","Cant.","Mesas"],
-        rows=reservas,
+        columns=["ID", "Plato", "Categoría", "Precio","Hay stock?"],
+        rows=usuarios,
         row_height=50,
         show_delete=true,
         show_edit=true,
-        func_delete="",
-        func_edit=""
+        func_delete="eliminarPlato",
+        func_edit="editarPlato"
     ) }}
 
 
