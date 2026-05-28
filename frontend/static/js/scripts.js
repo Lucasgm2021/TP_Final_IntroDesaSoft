@@ -15,7 +15,7 @@ function mostrarMesasDisponibles(){
         nro_comensales: nro_comensales
     }
     sessionStorage.setItem('savedFormDataReserva', JSON.stringify(formData));
-    window.location.href = window.location.pathname + "?mesas=true&fecha=" + fecha + "&hora=" + hora + "&ubicacion=" + ubicacion + "&comensales=" + nro_comensales
+    window.location.href = window.location.pathname + "?fecha=" + fecha + "&hora=" + hora + "&ubicacion=" + ubicacion + "&comensales=" + nro_comensales
 }
 
 window.addEventListener('DOMContentLoaded', () => {

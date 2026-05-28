@@ -12,7 +12,7 @@ def crear_reserva_form():
         hora = request.args.get("hora")
         ubicacion = request.args.get("ubicacion")
         comensales = request.args.get("comensales")
-        
+        numeros_mesas = []
         if fecha and hora and ubicacion and comensales:
             ubicacion_bool = ubicacion == "interior"
             mesas = obtener_mesas(fecha,hora,ubicacion_bool,comensales,request.cookies)
@@ -21,8 +21,10 @@ def crear_reserva_form():
                     flash(e, 'error')
                 mesas = None
             else:
-                mesas = mesas.get("Listado de capacidades disponibles", [])
-        return render_template("creacion_reserva.html", mesas=mesas)
+                mesas = mesas.get("data")
+                numeros_mesas = [mesa["numero"] for mesa in mesas]
+
+        return render_template("creacion_reserva.html", mesas=numeros_mesas)
 
     hora = request.form.get('hora', '').strip()
     fecha = request.form.get('fecha', '').strip()

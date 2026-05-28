@@ -30,7 +30,8 @@
         name="{{ name }}"
 
         class="dropshadow input-default"
-
+        multiple 
+        size=6
         style="
             width: 100%;
             height: {{ height }};
@@ -45,7 +46,7 @@
         "
     >
         {% for mesa in mesas %}
-        <option value="{{mesa}}">
+        <option  value="{{mesa}}">
             {{ mesa }}
         </option>
         {% endfor %}
