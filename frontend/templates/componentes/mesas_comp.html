@@ -1,5 +1,5 @@
 {% macro mesas_comp(
-    endpoint="",
+    mesas=[],
     id="mesas-select",
     name="mesa",
     width="300px",
@@ -44,42 +44,13 @@
             font-size: calc({{ height }} * 0.4);
         "
     >
-
-        <option>
-            Cargando...
+        {% for mesa in mesas %}
+        <option value="{{mesa}}">
+            {{ mesa }}
         </option>
-
+        {% endfor %}
     </select>
 
 </div>
-
-<script>
-
-fetch("http://localhost:5005/{{ endpoint }}")
-    .then(response => response.json())
-    .then(data => {
-
-        const select =
-            document.getElementById("{{ id }}");
-
-        select.innerHTML = "";
-
-        data.data.forEach(mesa => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = mesa.id_mesa;
-
-            option.textContent =
-                `Mesa ${mesa.numero}`;
-
-            select.appendChild(option);
-
-        });
-
-    });
-
-</script>
 
 {% endmacro %}

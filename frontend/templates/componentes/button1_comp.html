@@ -1,12 +1,14 @@
 {% macro button1_comp(
     text="CONFIRMAR RESERVA",
     height=100,
-    func = ""
+    func = "",
+    type=""
 ) %}
 
 {% set width = height * 2.5 %}
 
 <button
+    {% if type %}type="{{ type }}"{% endif %}
     class="dropshadow button-default button"
     style="
         width: {{ width }}px;
@@ -15,7 +17,7 @@
         background: #6f5143;
         font-size: calc({{ height }}px * 0.25);
     "
-    onclick={{ func }}
+    onclick="{{ func }}()"
 >
 
     {{ text }}

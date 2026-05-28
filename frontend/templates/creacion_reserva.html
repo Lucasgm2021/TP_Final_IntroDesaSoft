@@ -22,7 +22,8 @@
     {% from "componentes/button1_comp.html" import button1_comp %}
     {% from "componentes/button3_comp.html" import button3_comp %}
     {% from "componentes/mesas_comp.html" import mesas_comp %}
-    <form id="form-crear-reserva" action="{{ url_for('reservas.crear_reserva_form')}}" method="post">
+    <div id="form-crear-reserva">
+    <form action="{{ url_for('reservas.crear_reserva_form')}}" method="get">
         <div id="form-crear-reserva-title"> 
             {{ circle_comp(
                 text="<",
@@ -57,40 +58,42 @@
             width="250px"
         ) }}
         <div>
-            {{ button3_comp(
-                text="Interior",
-                height=50,
-                acceptordeny="accept",
-                func=""
-            ) }}
-
-            {{ button3_comp(
-                text="Exterior",
-                height=50,
-                acceptordeny="accept",
-                func=""
-            ) }}
+            <input type="radio" name="ubicacion" id="interior" value="interior" checked>
+            <label for="interior">Interior</label>
+            <input type="radio" name="ubicacion" id="exterior" value="exterior">
+            <label for="exterior">Exterior</label>
         </div>
         <div>
             {{ button1_comp(
                 text="VALIDAR DISPONIBILIDAD",
                 height=55,
-                func=""
+                func="mostrarMesasDisponibles",
+                type="button"
             ) }}
         </div>
-        {{ mesas_comp(
-        endpoint="mesas/",
-        id="mesas-principal",
-        width="250px"
-        ) }}
-        {{ input_comp(
-            name="Confirmar",
-            type="submit",
-            label="",
-            value="Confirmar",
-            width="250px"
-        ) }}
     </form>
-    
+    {% if mesas %}
+    <form action="{{url_for('reservas.crear_reserva_form')}}" method="post">
+            <input type="hidden" name="fecha" value="{{ request.args.get('fecha') }}">
+            <input type="hidden" name="hora" value="{{ request.args.get('hora') }}">
+            <input type="hidden" name="ubicacion" value="{{ request.args.get('ubicacion') }}">
+            <input type="hidden" name="comensales" value="{{ request.args.get('comensales') }}">
+            {{ mesas_comp(
+            mesas=mesas,
+            id="mesas-principal",
+            width="250px"
+            ) }}
+            {{ input_comp(
+                name="Confirmar",
+                type="submit",
+                label="",
+                value="Confirmar",
+                width="250px"
+            ) }}
+
+    </form>
+    {% endif %}
+    </div>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

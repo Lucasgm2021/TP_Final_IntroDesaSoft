@@ -16,7 +16,6 @@ def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,c
             return {"ok":True}
         try:
             error_data = response.json()
-            print("data de error del backend:",error_data)
             errores = error_data.get('errors', [])
             mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
 
@@ -33,3 +32,26 @@ def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,c
 
 
     return data
+
+def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
+    try:
+        response = requests.get(f"{API_BASE_URL}/reservas/mesas/validacion", params={
+            "fecha": fecha,
+            "hora": hora,
+            "interior": ubicacion_bool
+        }, timeout=10,cookies=cookies)
+        print("respuesta:",response.status_code,response.json())
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print("response:", response.json())
+            error_data = response.json()
+            errores = error_data.get('errors', [])
+            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
+
+            if not mensajes:
+                mensajes = [f'Error del servidor: HTTP {response.status_code}']
+
+            return {'errores': mensajes,"code":response.status_code}
+    except requests.exceptions.ConnectionError:
+        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}

@@ -30,11 +30,11 @@ def obtener_mesas_disponibles():
 #GET /mesas/validacion. Parametros: fecha, hora e interior. Devuelve listado desde 1 a una cantidad maxima de comensales que pueden reservar 1 mesa segun la disponibilidad de las mismas segun los parametros.
 @reservas_bp.route("/mesas/validacion", methods=["GET"])
 def obtener_cantidades_comensales_posibles():
-    is_user, error = check_usuario()
+    #is_user, error = check_usuario()
 
-    if not is_user:
-        respuesta, status = error
-        return jsonify(respuesta), status
+    #if not is_user:
+    #    respuesta, status = error
+    #    return jsonify(respuesta), status
 
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")

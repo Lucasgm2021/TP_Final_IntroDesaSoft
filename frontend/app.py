@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "manzana"
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
 @app.route("/examples")
 def index():
@@ -27,17 +28,8 @@ def login():
     if result.get("ok"):
         # 1. Login successful, redirect to a different page or show success message
         flash('Usuario logueado correctamente', 'success')
-        # 2. Prepare our redirect action to the next page
-        redireccion = redirect(url_for("reservas.crear_reserva_form"))
-        
-        # 3. Turn it into a malleable Flask Response object
-        flask_response = make_response(redireccion)
-
-        for name, value in result["cookies"].items():
-            flask_response.set_cookie(
-                name, 
-                value)
-        return flask_response
+        session["sesion_id"] = result["cookies"].get("backend_session")
+        return redirect(url_for("reservas.crear_reserva_form"))
     else:
         # Login failed, show error messages
         for e in result.get('errores', ['Error al logear.']):
