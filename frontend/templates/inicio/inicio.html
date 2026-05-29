@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Puerto Hermoso</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+</head>
+
+<body id="body-inicio">
+
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button2_comp.html" import button2_comp %}
+    {% from "componentes/circle_comp.html" import circle_comp %}
+
+    
+    <div id="hero">
+
+        <h1 class="puerto-hermoso">PUERTO HERMOSO</h1>
+
+        <p>NUESTRAS ESPECIALIDADES</p>
+
+        {{ button2_comp(
+            text="VER MENÚ",
+            height=50,
+            func="document.getElementById('seccion-menu').scrollIntoView({behavior:'smooth'})"
+        ) }}
+
+        <div id="hero-reservas">
+
+            <span>RESERVAS</span>
+
+            {{ button1_comp(
+                text="RESERVAR",
+                height=50,
+                func="window.location.href='/reservas'"
+            ) }}
+
+        </div>
+
+    </div>
+
+
+    <div id="seccion-historia">
+
+        <img
+            src="{{ url_for('static', filename='images/inicio/background_img.png') }}"
+            alt="Puerto Hermoso"
+            id="historia-foto"
+        >
+
+        <div id="historia-contenido">
+
+            <h2>NUESTRA HISTORIA</h2>
+
+            <p>{{ info.get('historia', 'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeño sueño familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas. Hoy, tres generaciones después, mantenemos intacta la esencia que nos dio origen: la calidez del trato familiar y el respeto por la cocina bien hecha. Somos la historia viva de un barrio que amamos, evolucionando con el tiempo pero conservando siempre el corazón en nuestros fuegos. Medio siglo de familia, encuentros y pasión por la mesa.') }}</p>
+
+        </div>
+
+    </div>
+
+
+    <div id="seccion-info">
+
+        <div id="mapa-lado">
+
+            <img
+                src="{{ url_for('static', filename='images/inicio/mapa.png') }}"
+                alt="Ubicación"
+                id="imagen-mapa"
+            >
+
+            {% if servicios %}
+
+            <div id="servicios-container">
+
+                <p>NUESTRAS INSTALACIONES</p>
+
+                <div id="servicios-tags">
+
+                    {% for s in servicios %}
+                    <span>{{ s.nombre | upper }}</span>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div id="servicios-container">
+
+                <p>NUESTRAS INSTALACIONES</p>
+
+                <div id="servicios-tags">
+                    <span>FÁCIL ACCESO MOVILIDAD REDUCIDA</span>
+                    <span>ESTACIONAMIENTO</span>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div id="reseñas-lado">
+
+            <h2>RESEÑAS DE CLIENTES</h2>
+
+            {% if reseñas %}
+
+                {% for reseña in reseñas[:3] %}
+
+                <div class="card-reseña">
+
+                    <div class="reseña-calificacion">
+
+                        <span>{{ reseña.calificacion }}/5</span>
+
+                        <span>
+                            {% for i in range(reseña.calificacion) %}★{% endfor %}{% for i in range(5 - reseña.calificacion) %}☆{% endfor %}
+                        </span>
+
+                    </div>
+
+                    <p>{{ reseña.comentario if reseña.comentario else 'Sin comentario' }}</p>
+
+                </div>
+
+                {% endfor %}
+
+                {% if reseñas | length > 3 %}
+                <a href="#">Más reseñas...</a>
+                {% endif %}
+
+            {% else %}
+
+                {% for i in range(3) %}
+
+                <div class="card-reseña">
+
+                    <div class="reseña-calificacion">
+                        <span>4.2/5</span>
+                        <span>★★★★☆</span>
+                    </div>
+
+                    <p>Rica la comida, mas rico el chef</p>
+
+                </div>
+
+                {% endfor %}
+
+                <a href="#">Más reseñas...</a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <footer id="footer-inicio">
+
+        <p>PUERTO HERMOSO</p>
+
+        <p>Thames 1810, Palermo Soho, Buenos Aires | 1154171123 | reservas.puertohermoso@gmail.com</p>
+
+        <a href="#">
+            <img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram" width="24">
+        </a>
+
+    </footer>
+
+</body>
+
+</html>

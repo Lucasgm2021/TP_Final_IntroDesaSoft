@@ -1,0 +1,32 @@
+{% macro button3_comp(
+    text="CONFIRMAR RESERVA",
+    height=100,
+    acceptordeny= "accept",
+    func = ""
+) %}
+
+    {% if acceptordeny == "accept" %}
+        {% set color = "#7CC96C" %}
+    {% else %}
+        {% set color = "#CF4444" %}
+    {% endif %}
+
+{% set width = height * 2.5 %}
+
+<button
+    class="dropshadow button-default button"
+    style="
+        width: {{ width }}px;
+        height: {{ height }}px;
+        border-radius: calc({{ height }}px * 0.3);
+        background: {{ color }};
+        font-size: calc({{ height }}px * 0.25);
+    "
+    onclick={{ func }}
+>
+
+    {{ text }}
+
+</button>
+
+{% endmacro %}

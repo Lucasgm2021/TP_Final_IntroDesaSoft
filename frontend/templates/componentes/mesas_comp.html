@@ -1,0 +1,88 @@
+{% macro mesas_comp(
+    endpoint="",
+    id="mesas-select",
+    name="mesa",
+    width="300px",
+    height="60px"
+) %}
+
+<div
+    style="
+        width: {{ width }};
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    "
+>
+
+    <label
+        style="
+            color: white;
+            font-weight: bold;
+            font-size: calc({{ height }} * 0.4);
+        "
+    >
+        MESA
+    </label>
+
+    <select
+            multiple
+        id="{{ id }}"
+        name="{{ name }}"
+
+        class="dropshadow input-default"
+
+        style="
+            width: 100%;
+            height: {{ height }};
+
+            padding-left: calc({{ height }} * 0.3);
+
+            border: none;
+
+            border-radius: calc({{ height }} * 0.2);
+
+            font-size: calc({{ height }} * 0.4);
+        "
+    >
+
+        <option>
+            Cargando...
+        </option>
+
+    </select>
+
+</div>
+
+<script>
+
+fetch("http://localhost:5005/{{ endpoint }}")
+    .then(response => response.json())
+    .then(data => {
+
+        const select =
+            document.getElementById("{{ id }}");
+
+        select.innerHTML = "";
+
+        data.data.forEach(mesa => {
+
+            if (mesa.funcional === 1) {
+            const option =
+                document.createElement("option");
+
+            option.value = mesa.id_mesa;
+
+            option.textContent =
+                `Mesa ${mesa.numero}`;
+
+            select.appendChild(option);
+            }
+
+        });
+
+    });
+
+</script>
+
+{% endmacro %}
