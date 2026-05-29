@@ -440,3 +440,123 @@ body {
     margin-top: 60px;
     padding-right: 20px;
 }
+
+.menu-card {
+    cursor: pointer;
+}
+
+.menu-card:hover {
+    transform: translateY(-4px);
+    transition: transform 0.2s;
+}
+
+/* modal de plato */
+
+.menu-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-modal-overlay--visible {
+    display: flex;
+}
+
+.menu-modal {
+    position: relative;
+    width: 620px;
+    background: #1d2732;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.menu-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.55);
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.menu-modal-close:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.menu-modal-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #2b2b2b;
+    background-size: cover;
+    background-position: center;
+}
+
+.menu-modal-body {
+    padding: 28px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.menu-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.menu-modal-nombre {
+    font-size: 1.6rem;
+    color: #f0e8df;
+}
+
+.menu-modal-precio {
+    background: #e9e9e9;
+    color: #1e2329;
+    font-weight: bold;
+    font-size: 1.4rem;
+    padding: 6px 22px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.menu-modal-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.menu-modal-badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.menu-modal-badge--ok {
+    background: #1e4030;
+    color: #6fcf97;
+}
+
+.menu-modal-badge--info {
+    background: #2e3847;
+    color: #a8b8cc;
+}
+
+.menu-modal-badge--alerta {
+    background: #4a1a1a;
+    color: #CF4444;
+}

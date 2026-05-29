@@ -35,7 +35,18 @@
 
         {% for plato in platos %}
 
-        <article class="menu-card dropshadow">
+        <article
+            class="menu-card dropshadow"
+            onclick="abrirModal(this)"
+            data-nombre="{{ plato.nombre }}"
+            data-precio="{{ plato.precio }}"
+            data-imagen="{{ plato.link_imagen }}"
+            data-hay-stock="{{ '1' if plato.hay_stock else '0' }}"
+            data-gluten="{{ '1' if plato.gluten else '0' }}"
+            data-lactosa="{{ '1' if plato.lactosa else '0' }}"
+            data-carnes="{{ '1' if plato.carnes else '0' }}"
+            data-animal="{{ '1' if plato.producto_animal else '0' }}"
+        >
 
             <div
                 class="menu-card-img"
@@ -83,6 +94,67 @@
     <h1 class="puerto-hermoso menu-brand">
         PUERTO HERMOSO
     </h1>
+
+    <div id="menu-modal-overlay" class="menu-modal-overlay" onclick="cerrarModal(event)">
+
+        <div class="menu-modal dropshadow" onclick="event.stopPropagation()">
+
+            <button class="menu-modal-close" onclick="cerrarModal()">✕</button>
+
+            <div id="menu-modal-img" class="menu-modal-img"></div>
+
+            <div class="menu-modal-body">
+
+                <div class="menu-modal-header">
+
+                    <span id="menu-modal-nombre" class="menu-modal-nombre"></span>
+
+                    <span id="menu-modal-precio" class="menu-modal-precio"></span>
+
+                </div>
+
+                <div id="menu-modal-badges" class="menu-modal-badges"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function abrirModal(card) {
+            var d = card.dataset;
+            document.getElementById('menu-modal-nombre').textContent = d.nombre;
+            document.getElementById('menu-modal-precio').textContent = d.precio + '$';
+            document.getElementById('menu-modal-img').style.backgroundImage = "url('" + d.imagen + "')";
+
+            var badges = [];
+            if (d.hayStock === '0') badges.push({ texto: 'Sin stock',        tipo: 'alerta' });
+            if (d.gluten  === '0') badges.push({ texto: 'Sin gluten',        tipo: 'ok'     });
+            if (d.lactosa === '0') badges.push({ texto: 'Sin lactosa',       tipo: 'ok'     });
+            if (d.carnes  === '0') badges.push({ texto: 'Vegetariano',       tipo: 'ok'     });
+            if (d.animal  === '0') badges.push({ texto: 'Vegano',            tipo: 'ok'     });
+            if (d.gluten  === '1') badges.push({ texto: 'Contiene gluten',   tipo: 'info'   });
+            if (d.lactosa === '1') badges.push({ texto: 'Contiene lactosa',  tipo: 'info'   });
+            if (d.carnes  === '1') badges.push({ texto: 'Contiene carnes',   tipo: 'info'   });
+
+            document.getElementById('menu-modal-badges').innerHTML = badges.map(function(b) {
+                return '<span class="menu-modal-badge menu-modal-badge--' + b.tipo + '">' + b.texto + '</span>';
+            }).join('');
+
+            document.getElementById('menu-modal-overlay').classList.add('menu-modal-overlay--visible');
+        }
+
+        function cerrarModal(e) {
+            if (!e || e.target === document.getElementById('menu-modal-overlay')) {
+                document.getElementById('menu-modal-overlay').classList.remove('menu-modal-overlay--visible');
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarModal();
+        });
+    </script>
 
 </body>
 
