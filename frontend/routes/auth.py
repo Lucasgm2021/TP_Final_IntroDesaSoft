@@ -31,11 +31,13 @@ def register():
         }
     )
 
-    if resp.status_code == 200:
+    if resp.status_code == 201:
         session['usuario'] = resp.cookies.get('session')
         return redirect('profile')
-    else:
+    elif resp.status_code == 409:
         return render_template('auth/register.html', error="Email ya utilizado")
+    else:
+        return render_template('auth/register.html', error=f"Error:{resp.status_code}")
 
 
 @auth_front_bp.route("/login", methods=["GET","POST"])
@@ -65,7 +67,7 @@ def logout():
         cookies={'session': data}
     )
     session.clear()
-    return redirect('login')
+    return redirect('/?error=Deslogueado con exito')
 
 @auth_front_bp.route("/profile")
 def profile():

@@ -53,22 +53,23 @@ def register_service(data):
 
     usuario_existe = (obtener_usuario_por_email(email))
 
-    if usuario_existe:
+    if not usuario_existe:
+        id_usuario = crear_usuario(email, password)
+
+        session["id_usuario"] = id_usuario
+        session["email"] = email
+        session["es_admin"] = False
+
         return error_msg(
-            409,
-            "El usuario ya existe"
+            201,
+            "Registrado con exito, sea iniciado sesion automaticamente",
+            "confirmacion"
         )
 
-    id_usuario = crear_usuario(email, password)
-
-    session["id_usuario"] = id_usuario
-    session["email"] = email
-    session["es_admin"] = False
 
     return error_msg(
-        201,
-        "Registrado con exito, sea iniciado sesion automaticamente",
-        "confirmacion"
+        409,
+        "El usuario ya existe"
     )
 
 def logout_service():

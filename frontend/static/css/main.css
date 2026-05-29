@@ -239,13 +239,19 @@ body {
 }
 
 .auth-content {
-
     width: 100%;
-
     display: flex;
     flex-direction: column;
-
     align-items: center;
+}
+
+.auth-form {
+        gap:20px;
+        width: 100%;
+        height: 70%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 }
 
 .sidebar-top {
