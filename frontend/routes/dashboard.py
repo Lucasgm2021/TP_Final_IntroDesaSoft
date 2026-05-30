@@ -17,7 +17,7 @@ dashboard_bp = Blueprint(
 def home():
 
     if not usuario_es_admin():
-        return redirect()
+        return redirect("/")
 
     return render_template(
         "dashboard/home.html"
