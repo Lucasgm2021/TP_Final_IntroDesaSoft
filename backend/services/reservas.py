@@ -108,17 +108,13 @@ def crear_reserva(data):
         return error_msg_lista(errores,400)  
 
     # buscar mesa disponible. Busca una mesa valida no esté en uso en fecha y hora dadas: mesa not in mesas en uso.
-    mesa = queries_reservas.obtener_mesa_disponible(
-        fecha,
-        hora,
-        nro_comensales,
-        interior
-    )
+    ids_mesas = data.get("ids_mesas", [])
 
-    if not mesa:
-        return {"msg":"No hay mesas disponibles para esa cantidad de comensales"},200
+    if not ids_mesas:
+        return {
+        "msg": "Debe seleccionar al menos una mesa"
+    }, 400
 
-    id_mesa = mesa["id_mesa"]
     try:
         fecha_hora_mas_30min = fecha_hora + timedelta(minutes=30)
         uuid_qr = str(uuid.uuid4()).replace("-","")
@@ -126,9 +122,11 @@ def crear_reserva(data):
         id_reserva = queries_reservas.insertar_reserva(
             interior,id_usuario,fecha,hora,nro_comensales,uuid_qr,qr_expiracion=fecha_hora_mas_30min
         )
-        queries_reservas.insertar_reserva_mesa(
-            id_reserva,id_mesa
-        )
+        for id_mesa in ids_mesas:
+            queries_reservas.insertar_reserva_mesa(
+                id_reserva,
+                id_mesa
+            )
         #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
         mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"

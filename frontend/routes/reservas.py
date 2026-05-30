@@ -30,12 +30,12 @@ def crear_reserva_form():
     fecha = request.form.get('fecha', '').strip()
     nro_comensales = int(request.form.get('comensales', 0))
     interior = request.form.get("ubicacion") == "interior"
-
+    ids_mesas = request.form.getlist("id_mesas[]")
     hora_datetime = datetime.strptime(hora, "%H:%M")
     hora_formateada = hora_datetime.strftime("%H:%M:%S")
     hora_formateada = hora_formateada[0:2] + ":00:00"
 
-    resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,request.cookies)
+    resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,ids_mesas,request.cookies)
 
     if resultado.get('ok'):
         flash('Reserva creada con exito', 'success')

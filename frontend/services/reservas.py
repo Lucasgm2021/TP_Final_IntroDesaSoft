@@ -2,14 +2,15 @@ import requests
 
 API_BASE_URL = "http://localhost:5000"
 
-def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,cookies):
+def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,cookies):
     data = {}
     try:
         response = requests.post(f"{API_BASE_URL}/reservas",json={
             "hora": hora_reserva,
             "fecha": dia_reserva,
             "nro_comensales": nro_comensales,
-            "interior": interior
+            "interior": interior,
+            "ids_mesas": ids_mesas
         }, timeout=10,cookies=cookies)
         print("respuesta de backend:",response,response.status_code,type(response.status_code))
         if response.status_code == 201:
