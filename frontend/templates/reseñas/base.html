@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    
+    <title>
+        Reseñas-Puerto Hermoso
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+</head>
+
+<body class="auth-body" style="background-image: url('/static/images/reseñas/background_reseñas_img.png');">
+
+    <div class="auth-overlay"></div>
+
+    <main class="auth-layout">
+
+        <section class="auth-card dropshadow" style="width: 90%; max-width: 600px; padding: 30px;">
+
+            <div class="auth-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
+                
+                {% from "componentes/circle_comp.html" import circle_comp %}
+                <div style="position: absolute; left: 0;">
+                    {{ circle_comp(size=40, type=3, func="window.location.href='/'", text="<") }}
+                </div>
+
+                <h2 class="puerto-hermoso" style="font-size: 3rem;color: black;">
+                    RESEÑAS
+                </h2>
+
+            </div>
+
+            <div class="auth-content" style="overflow-y: auto; max-height: 60vh; width: 100%;">
+                
+                {% block content %}
+                {% endblock %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
