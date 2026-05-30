@@ -1,0 +1,137 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+    {% from "componentes/tabla_comp.html" import tabla_comp %}
+    {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 style="margin: 0;">
+            MESAS
+        </h1>
+        
+        {{ button1_comp(
+            text="+ Nueva Mesa",
+            height=45,
+            func="window.location.href='/dashboard/mesas?create=true'; return false;"
+        ) }}
+    </div>
+
+    {{ tabla_comp(
+        id="tabla-mesas",
+        columns=["ID Mesa", "Número", "Capacidad", "Ubicación", "¿Operativa?"],
+        rows=mesas,
+        row_height=50,
+        show_delete=true,
+        show_edit=true,
+        func_delete="eliminarMesa",
+        func_edit="editarMesa"
+    ) }}
+
+    {% if mesa_editar or crear_nuevo %}
+
+        <div
+        style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;"
+        >
+
+            <form method="POST"
+                  class="dropshadow"
+                  style="
+                  width: 700px;
+                  background: #1d2732;
+                  border-radius: 24px;
+                  padding: 40px;
+                  box-sizing: border-box;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 22px;
+        "
+            >
+                <input type="hidden" name="id_mesa" value="{{ mesa_editar.id_mesa if mesa_editar else '' }}">
+
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    <h2 style="margin:0; font-size:2rem;">
+                        {% if mesa_editar %}Editar Mesa{% else %}Crear Nueva Mesa{% endif %}
+                    </h2>
+                    {% if mesa_editar %}
+                    <span style="opacity:0.7; font-size:1rem;">ID Sistema: {{ mesa_editar.id_mesa }}</span>
+                    {% endif %}
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:18px;">
+                    {{ input_comp(
+                        name="numero",
+                        type="number",
+                        label="Número de la Mesa",
+                        value=mesa_editar.numero if mesa_editar else '',
+                        placeholder="Ej: 5",
+                        width="100%",
+                        height="45px",
+                        required=true
+                    ) }}
+
+                    {{ input_comp(
+                        name="comensales",
+                        type="number",
+                        label="Capacidad Máxima (Personas)",
+                        value=mesa_editar.comensales if mesa_editar else '',
+                        placeholder="Ej: 4",
+                        width="100%",
+                        height="45px",
+                        required=true
+                    ) }}
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:18px; font-size:1.1rem;">
+                    <label>
+                        <input type="checkbox" name="interior" {% if mesa_editar and (mesa_editar.interior == 1 or mesa_editar.interior is sameas true) %}checked{% endif %}>
+                        Salón Interior
+                    </label>
+
+                    <label>
+                        <input type="checkbox" name="funcional" {% if (mesa_editar and (mesa_editar.funcional == 1 or mesa_editar.funcional is sameas true)) or crear_nuevo %}checked{% endif %}>
+                        Mesa Operativa / Habilitada
+                    </label>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:18px; margin-top:10px;">
+                    {{ button1_comp(
+                        text="Cancelar",
+                        height=50,
+                        func="window.location.href='/dashboard/mesas'; return false;"
+                    ) }}
+
+                    {{ button1_comp(
+                        text="Guardar",
+                        height=50,
+                        type="submit"
+                    ) }}
+                </div>
+
+            </form>
+
+        </div>
+
+    {% endif %}
+
+    <script>
+        function editarMesa(id) {
+            window.location.href = '/dashboard/mesas?edit=' + id;
+        }
+
+        function eliminarMesa(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar la Mesa N° ' + id + '?')) {
+                window.location.href = '/dashboard/mesas/eliminar/' + id;
+            }
+        }
+    </script>
+
+{% endblock %}

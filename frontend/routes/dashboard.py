@@ -221,6 +221,97 @@ def usuarios():
         usuarios=usuarios_data
     )
 
+@dashboard_bp.route("/mesas", methods=["GET", "POST"])
+def mesas():
+    if not usuario_es_admin():
+        return redirect("/")
+
+    data_sesion = session.get("usuario") or ''
+
+    if request.method == "POST":
+        id_mesa = request.form.get("id_mesa")
+
+        body = {
+            "numero": int(request.form.get("numero", 0)),
+            "capacidad": int(request.form.get("capacidad", request.form.get("comensales", 0))),
+            "interior": 1 if "interior" in request.form else 0,
+            "funcional": 1 if "funcional" in request.form else 0
+        }
+
+        if id_mesa:
+            requests.patch(
+                f"http://localhost:5005/mesas/{id_mesa}",
+                json=body,
+                cookies={'session': data_sesion}
+            )
+        else:
+            requests.post(
+                "http://localhost:5005/mesas",
+                json=body,
+                cookies={'session': data_sesion}
+            )
+
+        return redirect("/dashboard/mesas")
+
+    response = requests.get(
+        "http://localhost:5005/mesas",
+        cookies={'session': data_sesion}
+    )
+    
+    data = response.json().get("data", [])
+    
+    mesas_lista = []
+    for mesa in data:
+        id_m = mesa.get("id_mesa", 0)
+        num_m = mesa.get("numero", "—")
+        cant_m = mesa.get("capacidad", "—")
+        int_m = mesa.get("interior", 0)
+        func_m = mesa.get("funcional", 0)
+
+        mesas_lista.append({
+            "id": id_m,
+            "cells": [
+                id_m,
+                f"Mesa {num_m}",
+                f"{cant_m} Personas",
+                "Interior" if int_m == 1 or int_m is True else "Exterior",
+                "Sí" if func_m == 1 else "No"
+            ]
+        })
+        
+    mesa_editar = None
+    crear_nuevo = request.args.get("create") 
+
+    edit_id = request.args.get("edit")
+    if edit_id:
+        response_individual = requests.get(
+            f"http://localhost:5005/mesas/{edit_id}",
+            cookies={'session': data_sesion}
+        )
+        mesa_editar = response_individual.json().get("data")
+
+    return render_template(
+        "dashboard/mesas.html",
+        mesas=mesas_lista,
+        mesa_editar=mesa_editar,
+        crear_nuevo=crear_nuevo
+    )
+    
+@dashboard_bp.route("/mesas/eliminar/<int:id_mesa>")
+def eliminar_mesa_ruta(id_mesa):
+    if not usuario_es_admin():
+        return redirect("/")
+
+    data_sesion = session.get("usuario") or ''
+
+    requests.delete(
+        f"http://localhost:5005/mesas/{id_mesa}",
+        cookies={'session': data_sesion}
+    )
+
+    return redirect("/dashboard/mesas")
+
+
 @dashboard_bp.route("/configuracion/")
 def configuracion():
 
