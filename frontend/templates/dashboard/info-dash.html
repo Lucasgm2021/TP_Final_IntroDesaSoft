@@ -1,0 +1,23 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<h1>
+    Config Info.
+</h1>
+
+    {% from "componentes/tabla_comp.html" import tabla_comp %}
+
+    {{ tabla_comp(
+        id="tabla-delete-edit",
+        columns=["Clave","Data"],
+        rows=infodash,
+        row_height=50,
+        show_delete=true,
+        show_edit=true,
+        func_delete="",
+        func_edit=""
+    ) }}
+
+
+{% endblock %}

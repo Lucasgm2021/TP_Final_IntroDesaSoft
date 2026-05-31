@@ -51,15 +51,10 @@ def obtener_info_service():
         obtener_toda_la_configuracion()
     )
 
-    data = {}
-
-    for config in configuraciones:
-        data[config["clave"]] = (
-            config["valor"]
-        )
-
-    return data, 200
-
+    config = [dict(row) for row in configuraciones]
+    return {
+        "data": config
+    }, 200
 
 def obtener_info_por_clave_service(
     clave

@@ -1,8 +1,5 @@
-from flask import Flask, render_template,redirect, url_for, request, flash, session, make_response
-from routes.reservas import reserva_bp
-from services import sesion
-
-from datetime import datetime, timedelta
+from flask import Flask, render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "manzana"
@@ -10,7 +7,7 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
 @app.route("/examples")
-def index():
+def examples():
     return render_template("examples/example.html")
 
 @app.route("/login",methods=["GET","POST"])
@@ -38,6 +35,14 @@ def login():
     return redirect(url_for("login"))
 
 app.register_blueprint(reserva_bp,url_prefix="/reservas")
+
+@app.route("/")
+def inicio():
+    error = request.args.get("error",None)
+    return render_template("base.html",usuario_logueado=usuario_es_valido(),error=error)
+
+app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
+app.register_blueprint(auth_front_bp, url_prefix="/auth")
 
 if __name__ == "__main__":
     app.run(debug=True)

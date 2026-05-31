@@ -37,23 +37,16 @@ def crear_usuario():
     respuesta, status = crear_usuario_service(data)
     return jsonify(respuesta), status
 
-@usuarios_bp.route("/admin", methods=["GET"]) 
+@usuarios_bp.route("/", methods=["GET"])
 def obtener_usuarios():
-    #es_admin, error = check_usuario_es_admin()
+    es_admin, error = check_usuario_es_admin()
 
-    #if not es_admin: #no deberia porque pasar
-       # respuesta, status = error
-        #return jsonify(respuesta), status
-
-    #respuesta, status = obtener_usuarios_service()
-    #return jsonify(respuesta), status
-
-    try:
-        respuesta, status = obtener_usuarios_service()
+    if not es_admin: #no deberia porque pasar
+        respuesta, status = error
         return jsonify(respuesta), status
-    except Exception as e:
-        print(f"ERROR: {e}")
-        raise
+
+    respuesta, status = obtener_usuarios_service()
+    return jsonify(respuesta), status
 
 @usuarios_bp.route("/admin/<string:email>", methods=["GET"])  
 def obtener_usuario_email(email):

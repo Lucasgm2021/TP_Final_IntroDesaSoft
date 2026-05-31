@@ -4,7 +4,6 @@ load_dotenv()
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
-from flask_cors import CORS
 
 from datetime import timedelta
 from routes.usuarios import usuarios_bp
@@ -15,10 +14,7 @@ from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
 #from routes.estadisticas import estadisticas_bp
 from routes.mesas import mesas_bp
-
-"""
-# 1. Allow cookies to travel from Port 5000 (Back) to Port 5001 (Front)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5001"}}, supports_credentials=True)
+from flask_cors import CORS
 
 # 2. Relax cookie security rules for local cross-port development
 app.config["SESSION_COOKIE_SAMESITE"] = "None"
@@ -49,6 +45,8 @@ db = SQLAlchemy(app)
 app.config["SESSION_SQLALCHEMY"] = db
 
 Session(app)
+CORS(app)
+
 
 @app.route("/")
 def index():
@@ -62,8 +60,6 @@ app.register_blueprint(reseñas_bp, url_prefix="/reseñas")
 app.register_blueprint(info_frontend_bp, url_prefix="/info_frontend")
 app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
 app.register_blueprint(reservas_bp, url_prefix="/reservas")
-
-#app.register_blueprint(estadisticas_bp, url_prefix="/estadisticas")
 
 if __name__ == "__main__":
     app.run(debug=True,port=5005)

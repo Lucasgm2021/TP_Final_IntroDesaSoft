@@ -1,26 +1,29 @@
-DELETE FROM usuarios WHERE email != 'admin@puertohermoso.com';
-
-DELETE FROM mesa;
-
+DELETE FROM reseña;
+DELETE FROM reserva_mesa;
 DELETE FROM reserva;
 
-DELETE FROM reserva_mesa;
+DELETE FROM mesa;
+DELETE FROM servicios_extra;
+DELETE FROM plato;
+DELETE FROM categoria_plato;
+DELETE FROM configuracion;
+
+DELETE FROM usuarios;
 
 ALTER TABLE usuarios AUTO_INCREMENT = 1;
+ALTER TABLE categoria_plato AUTO_INCREMENT = 1;
+ALTER TABLE plato AUTO_INCREMENT = 1;
 ALTER TABLE reserva AUTO_INCREMENT = 1;
+ALTER TABLE servicios_extra AUTO_INCREMENT = 1;
 ALTER TABLE mesa AUTO_INCREMENT = 1;
+ALTER TABLE reseña AUTO_INCREMENT = 1;
 
-INSERT INTO usuarios (email, password, es_admin, reservas, canceladas) VALUES
-('admin.lucas@restaurant.com', '$2b$12$K7q9...', TRUE, 0, 0),
-('admin.sofia@restaurant.com', '$2b$12$M9w1...', TRUE, 0, 0),
-('juan.perez@email.com', '$2b$12$ExAmPlE1...', FALSE, 3, 1),
-('maria.gomez@email.com', '$2b$12$ExAmPlE2...', FALSE, 2, 0),
-('diego.maradona@email.com', '$2b$12$ExAmPlE3...', FALSE, 5, 2),
-('carla.rodriguez@email.com', '$2b$12$ExAmPlE4...', FALSE, 1, 0),
-('luis.vazquez@email.com', '$2b$12$ExAmPlE5...', FALSE, 0, 0),
-('ana.martinez@email.com', '$2b$12$ExAmPlE6...', FALSE, 4, 0),
-('nico.gonzalez@email.com', '$2b$12$ExAmPlE7...', FALSE, 2, 1),
-('flor.fernandez@email.com', '$2b$12$ExAmPlE8...', FALSE, 1, 0);
+INSERT INTO categoria_plato (categoria)
+VALUES
+('Entrada'),
+('Principal'),
+('Postre'),
+('Bebida');
 
 INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (101, 2, TRUE, TRUE),  (102, 2, TRUE, TRUE),  (103, 4, TRUE, TRUE),  (104, 4, TRUE, TRUE),
@@ -118,10 +121,6 @@ VALUES
     'Musica en vivo viernes y sabados',
     FALSE
 );
-
--- =========================
--- PLATOS
--- =========================
 
 INSERT INTO plato (
     id_categoria,

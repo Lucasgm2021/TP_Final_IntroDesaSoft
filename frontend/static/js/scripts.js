@@ -11,3 +11,16 @@ if (selectFecha) {
     const formattedDate = `${year}-${month}-${day}`;
     selectFecha.setAttribute('min', formattedDate);
 }
+
+
+function editarPlato(id){
+
+    window.location.href =
+        `/dashboard/menu?edit=${id}`
+}
+
+function eliminarPlato(id){
+
+    window.location.href =
+        `/dashboard/menu?eliminar=${id}`
+}

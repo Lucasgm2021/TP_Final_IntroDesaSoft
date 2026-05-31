@@ -76,7 +76,7 @@ def modificar_plato_service(id_plato, data): #valida la existencia y el precio d
         return error_msg(404, "Plato no encontrado")
 
     precio = data.get("precio")
-    if precio is not None and precio <= 0:
+    if precio is not None and float(precio) <= 0:
         return error_msg(
             400,
             "Precio invalido",
