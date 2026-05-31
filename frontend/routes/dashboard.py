@@ -18,10 +18,40 @@ dashboard_bp = Blueprint(
 def home():
 
     if not usuario_es_admin():
-        return redirect()
+        return redirect("auth.login")
 
+    data = session.get(FRONTEND_COOKIE_CLAVE) or ''
+
+    response = requests.get(
+        f'{API_BASE_URL}/reservas/',
+        cookies={BACKEND_SESSION_COOKIE_NAME: data}
+    )
+
+    reservas_todas = response.json()["reservas"]
+
+    reservas_data = []
+
+    for reserva in reservas_todas:
+        reservas_data.append({
+
+            "id": reserva["id_reserva"],
+
+            "cells": [
+
+                reserva["id_reserva"],
+                reserva["id_usuario"],
+                reserva["estado_reserva"],
+                reserva["hora_reserva"],
+                reserva["fecha"],
+                "Interior" if reserva["interior"] else "Exterior",
+                reserva["comensales"],
+                reserva["id_mesa"],
+
+            ]
+        })
     return render_template(
-        "dashboard/home.html"
+        "dashboard/home.html",
+        reservas=reservas_data
     )
 
 @dashboard_bp.route("/menu", methods=["GET", "POST"])
@@ -103,7 +133,7 @@ def menu():
 def reservas():
 
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect("auth.login")
 
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
 

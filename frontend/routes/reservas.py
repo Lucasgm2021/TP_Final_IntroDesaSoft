@@ -36,7 +36,7 @@ def crear_reserva_form():
                 {nuevas_claves_dict.get(clave, clave): valor for clave, valor in mesa.items()}
                 for mesa in mesas
             ]
-        return render_template("creacion_reserva.html", mesas=mesas_claves_modificadas, horarios=horarios)
+        return render_template("reservas/creacion_reserva.html", mesas=mesas_claves_modificadas, horarios=horarios)
 
     hora = request.form.get('hora', '').strip()
     fecha = request.form.get('fecha', '').strip()
@@ -56,15 +56,12 @@ def crear_reserva_form():
             flash(e, 'error')
     return redirect(url_for('reservas.crear_reserva_form'))
 
-@reserva_bp.route("/example", methods=["GET"])
-def ejemplo():
-    return render_template("examples/reservas.html")
-
 @reserva_bp.route("/mis_reservas", methods=["GET"])
 def mis_reservas():
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
-    reservas = obtener_mis_reservas(cookies)
-    return render_template("mis_reservas.html", reservas=reservas)
+    reservas = obtener_mis_reservas(cookies).get("reservas",[])
+    print("reservas en mis reservas:", reservas)
+    return render_template("reservas/mis_reservas.html", reservas=reservas)
 
 @reserva_bp.route("/reservas_admin", methods=["GET"])
 def reservas_admin():

@@ -115,7 +115,7 @@
                     {{ button3_comp(
                         text="CERRAR SESIÓN",
                         height=50,
-                        acceptordeny="deny",
+                        type="2",
                         func=""
                     ) }}
 
@@ -274,28 +274,28 @@
                     <div class="acciones-admin-reserva">
 
                         <form
-                            action="{{ url_for('admin.cancelar_reserva', id_reserva=reserva.id_reserva) }}"
+                            action="#"
                             method="POST"
                         >
 
                             {{ button3_comp(
                                 text="CANCELAR",
                                 height=45,
-                                acceptordeny="deny",
+                                acceptordeny="2",
                                 func=""
                             ) }}
 
                         </form>
 
                         <form
-                            action="{{ url_for('admin.finalizar_reserva', id_reserva=reserva.id_reserva) }}"
+                            action="#"
                             method="POST"
                         >
 
                             {{ button3_comp(
                                 text="FINALIZAR",
                                 height=45,
-                                acceptordeny="accept",
+                                acceptordeny="2",
                                 func=""
                             ) }}
 

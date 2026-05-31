@@ -1,0 +1,30 @@
+{% macro reserva_comp(reserva) %}
+    <div class="info-reserva">
+        <div class="col-reserva">
+            <strong>Comensales:</strong>
+            <div class="dato-content">
+                <i class="icon-user">👤</i> <span>{{ reserva.comensales }}</span>
+            </div>
+        </div>
+        <div class="col-reserva">
+            <strong>Fecha</strong>
+            <div class="dato-content">
+                <i class="icon-calendar">📅</i> <div class="fecha-hora-stack">
+                    <span>{{ reserva.fecha }}</span>
+                    <span>{{ reserva.hora_reserva }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-reserva">
+            <strong>Informacion extra:</strong>
+            <div class="dato-content">
+                <i class="icon-table">🪑</i> <span>
+                    {% if reserva.interior %} Salon Interior {% else %} Patio Exterior {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="col-actions">
+            <button class="button-delete button-cancelar-reserva">X</button>
+        </div>
+    </div>
+{% endmacro %}
