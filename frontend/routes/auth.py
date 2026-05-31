@@ -10,7 +10,7 @@ from flask import (
 import requests
 
 from services.verificaciones import usuario_es_valido, usuario_es_admin
-from constants import API_BASE_URL,SESSION_COOKIE_NAME, FRONTEND_SESSION
+from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 auth_front_bp = Blueprint(
     "auth_front",
@@ -33,7 +33,7 @@ def register():
     )
 
     if resp.status_code == 201:
-        session[FRONTEND_SESSION] = resp.cookies.get(SESSION_COOKIE_NAME)
+        session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
         return redirect('profile')
     elif resp.status_code == 409:
         return render_template('auth/register.html', error="Email ya utilizado")
@@ -54,20 +54,20 @@ def login():
         }
     )
     if resp.status_code == 201:
-        session[FRONTEND_SESSION] = resp.cookies.get(SESSION_COOKIE_NAME)
+        session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
         return redirect('profile')
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
 
 @auth_front_bp.route("/logout")
 def logout():
-    data = session.get(FRONTEND_SESSION) or ''
+    data = session.get(FRONTEND_COOKIE_CLAVE) or ''
     requests.post(
         f'{API_BASE_URL}/sesion/logout',
-        cookies={SESSION_COOKIE_NAME: data}
+        cookies={BACKEND_SESSION_COOKIE_NAME: data}
     )
     session.clear()
-    return redirect('/?error=Deslogueado con exito')
+    return redirect('login')
 
 @auth_front_bp.route("/profile")
 def profile():

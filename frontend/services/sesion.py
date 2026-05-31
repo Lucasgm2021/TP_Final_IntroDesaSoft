@@ -1,7 +1,6 @@
 import requests
 from flask import request, redirect, url_for
-
-API_BASE_URL = "http://localhost:5000"
+from constants import API_BASE_URL
 
 def login(email,password):
     data = {}

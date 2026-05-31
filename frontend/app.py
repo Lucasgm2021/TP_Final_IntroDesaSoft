@@ -28,4 +28,4 @@ app.register_blueprint(auth_front_bp, url_prefix="/auth")
 app.register_blueprint(reserva_bp,url_prefix="/reservas")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

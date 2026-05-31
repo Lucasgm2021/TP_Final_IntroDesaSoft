@@ -1,13 +1,13 @@
 from flask import Blueprint, request, render_template,url_for,jsonify, flash, redirect, session
-from services.reservas import crear_reserva_form_prueba, obtener_mesas
+from services.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas
 from datetime import datetime
-from constants import SESSION_COOKIE_NAME, FRONTEND_SESSION
+from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 reserva_bp = Blueprint("reservas",__name__)
 
 @reserva_bp.route("/",methods=["GET","POST"])
 def crear_reserva_form():
-    cookies = {SESSION_COOKIE_NAME: session.get(FRONTEND_SESSION,"")}
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if request.method == "GET":
         mesas = None
         fecha = request.args.get("fecha")
@@ -47,7 +47,7 @@ def crear_reserva_form():
     hora_formateada = hora_datetime.strftime("%H:%M:%S")
     hora_formateada = hora_formateada[0:2] + ":00:00"
 
-    resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,ids_mesas,cookies)
+    resultado = crear_reserva(hora_formateada,fecha,nro_comensales,interior,ids_mesas,cookies)
 
     if resultado.get('ok'):
         flash('Reserva creada con exito', 'success')
@@ -62,7 +62,9 @@ def ejemplo():
 
 @reserva_bp.route("/mis_reservas", methods=["GET"])
 def mis_reservas():
-    return render_template("mis_reservas.html")
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
+    reservas = obtener_mis_reservas(cookies)
+    return render_template("mis_reservas.html", reservas=reservas)
 
 @reserva_bp.route("/reservas_admin", methods=["GET"])
 def reservas_admin():
