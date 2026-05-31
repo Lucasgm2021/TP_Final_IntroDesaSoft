@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, render_template,redirect, url_for, request, flash, session, make_response
 from routes.reservas import reserva_bp
 from routes.dashboard import dashboard_bp

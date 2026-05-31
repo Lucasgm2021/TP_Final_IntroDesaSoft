@@ -1,6 +1,5 @@
 import requests
-
-API_BASE_URL = "http://localhost:5000"
+from constants import API_BASE_URL
 
 def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,cookies):
     data = {}

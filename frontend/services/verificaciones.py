@@ -1,12 +1,13 @@
 from flask import session
 import requests
+from constants import API_BASE_URL,SESSION_COOKIE_NAME, FRONTEND_SESSION
 
 def usuario_es_valido():
-    data = session.get("usuario") or ''
+    data = session.get(FRONTEND_SESSION) or ''
 
     sesion = requests.get(
-        f'http://localhost:5000/sesion/perfil',
-        cookies={'backend_session': data }
+        f'{API_BASE_URL}/sesion/perfil',
+        cookies={SESSION_COOKIE_NAME: data }
     )
 
     if sesion.status_code == 200:
@@ -15,11 +16,11 @@ def usuario_es_valido():
         return False
 
 def usuario_es_admin():
-    data = session.get("usuario") or ''
+    data = session.get(FRONTEND_SESSION) or ''
 
     sesion = requests.get(
-        f'http://localhost:5000/sesion/perfil',
-        cookies={'backend_session': data }
+        f'{API_BASE_URL}/sesion/perfil',
+        cookies={SESSION_COOKIE_NAME: data }
     )
     
     if sesion.status_code == 200 and sesion.json()["es_admin"]:

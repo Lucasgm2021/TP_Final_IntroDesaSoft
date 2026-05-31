@@ -1,12 +1,13 @@
 from flask import Blueprint, request, render_template,url_for,jsonify, flash, redirect, session
 from services.reservas import crear_reserva_form_prueba, obtener_mesas
 from datetime import datetime
+from constants import SESSION_COOKIE_NAME, FRONTEND_SESSION
 
 reserva_bp = Blueprint("reservas",__name__)
 
 @reserva_bp.route("/",methods=["GET","POST"])
 def crear_reserva_form():
-    cookies = {'backend_session': session.get("usuario","")}
+    cookies = {SESSION_COOKIE_NAME: session.get(FRONTEND_SESSION,"")}
     if request.method == "GET":
         mesas = None
         fecha = request.args.get("fecha")

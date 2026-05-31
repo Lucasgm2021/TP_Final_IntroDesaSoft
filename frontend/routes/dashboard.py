@@ -5,6 +5,7 @@ from flask import (
 )
 import requests
 from services.verificaciones import usuario_es_admin
+from constants import API_BASE_URL,SESSION_COOKIE_NAME, FRONTEND_SESSION
 
 dashboard_bp = Blueprint(
     "dashboard",
@@ -45,18 +46,18 @@ def menu():
             "lactosa": "lactosa" in request.form,
         }
 
-        data = session.get("usuario") or ''
+        data = session.get(FRONTEND_SESSION) or ''
 
         requests.put(
-            f"http://localhost:5000/menu/{id_plato}",
+            f'{API_BASE_URL}/menu/{id_plato}',
             json=body,
-            cookies={'session': data}
+            cookies={SESSION_COOKIE_NAME: data}
         )
 
         return redirect("/dashboard/menu")
 
     response = requests.get(
-        "http://localhost:5000/menu"
+        f'{API_BASE_URL}/menu'
     )
 
     data = response.json()["data"]
@@ -83,10 +84,10 @@ def menu():
     edit_id = request.args.get("edit")
 
     if edit_id:
-        data = session.get("usuario") or ''
+        data = session.get(FRONTEND_SESSION) or ''
         response = requests.get(
-            f"http://localhost:5000/menu/{edit_id}",
-            cookies={'session': data}
+            f'{API_BASE_URL}/menu/{edit_id}',
+            cookies={SESSION_COOKIE_NAME: data}
         )
 
         plato_editar = response.json()["data"]
@@ -104,11 +105,11 @@ def reservas():
     if not usuario_es_admin():
         return redirect("/")
 
-    data = session.get("usuario") or ''
+    data = session.get(FRONTEND_SESSION) or ''
 
     response = requests.get(
-        f'http://localhost:5000/reservas/',
-        cookies={'session': data}
+        f'{API_BASE_URL}/reservas/',
+        cookies={SESSION_COOKIE_NAME: data}
     )
 
     reservas_todas = response.json()["reservas"]
@@ -147,11 +148,11 @@ def reseñas():
     if not usuario_es_admin():
         return redirect("/")
 
-    data = session.get("usuario") or ''
+    data = session.get(FRONTEND_SESSION) or ''
 
     response = requests.get(
-        f'http://localhost:5000/reseñas/todas',
-        cookies={'session': data}
+        f'{API_BASE_URL}/reseñas/todas',
+        cookies={SESSION_COOKIE_NAME: data}
     )
 
     reseñas = response.json()["data"]
@@ -190,11 +191,11 @@ def usuarios():
     if not usuario_es_admin():
         return redirect("/")
 
-    data = session.get("usuario") or ''
+    data = session.get(FRONTEND_SESSION) or ''
 
     response = requests.get(
-        f'http://localhost:5000/usuarios',
-        cookies={'session': data}
+        f'{API_BASE_URL}/usuarios',
+        cookies={SESSION_COOKIE_NAME: data}
     )
 
     users = response.json()["data"]
@@ -227,11 +228,11 @@ def configuracion():
     if not usuario_es_admin():
         return redirect("/")
 
-    data = session.get("usuario") or ''
+    data = session.get(FRONTEND_SESSION) or ''
 
     response = requests.get(
-        f'http://localhost:5000/info_frontend',
-        cookies={'session': data}
+        f'{API_BASE_URL}/info_frontend',
+        cookies={SESSION_COOKIE_NAME: data}
     )
 
     informacion = response.json()["data"]

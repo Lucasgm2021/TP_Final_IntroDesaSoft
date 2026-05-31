@@ -18,10 +18,6 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# 2. Tell the browser it's allowed to send this Session ID cookie across ports
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = False  # Keep False for HTTP localhost development
-
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
