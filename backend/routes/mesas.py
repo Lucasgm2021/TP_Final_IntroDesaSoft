@@ -15,7 +15,7 @@ def obtener_mesas_validas():
     data = {}
     data["fecha"] = request.args.get("fecha")
     data["hora_reserva"] = request.args.get("hora")
-    data["interior"] = request.args.get("interior")
+    data["interior"] = request.args.get("interior").lower() == "true"
     res, status = servicios_mesas.obtener_mesas_validas_service(data)
     return jsonify(res), status
 

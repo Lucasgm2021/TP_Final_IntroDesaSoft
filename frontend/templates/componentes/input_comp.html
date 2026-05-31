@@ -2,12 +2,15 @@
     name="",
     type="text",
     value="",
-
+    id="",
     label="INPUT",
-    placeholder="********",
+    placeholder="",
 
     width="400px",
-    height="60px"
+    height="60px",
+    min="",
+    max="",
+    step=""
 ) %}
     {% set min_width = height|replace("px", "")|int * ((placeholder|length * 0.25) + 2) %}
 
@@ -42,9 +45,14 @@
             type="{{ type }}"
             name="{{ name }}"
             value="{{ value }}"
-
-            placeholder="{{ placeholder }}"
+            {% if id %} id="{{ id }}" {% endif %}
+            {% if placeholder %}placeholder="{{ placeholder }}" {% endif %}
             {% if type == "number" %} min="1" {% endif %}
+            {% if type == "time" %} 
+            min="{{ min }}" 
+            max="{{ max }}"
+            step="{{ step }}"
+            {% endif %}
             style="
                 height: {{ height }};
 

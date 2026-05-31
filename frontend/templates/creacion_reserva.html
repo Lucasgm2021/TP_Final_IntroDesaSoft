@@ -21,7 +21,7 @@
     {% from "componentes/circle_comp.html" import circle_comp %}
     {% from "componentes/button1_comp.html" import button1_comp %}
     {% from "componentes/button3_comp.html" import button3_comp %}
-    {% from "componentes/mesas_comp.html" import mesas_comp %}
+    {% from "componentes/select_comp.html" import select_comp %}
     <div id="form-crear-reserva">
     <form action="{{ url_for('reservas.crear_reserva_form')}}" method="get">
         <div id="form-crear-reserva-title"> 
@@ -33,21 +33,26 @@
             ) }}
             <h1>Puerto Hermoso</h1>
         </div>
-        {{ input_comp(
-            name="hora",
-            type="time",
-            label="Horario",
-            placeholder="",
-            height="40px",
-            width="250px"
-        ) }}
+        {{
+            select_comp(
+                opciones=horarios,
+                id="horarios-select",
+                name="hora",
+                label="Horario",
+                width="250px",
+                height="40px",
+                default_option="Elija un horario",
+                classes="dropshadow input-default select-form"
+            )
+        }}
         {{ input_comp(
             name="fecha",
             type="date",
             label="Fecha de reserva",
             placeholder="",
             height="40px",
-            width="250px"
+            width="250px",
+            id="fechaReservaCreacion"
         ) }}
         {{ input_comp(
             name="comensales",
@@ -78,20 +83,17 @@
             <input type="hidden" name="hora" value="{{ request.args.get('hora') }}">
             <input type="hidden" name="ubicacion" value="{{ request.args.get('ubicacion') }}">
             <input type="hidden" name="comensales" value="{{ request.args.get('comensales') }}">
-            {{ mesas_comp(
-            mesas=mesas,
+            {{ select_comp(
+            opciones=mesas,
             id="mesas-principal",
             width="250px",
-            name="id_mesas[]"
+            name="id_mesas[]",
+            size=6,
+            classes="dropshadow input-default select-form"
             ) }}
-            {{ input_comp(
-                name="Confirmar",
-                type="submit",
-                label="",
-                value="Confirmar",
-                width="250px"
-            ) }}
-
+            <div>
+                <input type="submit" value="CONFIRMAR" class="button1 dropshadow" style="width: 250px; height: 55px; font-size: 18px; border-radius: 12px; margin-top: 20px;">
+            </div>
     </form>
     {% endif %}
     </div>

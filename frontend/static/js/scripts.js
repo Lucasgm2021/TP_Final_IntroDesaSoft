@@ -4,7 +4,7 @@ function comprar_porsche() {
 
 function mostrarMesasDisponibles(){
     let fecha = document.querySelector("input[name='fecha']").value;
-    let hora = document.querySelector("input[name='hora']").value;
+    let hora = document.getElementById("horarios-select").value;
     let ubicacion = document.querySelector("input[name='ubicacion']:checked").value;
     let nro_comensales = document.querySelector("input[name='comensales']").value;
     
@@ -24,10 +24,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if (savedData) {
         const formData = JSON.parse(savedData);
         document.querySelector('input[name="fecha"]').value = formData.fecha;
-        document.querySelector('input[name="hora"]').value = formData.hora;
-        console.log("Data retrieved from locker:", formData);
+        document.getElementById("horarios-select").value = formData.hora;
         const radioToCheck = document.querySelector(`input[name="ubicacion"][value="${formData.ubicacion}"]`);
-        console.log("Radio to check:", radioToCheck);
         if (radioToCheck) {
             radioToCheck.checked = true;
         }
@@ -36,3 +34,13 @@ window.addEventListener('DOMContentLoaded', () => {
         sessionStorage.removeItem('savedFormDataReserva');
     }
 });
+
+const selectFecha = document.getElementById('fechaReservaCreacion');
+if (selectFecha) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    selectFecha.setAttribute('min', formattedDate);
+}

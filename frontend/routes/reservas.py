@@ -13,6 +13,7 @@ def crear_reserva_form():
         ubicacion = request.args.get("ubicacion")
         comensales = request.args.get("comensales")
         numeros_mesas = []
+        horarios = [{"id":f"{hora:02d}:00","nombre":f"{hora:02d}:00"} for hora in range(9, 23)]
         if fecha and hora and ubicacion and comensales:
             ubicacion_bool = ubicacion == "interior"
             mesas = obtener_mesas(fecha,hora,ubicacion_bool,comensales,request.cookies)
@@ -22,9 +23,18 @@ def crear_reserva_form():
                 mesas = None
             else:
                 mesas = mesas.get("data")
-                numeros_mesas = [mesa["numero"] for mesa in mesas]
+                if not mesas:
+                    flash("No hay mesas disponibles para los datos ingresados.", 'info')
 
-        return render_template("creacion_reserva.html", mesas=numeros_mesas)
+            nuevas_claves_dict = {
+                "id_mesa": "id",
+                "numero": "nombre"
+            }
+            mesas_claves_modificadas = [
+                {nuevas_claves_dict.get(clave, clave): valor for clave, valor in mesa.items()}
+                for mesa in mesas
+            ]
+        return render_template("creacion_reserva.html", mesas=mesas_claves_modificadas, horarios=horarios)
 
     hora = request.form.get('hora', '').strip()
     fecha = request.form.get('fecha', '').strip()
@@ -35,12 +45,22 @@ def crear_reserva_form():
     hora_formateada = hora_datetime.strftime("%H:%M:%S")
     hora_formateada = hora_formateada[0:2] + ":00:00"
 
+    print("Datos recibidos para hacer post:", {
+        "hora": hora_formateada,
+        "fecha": fecha,
+        "nro_comensales": nro_comensales,
+        "interior": interior,
+        "ids_mesas": ids_mesas,
+        "cookies": request.cookies
+    })
+
     resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,ids_mesas,request.cookies)
 
     if resultado.get('ok'):
         flash('Reserva creada con exito', 'success')
     else:
         for e in resultado.get('errores', ['Error desconocido.']):
+            print("error a usar en flash:",e)
             flash(e, 'error')
     return redirect(url_for('reservas.crear_reserva_form'))
 

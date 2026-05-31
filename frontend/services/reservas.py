@@ -18,8 +18,7 @@ def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,i
         try:
             error_data = response.json()
             errores = error_data.get('errors', [])
-            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
-
+            mensajes = [e.get('description', 'Error desconocido') for e in errores]
             if not mensajes:
                 mensajes = [f'Error del servidor: HTTP {response.status_code}']
 
@@ -27,10 +26,7 @@ def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,i
         except Exception:
             return {'errores': [f'Error del servidor: HTTP {response.status_code}']}
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
-
         return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
-
 
     return data
 

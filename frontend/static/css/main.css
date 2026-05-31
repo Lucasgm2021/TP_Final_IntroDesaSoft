@@ -126,5 +126,15 @@ body {
     background-attachment: fixed; /* Keeps image fixed during scroll */
     background-position: center;
     background-size: cover; /* Scales to cover entire screen */ 
+}
 
+#horarios-select{
+    height: 40px;
+}
+
+.select-form {
+    width: 100%;
+    padding-left: 18px;
+    border: none;
+    border-radius: 12px;
 }

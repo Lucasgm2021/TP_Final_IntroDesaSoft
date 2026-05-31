@@ -4,6 +4,7 @@ import uuid
 from pathlib import Path
 from datetime import datetime,timedelta
 import db.reservas as queries_reservas
+import db.menu as queries_mesas
 import services.mail as servicios_mail
 from services.messages import error_msg, error_msg_lista,paginacion_msg
 import db.usuarios as queries_usuarios
@@ -89,14 +90,14 @@ def crear_reserva(data):
     hora = data.get("hora")
     nro_comensales = data.get("nro_comensales")    
     
-    if not "id_usuario" in data:
+    """if not "id_usuario" in data:
         id_usuario = session["id_usuario"]
     else:
         if data["id_usuario"] != session["id_usuario"] and not session["es_admin"]:
             return error_msg(403,"Necesitas permisos de administrador","")
-        id_usuario = data["id_usuario"]
+        id_usuario = data["id_usuario"]"""
     errores = []
-
+    id_usuario = 1
     fecha_hora = datetime.strptime(fecha + " " + hora, "%Y-%m-%d %H:%M:%S")
     if fecha_hora <= datetime.now():
         errores.append("Parametros invalidos","La fecha y hora ingresadas no pueden ser anteriores al instante actual.")  
@@ -107,13 +108,9 @@ def crear_reserva(data):
         errores = [{"message":"Parametros invalidos","description": error} for error in errores]
         return error_msg_lista(errores,400)  
 
-    # buscar mesa disponible. Busca una mesa valida no esté en uso en fecha y hora dadas: mesa not in mesas en uso.
     ids_mesas = data.get("ids_mesas", [])
-
     if not ids_mesas:
-        return {
-        "msg": "Debe seleccionar al menos una mesa"
-    }, 400
+        return error_msg(400,"Error: No se seleccionaron mesas",description="Debe seleccionar al menos una mesa para crear la reserva.")
 
     try:
         fecha_hora_mas_30min = fecha_hora + timedelta(minutes=30)
@@ -136,7 +133,7 @@ def crear_reserva(data):
             "url_cancelar": f"http://localhost:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
 
-        #servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
+        servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except Exception as e:
         return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")

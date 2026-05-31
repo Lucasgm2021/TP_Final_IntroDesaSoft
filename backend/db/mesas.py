@@ -22,6 +22,7 @@ def obtener_mesas():
 def obtener_mesas_validas(data):
     query = f"""
         SELECT
+            id_mesa,
             numero,
             capacidad
         FROM mesa
@@ -33,7 +34,7 @@ def obtener_mesas_validas(data):
             AND reserva.hora_reserva = :hora_reserva
             AND reserva.estado_reserva IN ('pendiente')
             AND reserva.interior = :interior
-        )
+        ) AND funcional = true AND interior = :interior
     """
 
     return ejecutar_query_lectura(query,params={"fecha": data["fecha"], "hora_reserva": data["hora_reserva"], "interior": data["interior"]})

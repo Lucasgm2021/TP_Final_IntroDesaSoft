@@ -1,0 +1,55 @@
+{% macro select_comp(
+    opciones={},
+    id="",
+    name="",
+    label="",
+    multiple=False,
+    width="300px",
+    height="60px",
+    default_option="",
+    size=None,
+    classes=""
+) %}
+
+<div
+    style="
+        width: {{ width }};
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    "
+>
+
+    <label
+        style="
+            color: white;
+            font-weight: bold;
+            font-size: 26px;
+        "
+    >
+        {{label}}
+    </label>
+
+    <select
+        id="{{ id }}"
+        name="{{ name }}"
+
+        class="{{ classes }}"
+        {% if multiple %} multiple {% endif %}
+        {% if size %} 
+            size="{{ size }}" 
+        {% endif %}
+    >
+        {%- if default_option %}
+        <option value="" selected disabled hidden>{{ default_option }}</option>
+        {%- endif %}
+        {% for opcion in opciones %}
+        <option  value="{{opcion.id}}">
+            {{ opcion.nombre }}
+        </option>
+        {% endfor %}
+    </select>
+
+</div>
+
+{% endmacro %}
