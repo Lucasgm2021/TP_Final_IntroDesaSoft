@@ -1,0 +1,44 @@
+{% macro navbtn_comp(
+    text="Home",
+    height=50,
+    selected=false,
+    func=""
+) %}
+
+{% set width_default  = height * 4 %}
+{% set width_selected = height * 5 %}
+{% set color_selected = "#C8906D" %}
+{% set color_default  = "#D6CFC4" %}
+
+<button
+    onclick="{{ func }}"
+    class="button navbtn button-default"
+    style="
+        width: {{ width_selected if selected else width_default }}px;
+        height: {{ height }}px;
+        background: {{ color_selected if selected else color_default }};
+        border-radius:
+            calc({{ height }}px * 0.1)
+            calc({{ height }}px * 0.5)
+            calc({{ height }}px * 0.5)
+            calc({{ height }}px * 0.1);
+        padding-left: calc({{ height }}px * 0.75);
+        font-size: calc({{ height }}px * 0.4);
+        color: #1e2329;
+        justify-content: left;
+        align-items: center;
+        display: flex;
+    "
+    onmouseenter="
+        this.style.width='{{ width_selected }}px';
+        this.style.background='{{ color_selected }}';
+    "
+    onmouseleave="
+        this.style.width='{{ width_selected if selected else width_default }}px';
+        this.style.background='{{ color_selected if selected else color_default }}';
+    "
+>
+    {{ text }}
+</button>
+
+{% endmacro %}

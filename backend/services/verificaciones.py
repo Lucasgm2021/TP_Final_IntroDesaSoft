@@ -4,7 +4,7 @@ from flask import session, request
 
 def check_usuario():
     if "id_usuario" not in session:
-        return False, error_msg(401, "Necesitas iniciar sesion como usuario")
+        return False, error_msg(401, "Necesitas iniciar sesion")
 
     return True, None
 
@@ -14,7 +14,7 @@ def check_usuario_es_admin():
             False,
             error_msg(
                 401,
-                "Necesitas iniciar sesion"
+                "Necesitas iniciar sesion como administrador"
             )
         )
 

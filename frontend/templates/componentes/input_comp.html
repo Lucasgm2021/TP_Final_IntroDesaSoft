@@ -1,0 +1,66 @@
+{% macro input_comp(
+    name="",
+    type="text",
+    value="",
+
+    label="INPUT",
+    placeholder="********",
+
+    width="400px",
+    height="60px",
+
+    required=False
+) %}
+    {% set min_width = height|replace("px", "")|int * ((placeholder|length * 0.25) + 2) %}
+
+<div
+    style="
+        user-select: none;
+        width: max({{ min_width }}px,{{ width }});
+        display: flex;
+        flex-direction: column;
+        gap: calc({{ height }} * 0.1);
+
+    "
+>
+
+    <label
+        style="
+            font-size: calc({{ height }} * 0.65);
+
+            font-weight: bold;
+
+            color: white;
+
+            line-height: 1;
+        "
+    >
+        {{ label }}
+    </label>
+
+    <input
+            {% if required %}
+                required
+            {% endif %}
+            class="dropshadow input-default"
+            type="{{ type }}"
+            name="{{ name }}"
+            value="{{ value }}"
+
+            placeholder="{{ placeholder }}"
+
+            style="
+                height: {{ height }};
+
+                padding-left: calc({{ height }} * 0.4);
+
+                border-radius: calc({{ height }} * 0.2);
+
+                font-size: calc({{ height }} * 0.5);
+
+            "
+    >
+
+</div>
+
+{% endmacro %}
