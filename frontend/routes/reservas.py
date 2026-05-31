@@ -53,7 +53,6 @@ def crear_reserva_form():
         flash('Reserva creada con exito', 'success')
     else:
         for e in resultado.get('errores', ['Error desconocido.']):
-            print("error a usar en flash:",e)
             flash(e, 'error')
     return redirect(url_for('reservas.crear_reserva_form'))
 

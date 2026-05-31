@@ -11,7 +11,6 @@ def crear_reserva_form_prueba(hora_reserva,dia_reserva,nro_comensales,interior,i
             "interior": interior,
             "ids_mesas": ids_mesas
         }, timeout=10,cookies=cookies)
-        print("respuesta de backend:",response,response.status_code,type(response.status_code))
         if response.status_code == 201:
             return {"ok":True}
         try:
