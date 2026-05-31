@@ -9,7 +9,7 @@ from flask import (
 
 import requests
 
-from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
+from services.verificaciones import usuario_es_valido, usuario_es_admin
 
 auth_front_bp = Blueprint(
     "auth_front",
@@ -24,7 +24,7 @@ def register():
         return render_template('auth/register.html')
 
     resp = requests.post(
-        'http://localhost:5005/sesion/register',
+        'http://localhost:5000/sesion/register',
         json={
             'email': request.form['email'],
             'password': request.form['password']
@@ -46,15 +46,14 @@ def login():
         return render_template('auth/login.html')
 
     resp = requests.post(
-        'http://localhost:5005/sesion/login',
+        'http://localhost:5000/sesion/login',
         json={
             'email': request.form['email'],
             'password': request.form['password']
         }
     )
-
-    if resp.status_code == 200:
-        session['usuario'] = resp.cookies.get('session')
+    if resp.status_code == 201:
+        session['usuario'] = resp.cookies.get('backend_session')
         return redirect('profile')
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
@@ -63,7 +62,7 @@ def login():
 def logout():
     data = session.get('usuario') or ''
     requests.post(
-        'http://localhost:5005/sesion/logout',
+        'http://localhost:5000/sesion/logout',
         cookies={'session': data}
     )
     session.clear()

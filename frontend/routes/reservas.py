@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template,url_for,jsonify, flash, redirect
+from flask import Blueprint, request, render_template,url_for,jsonify, flash, redirect, session
 from services.reservas import crear_reserva_form_prueba, obtener_mesas
 from datetime import datetime
 
@@ -6,6 +6,7 @@ reserva_bp = Blueprint("reservas",__name__)
 
 @reserva_bp.route("/",methods=["GET","POST"])
 def crear_reserva_form():
+    cookies = {'backend_session': session.get("usuario","")}
     if request.method == "GET":
         mesas = None
         fecha = request.args.get("fecha")
@@ -16,7 +17,7 @@ def crear_reserva_form():
         horarios = [{"id":f"{hora:02d}:00","nombre":f"{hora:02d}:00"} for hora in range(9, 23)]
         if fecha and hora and ubicacion and comensales:
             ubicacion_bool = ubicacion == "interior"
-            mesas = obtener_mesas(fecha,hora,ubicacion_bool,comensales,request.cookies)
+            mesas = obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies)
             if mesas.get('errors'):
                 for e in resultado.get('errores', ['Error desconocido.']):
                     flash(e, 'error')
@@ -45,7 +46,7 @@ def crear_reserva_form():
     hora_formateada = hora_datetime.strftime("%H:%M:%S")
     hora_formateada = hora_formateada[0:2] + ":00:00"
 
-    resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,ids_mesas,request.cookies)
+    resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,ids_mesas,cookies)
 
     if resultado.get('ok'):
         flash('Reserva creada con exito', 'success')

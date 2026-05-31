@@ -4,7 +4,7 @@ from flask import (
     redirect, session, request
 )
 import requests
-from servicesfront.verificaciones import usuario_es_admin
+from services.verificaciones import usuario_es_admin
 
 dashboard_bp = Blueprint(
     "dashboard",
@@ -48,7 +48,7 @@ def menu():
         data = session.get("usuario") or ''
 
         requests.put(
-            f"http://localhost:5005/menu/{id_plato}",
+            f"http://localhost:5000/menu/{id_plato}",
             json=body,
             cookies={'session': data}
         )
@@ -56,7 +56,7 @@ def menu():
         return redirect("/dashboard/menu")
 
     response = requests.get(
-        "http://localhost:5005/menu"
+        "http://localhost:5000/menu"
     )
 
     data = response.json()["data"]
@@ -85,7 +85,7 @@ def menu():
     if edit_id:
         data = session.get("usuario") or ''
         response = requests.get(
-            f"http://localhost:5005/menu/{edit_id}",
+            f"http://localhost:5000/menu/{edit_id}",
             cookies={'session': data}
         )
 
@@ -107,7 +107,7 @@ def reservas():
     data = session.get("usuario") or ''
 
     response = requests.get(
-        f'http://localhost:5005/reservas/',
+        f'http://localhost:5000/reservas/',
         cookies={'session': data}
     )
 
@@ -150,7 +150,7 @@ def reseñas():
     data = session.get("usuario") or ''
 
     response = requests.get(
-        f'http://localhost:5005/reseñas/todas',
+        f'http://localhost:5000/reseñas/todas',
         cookies={'session': data}
     )
 
@@ -193,7 +193,7 @@ def usuarios():
     data = session.get("usuario") or ''
 
     response = requests.get(
-        f'http://localhost:5005/usuarios',
+        f'http://localhost:5000/usuarios',
         cookies={'session': data}
     )
 
@@ -230,7 +230,7 @@ def configuracion():
     data = session.get("usuario") or ''
 
     response = requests.get(
-        f'http://localhost:5005/info_frontend',
+        f'http://localhost:5000/info_frontend',
         cookies={'session': data}
     )
 

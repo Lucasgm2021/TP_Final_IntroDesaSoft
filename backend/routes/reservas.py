@@ -70,12 +70,12 @@ def mostrar_cancelacion_reserva():
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():
-    """is_user, error = check_usuario()
+    is_user, error = check_usuario()
 
     if not is_user:
         respuesta, status = error
         return jsonify(respuesta), status
-    """
+    
     data = request.get_json()
     
     res,status = servicios_reservas.crear_reserva(data)

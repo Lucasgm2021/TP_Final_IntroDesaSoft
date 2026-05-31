@@ -17,8 +17,6 @@ from routes.mesas import mesas_bp
 from flask_cors import CORS
 
 app = Flask(__name__)
-# 1. Restrict origins to your frontend port and enable credentials (cookies)
-CORS(app, origins=["http://localhost:5001"], supports_credentials=True)
 
 # 2. Tell the browser it's allowed to send this Session ID cookie across ports
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
