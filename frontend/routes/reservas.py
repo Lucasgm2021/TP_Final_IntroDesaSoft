@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template,url_for,jsonify, flash, redirect, session
-from services.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas
+from services.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva
 from datetime import datetime
 from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
@@ -59,8 +59,13 @@ def crear_reserva_form():
 @reserva_bp.route("/mis_reservas", methods=["GET"])
 def mis_reservas():
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
-    reservas = obtener_mis_reservas(cookies).get("reservas",[])
-    print("reservas en mis reservas:", reservas)
+    reservas = obtener_mis_reservas(cookies)
+    if not reservas.get("reservas",[]):
+        for e in reservas.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+        reservas = []
+    else:
+        reservas = reservas.get("reservas",[])
     return render_template("reservas/mis_reservas.html", reservas=reservas)
 
 @reserva_bp.route("/reservas_admin", methods=["GET"])
@@ -102,3 +107,14 @@ def home_admin():
             }
         ]
     )
+
+@reserva_bp.route("/cancelar_reserva/<uuid_reserva>", methods=["POST"])
+def cancelar_reserva_route(uuid_reserva):
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
+    resultado = cancelar_reserva(uuid_reserva, cookies)
+    if resultado.get('ok'):
+        flash('Reserva cancelada con exito', 'success')
+    else:
+        for e in resultado.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+    return redirect(url_for('reservas.mis_reservas')) 

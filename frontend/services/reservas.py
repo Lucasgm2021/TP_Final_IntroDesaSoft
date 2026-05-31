@@ -58,6 +58,22 @@ def obtener_mis_reservas(cookies):
             error_data = response.json()
             errores = error_data.get('errors', [])
             mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
+            if not mensajes:
+                mensajes = [f'Error del servidor: HTTP {response.status_code}']
+
+            return {'errores': mensajes,"code":response.status_code}
+    except requests.exceptions.ConnectionError:
+        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
+
+def cancelar_reserva(uuid_reserva,cookies):
+    try:
+        response = requests.post(f"{API_BASE_URL}/reservas/cancelar/{uuid_reserva}", timeout=10, cookies=cookies)
+        if response.status_code == 201:
+            return {"ok": True}
+        else:
+            error_data = response.json()
+            errores = error_data.get('errors', [])
+            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
 
             if not mensajes:
                 mensajes = [f'Error del servidor: HTTP {response.status_code}']

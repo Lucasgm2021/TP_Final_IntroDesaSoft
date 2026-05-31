@@ -130,14 +130,13 @@ def obtener_reservas(data,limit=None,offset=None):
     lista_de_condiciones = []
     params = {}
     for key in data:
-        lista_de_condiciones.append(f"{key} = :{key}")
+        lista_de_condiciones.append(f"reserva.{key} = :{key}")
         params[key]=data[key]
 
     if data:
         string_para_query = " and ".join(lista_de_condiciones)
-        if "id_usuario" in data:
-            query += """ JOIN reserva on reserva_mesa.id_reserva = reserva.id_reserva"""
         query += f" WHERE {string_para_query}"
+        
     if offset is not None and limit is not None:
         paginacion = " LIMIT :limit OFFSET :offset"
         query += " " + paginacion

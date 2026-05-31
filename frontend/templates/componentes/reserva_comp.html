@@ -24,7 +24,13 @@
             </div>
         </div>
         <div class="col-actions">
-            <button class="button-delete button-cancelar-reserva">X</button>
+            {% if reserva.estado_reserva == "pendiente" %}
+                <form action="{{ url_for('reservas.cancelar_reserva_route', uuid_reserva=reserva.uuid_qr) }}" method="POST">
+                    <button class="button-delete button-cancelar-reserva" type="submit">X</button>
+                </form>
+            {% else %}
+                <span class="btn-disabled-circle">X</span>
+            {% endif %}
         </div>
     </div>
 {% endmacro %}

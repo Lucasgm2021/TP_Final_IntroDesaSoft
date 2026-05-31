@@ -21,11 +21,16 @@ CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
 def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):        
     offset = int(offset)
     limit = int(limit)
-    
     data={}
-    if id_usuario:
-        id_usuario = int(id_usuario)
-        data["id_usuario"] = id_usuario    
+    if not "id_usuario" in data:
+        id_usuario = session["id_usuario"]
+    else:
+        if data["id_usuario"] != session["id_usuario"] and not session["es_admin"]:
+            return error_msg(403,"Permisoos insuficientes",description="No puedes crear una reserva para otro usuario.")
+        id_usuario = data["id_usuario"]
+
+    id_usuario = int(id_usuario)
+    data["id_usuario"] = id_usuario    
 
     if fecha:
         data["fecha"]=fecha
