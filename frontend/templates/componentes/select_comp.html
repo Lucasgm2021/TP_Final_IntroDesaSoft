@@ -8,6 +8,7 @@
     height="60px",
     default_option="",
     size=None,
+    selected_value="",
     classes=""
 ) %}
 
@@ -41,10 +42,12 @@
         {% endif %}
     >
         {%- if default_option %}
-        <option value="" selected disabled hidden>{{ default_option }}</option>
+        <option value="" 
+            {% if not selected_value %} selected {% endif %}
+            disabled hidden>{{ default_option }}</option>
         {%- endif %}
         {% for opcion in opciones %}
-        <option  value="{{opcion.id}}">
+        <option  value="{{opcion.id}}" {% if opcion.id == selected_value %} selected {% endif %}>
             {{ opcion.nombre }}
         </option>
         {% endfor %}

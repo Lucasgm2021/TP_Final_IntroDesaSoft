@@ -12,7 +12,7 @@ def crear_reserva_form():
         hora = request.args.get("hora")
         ubicacion = request.args.get("ubicacion")
         comensales = request.args.get("comensales")
-        numeros_mesas = []
+        mesas_claves_modificadas = []
         horarios = [{"id":f"{hora:02d}:00","nombre":f"{hora:02d}:00"} for hora in range(9, 23)]
         if fecha and hora and ubicacion and comensales:
             ubicacion_bool = ubicacion == "interior"
@@ -44,15 +44,6 @@ def crear_reserva_form():
     hora_datetime = datetime.strptime(hora, "%H:%M")
     hora_formateada = hora_datetime.strftime("%H:%M:%S")
     hora_formateada = hora_formateada[0:2] + ":00:00"
-
-    print("Datos recibidos para hacer post:", {
-        "hora": hora_formateada,
-        "fecha": fecha,
-        "nro_comensales": nro_comensales,
-        "interior": interior,
-        "ids_mesas": ids_mesas,
-        "cookies": request.cookies
-    })
 
     resultado = crear_reserva_form_prueba(hora_formateada,fecha,nro_comensales,interior,ids_mesas,request.cookies)
 

@@ -42,6 +42,7 @@
                 width="250px",
                 height="40px",
                 default_option="Elija un horario",
+                selected_value=request.args.get('hora', ''),
                 classes="dropshadow input-default select-form"
             )
         }}
@@ -52,7 +53,8 @@
             placeholder="",
             height="40px",
             width="250px",
-            id="fechaReservaCreacion"
+            id="fechaReservaCreacion",
+            value=request.args.get('fecha', '')
         ) }}
         {{ input_comp(
             name="comensales",
@@ -60,12 +62,13 @@
             label="Cantidad de comensales",
             placeholder="1",
             height="40px",
-            width="250px"
+            width="250px",
+            value=request.args.get('comensales', '')
         ) }}
         <div>
-            <input type="radio" name="ubicacion" id="interior" value="interior" checked>
+            <input type="radio" name="ubicacion" id="interior" value="interior" {% if request.args.get('ubicacion', 'interior') == 'interior' %} checked {% endif %}>
             <label for="interior">Interior</label>
-            <input type="radio" name="ubicacion" id="exterior" value="exterior">
+            <input type="radio" name="ubicacion" id="exterior" value="exterior" {% if request.args.get('ubicacion', 'interior') == 'exterior' %} checked {% endif %}>
             <label for="exterior">Exterior</label>
         </div>
         <div>
