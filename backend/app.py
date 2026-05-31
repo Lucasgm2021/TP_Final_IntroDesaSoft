@@ -16,11 +16,6 @@ from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from flask_cors import CORS
 
-# 2. Relax cookie security rules for local cross-port development
-app.config["SESSION_COOKIE_SAMESITE"] = "None"
-app.config["SESSION_COOKIE_SECURE"] = False  # Keep False because we are using HTTP, not HTTPS
-"""
-
 app = Flask(__name__)
 # 1. Restrict origins to your frontend port and enable credentials (cookies)
 CORS(app, origins=["http://localhost:5001"], supports_credentials=True)

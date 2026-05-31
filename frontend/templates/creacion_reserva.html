@@ -54,7 +54,8 @@
             height="40px",
             width="250px",
             id="fechaReservaCreacion",
-            value=request.args.get('fecha', '')
+            value=request.args.get('fecha', ''),
+            required=True
         ) }}
         {{ input_comp(
             name="comensales",
@@ -63,7 +64,8 @@
             placeholder="1",
             height="40px",
             width="250px",
-            value=request.args.get('comensales', '')
+            value=request.args.get('comensales', ''),
+            required=True
         ) }}
         <div>
             <input type="radio" name="ubicacion" id="interior" value="interior" {% if request.args.get('ubicacion', 'interior') == 'interior' %} checked {% endif %}>
