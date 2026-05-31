@@ -3,6 +3,7 @@ import re
 from db.usuarios import (
     crear_cliente,
     crear_usuario,
+    obtener_usuario_id,
     obtener_usuarios,
     obtener_usuario_email,
     actualizar_mi_perfil,
@@ -79,6 +80,12 @@ def obtener_usuario_email_service(email):
         return error_msg(400, "Email no válido")
     
     usuario = obtener_usuario_email(email)
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+    return usuario, 200
+
+def obtener_mi_perfil_service():
+    usuario = obtener_usuario_id(session["id_usuario"])
     if not usuario:
         return error_msg(404, "Usuario no encontrado")
     return usuario, 200

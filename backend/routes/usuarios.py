@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from services.usuarios import (
     crear_cliente_service,
     crear_usuario_service,
+    obtener_mi_perfil_service,
     obtener_usuarios_service,
     obtener_usuario_email_service,
     actualizar_mi_perfil_service,
@@ -57,6 +58,11 @@ def obtener_usuario_email(email):
         #return jsonify(respuesta), status
 
     respuesta, status = obtener_usuario_email_service(email)
+    return jsonify(respuesta), status
+
+@usuarios_bp.route("/cliente/mi_perfil", methods=["GET"]) 
+def obtener_mi_perfil():
+    respuesta, status = obtener_mi_perfil_service()
     return jsonify(respuesta), status
 
 @usuarios_bp.route("/cliente/mi_perfil", methods=["PATCH"]) 
