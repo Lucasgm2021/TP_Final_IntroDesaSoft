@@ -122,11 +122,11 @@ def cancelar_reserva(uuid_reserva):
 #PATCH /reservas/ Recibe json: estado reserva. Modifica el estado de una reserva.
 @reservas_bp.route("/<id_reserva>", methods=["PATCH"])
 def modificar_reserva(id_reserva):
-    is_user, error = check_usuario()
-    if not is_user:
+    is_admin, error = check_usuario_es_admin()
+    if not is_admin:
         respuesta, status = error
         return jsonify(respuesta), status
-
+    
     data = request.get_json()
     res, status = servicios_reservas.modificar_reserva(id_reserva,data)
     return jsonify(res),status

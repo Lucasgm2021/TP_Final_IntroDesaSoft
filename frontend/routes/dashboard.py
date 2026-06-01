@@ -6,7 +6,7 @@ from flask import (
 from datetime import datetime
 import requests
 from services.verificaciones import usuario_es_admin
-from services.reservas import obtener_reservas_admin
+from services.reservas import obtener_reservas_admin, editar_reserva
 from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 dashboard_bp = Blueprint(
@@ -138,7 +138,7 @@ def menu():
     )
 
 
-@dashboard_bp.route("/reservas")
+@dashboard_bp.route("/reservas", methods=["GET","POST"])
 def reservas():
 
     if not usuario_es_admin():
@@ -146,18 +146,48 @@ def reservas():
 
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
 
-    reservas_todas = obtener_reservas_admin(limit=100, cookies={BACKEND_SESSION_COOKIE_NAME: data}).get("reservas", [])
+    if request.method == "POST":
+
+        id_reserva = request.form.get("id_reserva")
+
+        body = {
+            "estado_reserva": request.form.get("estado_reserva"),
+            "fecha": request.form.get("fecha"),
+            "hora_reserva": request.form.get("hora_reserva"),
+            "comensales": int(request.form.get("comensales")),
+            "interior": request.form.get("interior") == "True"
+        }
+
+        editar_reserva(
+            id_reserva,
+            body,
+            {BACKEND_SESSION_COOKIE_NAME: data}
+        )
+
+        return redirect("/dashboard/reservas")
+
+    reservas_todas = obtener_reservas_admin(
+        limit=100,
+        cookies={BACKEND_SESSION_COOKIE_NAME: data}
+    ).get("reservas", [])
+
     reservas_data = []
 
     for reserva in reservas_todas:
-        reserva_vigente = datetime.strptime(reserva["fecha"] + " " + reserva["hora_reserva"], "%Y-%m-%d %H:%M:%S") > datetime.now()
-        if reserva_vigente: continue
+
+        reserva_vigente = (
+            datetime.strptime(
+                reserva["fecha"] + " " + reserva["hora_reserva"],
+                "%Y-%m-%d %H:%M:%S"
+            ) > datetime.now()
+        )
+
+        if reserva_vigente:
+            continue
+
         reservas_data.append({
-
             "id": reserva["id_reserva"],
-
             "cells": [
-
                 reserva["id_reserva"],
                 reserva["id_usuario"],
                 reserva["estado_reserva"],
@@ -166,15 +196,27 @@ def reservas():
                 "Interior" if reserva["interior"] else "Exterior",
                 reserva["comensales"],
                 reserva["id_mesa"],
-
             ]
         })
 
+    reserva_editar = None
 
+    edit_id = request.args.get("edit")
+
+    if edit_id:
+
+        response = requests.get(
+            f"{API_BASE_URL}/reservas/{edit_id}",
+            cookies={BACKEND_SESSION_COOKIE_NAME: data}
+        )
+
+        if response.status_code == 200:
+            reserva_editar = response.json()["data"]
 
     return render_template(
         "dashboard/reservas.html",
-        reservas=reservas_data
+        reservas=reservas_data,
+        reserva_editar=reserva_editar
     )
 
 @dashboard_bp.route("/reseñas")

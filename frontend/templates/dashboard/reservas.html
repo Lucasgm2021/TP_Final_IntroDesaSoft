@@ -15,5 +15,125 @@
         row_height=50
     ) }}
 
+    {% if reserva_editar %}
+
+<div class="modal-overlay">
+
+    <form method="POST" class="modal-form">
+
+        <input
+            type="hidden"
+            name="id_reserva"
+            value="{{ reserva_editar.id_reserva }}"
+        >
+
+        <h2>
+            Editar Reserva #{{ reserva_editar.id_reserva }}
+        </h2>
+
+        {{ input_comp(
+            name="fecha",
+            type="date",
+            label="Fecha",
+            value=reserva_editar.fecha,
+            width="100%"
+        ) }}
+
+        {{ input_comp(
+            name="hora_reserva",
+            type="time",
+            label="Hora",
+            value=reserva_editar.hora_reserva[:5],
+            width="100%"
+        ) }}
+
+        {{ input_comp(
+            name="comensales",
+            type="number",
+            label="Comensales",
+            value=reserva_editar.comensales,
+            width="100%"
+        ) }}
+
+        <label>
+            Estado
+        </label>
+
+        <select name="estado_reserva">
+
+            <option
+                value="pendiente"
+                {% if reserva_editar.estado_reserva == "pendiente" %}
+                selected
+                {% endif %}
+            >
+                Pendiente
+            </option>
+
+            <option
+                value="confirmada"
+                {% if reserva_editar.estado_reserva == "confirmada" %}
+                selected
+                {% endif %}
+            >
+                Confirmada
+            </option>
+
+            <option
+                value="finalizada"
+                {% if reserva_editar.estado_reserva == "finalizada" %}
+                selected
+                {% endif %}
+            >
+                Finalizada
+            </option>
+
+            <option
+                value="cancelada"
+                {% if reserva_editar.estado_reserva == "cancelada" %}
+                selected
+                {% endif %}
+            >
+                Cancelada
+            </option>
+
+        </select>
+
+        <label>
+
+            <input
+                type="checkbox"
+                name="interior"
+                value="True"
+
+                {% if reserva_editar.interior %}
+                checked
+                {% endif %}
+            >
+
+            Interior
+
+        </label>
+
+        <div>
+
+            <button
+                type="button"
+                onclick="window.location='/dashboard/reservas'"
+            >
+                Cancelar
+            </button>
+
+            <button type="submit">
+                Guardar
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endif %}
 
 {% endblock %}

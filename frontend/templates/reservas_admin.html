@@ -309,6 +309,123 @@
 
                 {% endfor %}
 
+                {% if reserva_editar %}
+
+            <div class="modal-edicion">
+
+                <form method="POST">
+
+                    <input
+                     type="hidden"
+                     name="id_reserva"
+                     value="{{ reserva_editar.id_reserva }}"
+                    >
+
+                    <h2>
+                        Editar reserva #{{ reserva_editar.id_reserva }}
+                    </h2>
+
+                 <label>Fecha</label>
+
+                    <input
+                        type="date"
+                        name="fecha"
+                        value="{{ reserva_editar.fecha }}"
+                    >
+
+                    <label>Hora</label>
+
+                    <input
+                        type="text"
+                        name="hora_reserva"
+                        value="{{ reserva_editar.hora_reserva }}"
+                    >
+
+                    <label>Comensales</label>
+
+                    <input
+                        type="number"
+                        name="comensales"
+                        value="{{ reserva_editar.comensales }}"
+                    >
+
+                    <label>Estado</label>
+
+                    <select name="estado_reserva">
+
+                        <option value="pendiente"
+                            {% if reserva_editar.estado_reserva == "pendiente" %}
+                                selected
+                            {% endif %}
+                        >
+                            Pendiente
+                        </option>
+
+                        <option value="confirmada"
+                            {% if reserva_editar.estado_reserva == "confirmada" %}
+                                selected
+                            {% endif %}
+                        > 
+                            Confirmada
+                        </option>
+
+                        <option value="finalizada"
+                            {% if reserva_editar.estado_reserva == "finalizada" %}
+                                selected
+                            {% endif %}
+                        >
+                            Finalizada
+                        </option>
+
+                        <option value="cancelada"
+                            {% if reserva_editar.estado_reserva == "cancelada" %}
+                                selected
+                            {% endif %}
+                        >
+                            Cancelada
+                        </option>
+
+                    </select>
+
+                    <label>Ubicación</label>
+
+                    <select name="interior">
+
+                        <option value="true"
+                            {% if reserva_editar.interior %}
+                                selected
+                            {% endif %}
+                        >
+                            Interior
+                        </option>
+
+                        <option value="false"
+                            {% if not reserva_editar.interior %}
+                                selected
+                            {% endif %}
+                        >
+                            Exterior
+                        </option>
+
+                    </select>
+
+                    <button type="submit">
+                        Guardar
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="window.location.href='/dashboard/reservas'"
+                    >
+                        Cancelar
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% endif %}
+
             </div>
 
         </div>

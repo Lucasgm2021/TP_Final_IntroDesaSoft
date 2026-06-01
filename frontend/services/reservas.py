@@ -102,3 +102,35 @@ def obtener_reservas_admin(limit,estado_reserva,cookies):
             return {'errores': mensajes,"code":response.status_code}
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
+
+def editar_reserva(id_reserva, data, cookies):
+    try:
+        response = requests.patch(
+            f"{API_BASE_URL}/reservas/{id_reserva}",
+            json=data,
+            timeout=10,
+            cookies=cookies
+        )
+
+        if response.status_code in [200, 201]:
+            return {"ok": True}
+
+        error_data = response.json()
+
+        errores = error_data.get("errors", [])
+
+        mensajes = [
+            e.get("description", e.get("message", "Error desconocido"))
+            for e in errores
+        ]
+
+        return {
+            "ok": False,
+            "errores": mensajes
+        }
+
+    except requests.exceptions.ConnectionError:
+        return {
+            "ok": False,
+            "errores": ["No se pudo conectar con el backend"]
+        }

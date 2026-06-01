@@ -27,7 +27,7 @@ function eliminarPlato(id){
 
 
 function editarReserva(id){
-
+    
     window.location.href =
-        `/dashboard?edit=${id}`
+        `/dashboard/reservas?edit=${id}`
 }
