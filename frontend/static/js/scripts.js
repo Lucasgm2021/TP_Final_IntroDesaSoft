@@ -24,3 +24,10 @@ function eliminarPlato(id){
     window.location.href =
         `/dashboard/menu?eliminar=${id}`
 }
+
+
+function editarReserva(id){
+
+    window.location.href =
+        `/dashboard?edit=${id}`
+}

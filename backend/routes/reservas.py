@@ -21,6 +21,18 @@ def obtener_reservas():
     res,status = servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado,id_usuario)
     return jsonify(res),status
 
+
+@reservas_bp.route("/<id_reserva>", methods=["GET"])
+def obtener_reserva_id(id_reserva):
+    is_user, error = check_usuario_es_admin()
+
+    if not is_user:
+        respuesta, status = error
+        return jsonify(respuesta), status
+
+    res,status = servicios_reservas.obtener_reserva_con_id(id_reserva)
+    return jsonify(res),status
+
 #GET /mesas/disponibles. Sin parametros. Devuelve la cantidad de mesas disponibles en ese momento.
 @reservas_bp.route("/mesas/disponibles", methods=["GET"])
 def obtener_mesas_disponibles():

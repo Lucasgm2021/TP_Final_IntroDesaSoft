@@ -23,14 +23,16 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
     limit = int(limit)
     data={}
     if not "id_usuario" in data:
-        id_usuario = session["id_usuario"]
+        if not session["es_admin"]:
+            id_usuario = session["id_usuario"]
     else:
         if data["id_usuario"] != session["id_usuario"] and not session["es_admin"]:
             return error_msg(403,"Permisoos insuficientes",description="No puedes crear una reserva para otro usuario.")
         id_usuario = data["id_usuario"]
 
-    id_usuario = int(id_usuario)
-    data["id_usuario"] = id_usuario    
+    if id_usuario:
+        id_usuario = int(id_usuario)
+        data["id_usuario"] = id_usuario    
 
     if fecha:
         data["fecha"]=fecha
@@ -62,6 +64,16 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
     
 
     return reservas, total_reservas
+
+def obtener_reserva_con_id(id_reserva):
+    try:
+        result = queries_reservas.obtener_reserva_por_id(id_reserva)
+        if not result:
+            return error_msg(404,"Error: reserva no encontrada",description="No existe una reserva con ese ID.")
+    except:
+        return error_msg(500,"Error obteniendo reserva",description="Ha ocurrido un error en el servidor.")
+    reserva = {**result, "fecha": result["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(result["hora_reserva"]), "qr_expiracion": str(result["qr_expiracion"])}
+    return {"data": reserva},200
 
 def obtener_mesas_disponibles():
     #total de mesas - mesas usadas en un determinado momento = mesas disponibles en ese momento

@@ -3,8 +3,10 @@ from flask import (
     render_template,
     redirect, session, request
 )
+from datetime import datetime
 import requests
 from services.verificaciones import usuario_es_admin
+from services.reservas import obtener_reservas_admin
 from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 dashboard_bp = Blueprint(
@@ -20,38 +22,45 @@ def home():
     if not usuario_es_admin():
         return redirect("auth.login")
 
-    data = session.get(FRONTEND_COOKIE_CLAVE) or ''
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE) or ''}
 
-    response = requests.get(
-        f'{API_BASE_URL}/reservas/',
-        cookies={BACKEND_SESSION_COOKIE_NAME: data}
-    )
-
-    reservas_todas = response.json()["reservas"]
-
+    reservas_todas = obtener_reservas_admin(limit=100, cookies=cookies,estado_reserva="pendiente").get("reservas", [])
     reservas_data = []
 
     for reserva in reservas_todas:
+        #filtrar por estado qr y fecha tambien.
+        estado_qr_no_vigente = reserva["estado_qr"] != "pendiente"
+        qr_expirado = datetime.strptime(reserva["qr_expiracion"], "%Y-%m-%d %H:%M:%S") <= datetime.now()
+        reserva_expirada = datetime.strptime(reserva["fecha"] + " " + reserva["hora_reserva"], "%Y-%m-%d %H:%M:%S") <= datetime.now()
+        if estado_qr_no_vigente or qr_expirado or reserva_expirada: continue
         reservas_data.append({
-
             "id": reserva["id_reserva"],
-
             "cells": [
-
                 reserva["id_reserva"],
                 reserva["id_usuario"],
                 reserva["estado_reserva"],
                 reserva["hora_reserva"],
                 reserva["fecha"],
                 "Interior" if reserva["interior"] else "Exterior",
-                reserva["comensales"],
-                reserva["id_mesa"],
-
+                reserva["comensales"],                reserva["id_mesa"],
             ]
         })
+
+    reserva = None
+
+    edit_id = request.args.get("edit")
+    if edit_id:
+        data = session.get(FRONTEND_COOKIE_CLAVE) or ''
+        response = requests.get(
+            f'{API_BASE_URL}/reservas/{edit_id}',
+            cookies={BACKEND_SESSION_COOKIE_NAME: data}
+        )
+
+        reserva = response.json()["data"]
+        print("data edit:", edit_id,reserva)
     return render_template(
         "dashboard/home.html",
-        reservas=reservas_data
+        reservas=reservas_data,reserva_editar=reserva
     )
 
 @dashboard_bp.route("/menu", methods=["GET", "POST"])
@@ -137,16 +146,12 @@ def reservas():
 
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
 
-    response = requests.get(
-        f'{API_BASE_URL}/reservas/',
-        cookies={BACKEND_SESSION_COOKIE_NAME: data}
-    )
-
-    reservas_todas = response.json()["reservas"]
-
+    reservas_todas = obtener_reservas_admin(limit=100, cookies={BACKEND_SESSION_COOKIE_NAME: data}).get("reservas", [])
     reservas_data = []
 
     for reserva in reservas_todas:
+        reserva_vigente = datetime.strptime(reserva["fecha"] + " " + reserva["hora_reserva"], "%Y-%m-%d %H:%M:%S") > datetime.now()
+        if reserva_vigente: continue
         reservas_data.append({
 
             "id": reserva["id_reserva"],
