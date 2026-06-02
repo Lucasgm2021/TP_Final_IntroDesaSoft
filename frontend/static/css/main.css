@@ -335,3 +335,116 @@ body {
     background-color: #872020;
     padding: 5px 15px 5px 15px;
 }
+
+/* =========================================
+   VISTA DE RESEÑAS PÚBLICAS
+   ========================================= */
+
+/* Contenedor marron oscuro exterior */
+.reseñas-caja-exterior {
+    width: 95%;
+    max-width: 800px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 40px;
+    background-color: #5f4436;
+    border-radius: 0px;
+    box-sizing: border-box;
+}
+
+/* Título de reseñas */
+.reseñas-titulo {
+    font-family: 'ArefRuqaa', serif;
+    font-size: 2.2rem;
+    color: black;
+    margin: 0;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* Envuelve la caja clara para obligarla a estirarse */
+.reseñas-contenedor-interior {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Caja interior clara con scroll */
+.reseñas-caja-interior {
+    background-color: #8d6a4e;
+    border-radius: 15px;
+    padding: 25px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-grow: 1;
+    overflow-y: auto;
+    box-shadow: inset 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Lista que agrupa las reseñas (reemplaza los gap y flexbox) */
+.reseñas-lista {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Tarjeta individual de cada reseña */
+.reseña-tarjeta {
+    background-color: rgba(255, 255, 255, 0.76);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Fila para las estrellas y la fecha */
+.reseña-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Textos dentro del header de la tarjeta */
+.reseña-estrellas {
+    font-size: 1.1em;
+    color: #444;
+}
+
+.reseña-fecha {
+    color: #2d3947;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* Comentario dentro de la caja azul */
+.reseña-comentario {
+    background-color: #2d3947;
+    color: white;
+    margin: 0;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1.05em;
+}
+
+.estrellas-caja {
+    display: inline-block;
+    position: relative;
+}
+
+/* Las 5 estrellas grises/apagadas de fondo */
+.estrellas-fondo {
+    opacity: 0.3;
+}
+
+/* Las 5 estrellas encendidas superpuestas */
+.estrellas-progreso {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden; 
+}

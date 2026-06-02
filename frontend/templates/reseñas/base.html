@@ -2,47 +2,50 @@
 <html lang="es">
 
 <head>
+    
     <meta charset="UTF-8">
-    
-    <title>
-        Reseñas-Puerto Hermoso
-    </title>
-
+    <title>Reseñas - Puerto Hermoso</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    
+
 </head>
 
-<body class="auth-body" style="background-image: url('/static/images/reseñas/background_reseñas_img.png');">
+<body class="auth-body" style="background-image: url('/static/images/inicio/background_img.png');">
 
     <div class="auth-overlay"></div>
 
     <main class="auth-layout">
 
-        <section class="auth-card dropshadow" style="width: 90%; max-width: 600px; padding: 30px;">
+        <section class="auth-card dropshadow reseñas-caja-exterior">
 
-            <div class="auth-header" style="display: flex; align-items: center; justify-content: center; position: relative;">
+            <div class="auth-header" style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 30px;">
                 
                 {% from "componentes/circle_comp.html" import circle_comp %}
                 <div style="position: absolute; left: 0;">
-                    {{ circle_comp(size=40, type=3, func="window.location.href='/'", text="<") }}
+                    {{ circle_comp(size=40, type=3, func="volverAlInicio()", text="<") }}
                 </div>
 
-                <h2 class="puerto-hermoso" style="font-size: 3rem;color: black;">
+                <h2 class="reseñas-titulo">
                     RESEÑAS
                 </h2>
 
             </div>
 
-            <div class="auth-content" style="overflow-y: auto; max-height: 60vh; width: 100%;">
+            <div class="reseñas-contenedor-interior">
                 
-                {% block content %}
-                {% endblock %}
+                <div class="reseñas-caja-interior">
+                    
+                    {% block content %}
+                    {% endblock %}
+
+                </div>
 
             </div>
 
         </section>
 
     </main>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
 </body>
 

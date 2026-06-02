@@ -13,3 +13,7 @@ function eliminarPlato(id){
     window.location.href =
         `/dashboard/menu?eliminar=${id}`
 }
+
+function volverAlInicio() {
+    window.location.href = '/';
+}
