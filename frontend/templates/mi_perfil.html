@@ -1,0 +1,72 @@
+{% extends "auth/base.html" %}
+
+{% block head %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/mi_perfil.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% from "componentes/input_comp.html" import input_comp %}
+{% from "componentes/button1_comp.html" import button1_comp %}
+{% from "componentes/button3_comp.html" import button3_comp %}
+
+<h2>Mis datos</h2>
+
+<form class="perfil-form" method="POST">
+
+    {{ input_comp(
+        name="email",
+        type="email",
+        value=usuario.email,
+        label="EMAIL",
+        placeholder="Ingrese el email",
+        height="35px",
+        width="500px"
+    ) }}
+
+    {{ input_comp(
+        name="password",
+        type="password",
+        value=usuario.password,
+        label="CONTRASEÑA",
+        placeholder="Ingrese la contraseña",
+        height="35px",
+        width="500px"
+    ) }}
+
+    <div class="perfil-buttons">
+
+        {{ button1_comp(
+            text="GUARDAR CAMBIOS",
+            height=55,
+            type="submit"
+        ) }}
+
+    </div>
+
+</form>
+<form class="eliminar-form" method="POST" action="/usuarios/cliente/mi_perfil/eliminar">
+    {{ button3_comp(
+        text="ELIMINAR CUENTA",
+        height=55,
+        type=2,
+        func="return confirm('¿Está seguro que desea eliminar su cuenta?')"
+    ) }}
+</form>
+
+<script>
+function confirmarEliminarCuenta() {
+    if (confirm("¿Está seguro que desea eliminar su cuenta?")) {
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/usuarios/cliente/mi_perfil/eliminar";
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+
+{% endblock %}
