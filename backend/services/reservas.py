@@ -151,7 +151,7 @@ def crear_reserva(data):
             "url_cancelar": f"http://localhost:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
 
-        #servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)
+        servicios_mail.enviar_mail_con_qr_mailjet(mail_usuario,asunto,datos_mail,mail_template)
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except Exception as e:
         return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")
