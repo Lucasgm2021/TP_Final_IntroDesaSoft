@@ -123,6 +123,7 @@ body {
     border-bottom-width: 2px;
     border-bottom-style: solid;
     font-weight: bold;
+    word-break: break-word;
 }
 
 .table-row {
@@ -239,13 +240,19 @@ body {
 }
 
 .auth-content {
-
     width: 100%;
-
     display: flex;
     flex-direction: column;
-
     align-items: center;
+}
+
+.auth-form {
+        gap:20px;
+        width: 100%;
+        height: 70%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 }
 
 .sidebar-top {
@@ -300,6 +307,69 @@ body {
     padding: 40px;
 
     box-sizing: border-box;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-card {
+    width: 700px;
+    background: #1d2732;
+    border-radius: 24px;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.modal-subtitle {
+    opacity: 0.7;
+    font-size: 1rem;
+}
+
+.modal-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 1.1rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+    margin-top: 10px;
+}
+
+.table-add-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
 }
 
 /* genericos */
@@ -559,4 +629,41 @@ body {
 .menu-modal-badge--alerta {
     background: #4a1a1a;
     color: #CF4444;
+}
+
+.parent {
+    min-width: 100%;
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+}
+
+.div1 { grid-area: 1 / 1 / 4 / 4; }
+.div2 { grid-area: 4 / 1 / 5 / 5; }
+.div3 { grid-area: 1 / 4 / 4 / 5; }
+
+.stat-card {
+    background: #3A424D;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.stat-label {
+    color: #CCB499;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.stat-number {
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    line-height: 1;
 }

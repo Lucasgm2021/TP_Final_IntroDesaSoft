@@ -16,8 +16,9 @@
 
     func_delete="",
     func_edit="",
+    func_check="",
 
-    checkmark_text="Acep"
+    checkmark_text="Estado"
 ) %}
 
 {% set btn_size = (row_height * 0.6) | int %}
@@ -45,6 +46,7 @@
         <thead
             style="
                 background: {{ color_header }};
+                word-break: break-word;
             "
         >
 
@@ -74,8 +76,7 @@
                 {% if n_actions > 0 %}
                 <th
                     style="
-                        width: {{ (n_actions * btn_size) + (n_actions * 6) + 20 }}px;
-
+                        width: {{ [((n_actions * btn_size) + (n_actions * 6) + 20), 80] | max }}px;
                         border-left:
                             1px solid {{ color_border }};
                     "
@@ -85,7 +86,7 @@
                         class="table-actions"
                         style="
                             height:
-                                calc({{ row_height }}px * 0.78);
+                                calc({{ row_height }}px * 0.75);
                         "
                     >
 
@@ -173,6 +174,7 @@
                 {% if n_actions > 0 %}
                 <td
                     style="
+
                         border-top:
                             1px solid {{ color_border }};
 
@@ -190,7 +192,26 @@
                     >
 
                         {% if show_check %}
-                        <input type="checkbox">
+                        <button
+                            class="button-icon button-check"
+                            type="button"
+                            onclick="{{ func_check }}('{{ row.id }}', {{ 'true' if row.checked else 'false' }})"
+
+                            style="
+                                width: {{ btn_size }}px;
+                                height: {{ btn_size }}px;
+
+                                border-radius: 5px;
+
+                                background: {{ '#6abf69' if row.checked else '#cf4444' }};
+
+                                color: white;
+
+                                font-size: calc({{ btn_size }}px * 0.6);
+                            "
+                        >
+                            {{ 'Apr' if row.checked else 'X' }}
+                        </button>
                         {% endif %}
 
                         {% if show_delete %}

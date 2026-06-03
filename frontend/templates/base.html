@@ -1,7 +1,19 @@
 {% extends "auth/base.html" %}
 {% block content %}
 
-<a href="auth/login">LOGIN</a>
-<a href="auth/register">Register</a>
+{% if error %}
+
+<p class="error">
+    {{ error }}
+</p>
+
+{% endif %}
+
+{% if not usuario_logueado %}
+    <a href="auth/login">Login</a>
+    <a href="auth/register">Register</a>
+{% else %}
+    <a href="auth/logout">Log out</a>
+{% endif %}
 
 {% endblock %}
