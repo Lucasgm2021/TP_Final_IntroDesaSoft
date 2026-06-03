@@ -9,7 +9,8 @@
     width="400px",
     height="60px",
 
-    required=False
+    required=False,
+    disabled=False
 ) %}
     {% set min_width = height|replace("px", "")|int * ((placeholder|length * 0.25) + 2) %}
 
@@ -41,6 +42,9 @@
     <input
             {% if required %}
                 required
+            {% endif %}
+            {% if disabled %}
+                disabled
             {% endif %}
             class="dropshadow input-default"
             type="{{ type }}"

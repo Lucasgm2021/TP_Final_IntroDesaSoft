@@ -24,7 +24,7 @@ def register():
         return render_template('auth/register.html')
 
     resp = requests.post(
-        'http://localhost:5005/sesion/register',
+        'http://127.0.0.1:5005/sesion/register',
         json={
             'email': request.form['email'],
             'password': request.form['password']
@@ -46,7 +46,7 @@ def login():
         return render_template('auth/login.html')
 
     resp = requests.post(
-        'http://localhost:5005/sesion/login',
+        'http://127.0.0.1:5005/sesion/login',
         json={
             'email': request.form['email'],
             'password': request.form['password']
@@ -63,7 +63,7 @@ def login():
 def logout():
     data = session.get('usuario') or ''
     requests.post(
-        'http://localhost:5005/sesion/logout',
+        'http://127.0.0.1:5005/sesion/logout',
         cookies={'session': data}
     )
     session.clear()

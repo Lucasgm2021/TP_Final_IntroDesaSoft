@@ -46,7 +46,7 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
         limit,
         offset,
         total_reservas,
-        "http://localhost:5000/reservas",
+        "http://127.0.0.1:5000/reservas",
         "reservas",
         200,
         data
@@ -134,8 +134,8 @@ def crear_reserva(data):
         mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
         datos_mail = {
-            "qr_data": f"http://localhost:5000/reservas/mostrar_confirmacion?code={uuid_qr}",
-            "url_cancelar": f"http://localhost:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
+            "qr_data": f"http://127.0.0.1:5000/reservas/mostrar_confirmacion?code={uuid_qr}",
+            "url_cancelar": f"http://127.0.0.1:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
 
         servicios_mail.enviar_mail_con_qr(mail_usuario,asunto,datos_mail,mail_template)

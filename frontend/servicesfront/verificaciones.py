@@ -5,7 +5,7 @@ def usuario_es_valido():
     data = session.get("usuario") or ''
 
     sesion = requests.get(
-        f'http://localhost:5005/sesion/perfil',
+        f'http://127.0.0.1:5005/sesion/perfil',
         cookies={'session': data }
     )
 
@@ -18,7 +18,7 @@ def usuario_es_admin():
     data = session.get("usuario") or ''
 
     sesion = requests.get(
-        f'http://localhost:5005/sesion/perfil',
+        f'http://127.0.0.1:5005/sesion/perfil',
         cookies={'session': data }
     )
 
