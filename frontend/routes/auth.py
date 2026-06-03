@@ -31,7 +31,7 @@ def register():
         }
     )
 
-    if resp.status_code == 201:
+    if resp.status_code in (200, 201):
         session['usuario'] = resp.cookies.get('session')
         return redirect('profile')
     elif resp.status_code == 409:
