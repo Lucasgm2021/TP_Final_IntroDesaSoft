@@ -29,7 +29,7 @@
         {{ button2_comp(
             text="VER MENÚ",
             height=50,
-            func="document.getElementById('seccion-menu').scrollIntoView({behavior:'smooth'})"
+            func="window.location.href='/menu'"
         ) }}
 
         <div id="hero-reservas">
@@ -174,7 +174,7 @@
         <p>Thames 1810, Palermo Soho, Buenos Aires | 1154171123 | reservas.puertohermoso@gmail.com</p>
 
         <a href="#">
-            <img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram" width="24">
+            <img src="{{ url_for('static', filename='images/inicio/instagram.png') }}" alt="Instagram" width="24">
         </a>
 
     </footer>
