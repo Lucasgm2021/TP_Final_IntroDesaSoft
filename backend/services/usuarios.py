@@ -85,12 +85,20 @@ def obtener_usuario_email_service(email):
     return usuario, 200
 
 def obtener_mi_perfil_service():
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+    
     usuario = obtener_usuario_id(session["id_usuario"])
     if not usuario:
         return error_msg(404, "Usuario no encontrado")
     return usuario, 200
 
 def actualizar_mi_perfil_service(data):
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+    
     for campo in ["nuevo_email", "nueva_contraseña"]:
         if campo not in data:
             return error_msg(400, f"Falta {campo}")
@@ -98,13 +106,15 @@ def actualizar_mi_perfil_service(data):
     nuevo_email = data["nuevo_email"]
     nueva_contraseña = data["nueva_contraseña"]
     #el formulario del front tiene como default el email actual (igual la contraseña), si el email no se cambia, no hace falta validar ni verificar que ya existe
-    if nuevo_email != session["email"]: 
+    if nuevo_email != session.get("email"): 
         if not validar_email(nuevo_email):
             return error_msg(400, "Email no válido")
         if obtener_usuario_email(nuevo_email) :
             return error_msg(409, "Ya hay un usuario registrado con ese email")
 
     actualizar_mi_perfil(session["id_usuario"],nuevo_email,nueva_contraseña)
+    session["email"] = nuevo_email
+    session["password"] = nueva_contraseña
 
     return {
         "message": (
@@ -153,6 +163,24 @@ def eliminar_usuario_service(email):
             "email": email
         }
     }, 200
+
+def eliminar_mi_perfil_service():
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+    
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+
+    borrar_usuario(usuario["id_usuario"])
+    session.clear()
+
+    return {
+        "message": (
+            "Perfil eliminado"
+        )
+    }, 200
+      
 
 def validar_email(email):
     patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\.[a-zA-Z]+$"
