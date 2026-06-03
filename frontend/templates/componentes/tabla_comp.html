@@ -215,7 +215,9 @@
                             class="button-icon button-edit"
 
                             onclick="{{ func_edit }}('{{ row.id }}')"
-
+                            {% if not row.get("vigente","ok") %}
+                            disabled
+                            {% endif %}
                             style="
                                 width: {{ btn_size }}px;
                                 height: {{ btn_size }}px;

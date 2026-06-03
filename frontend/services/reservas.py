@@ -82,7 +82,7 @@ def cancelar_reserva(uuid_reserva,cookies):
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
 
-def obtener_reservas_admin(limit,estado_reserva,cookies):
+def obtener_reservas_admin(limit,cookies,estado_reserva=None):
     try:
         params = {'_limit': limit}
         if estado_reserva:

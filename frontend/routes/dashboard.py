@@ -175,16 +175,11 @@ def reservas():
 
     for reserva in reservas_todas:
 
-        reserva_vigente = (
-            datetime.strptime(
+        reserva_vigente = datetime.strptime(
                 reserva["fecha"] + " " + reserva["hora_reserva"],
                 "%Y-%m-%d %H:%M:%S"
-            ) > datetime.now()
-        )
-
-        if reserva_vigente:
-            continue
-
+            ) > datetime.now() and reserva["estado_reserva"] == "pendiente"
+        
         reservas_data.append({
             "id": reserva["id_reserva"],
             "cells": [
@@ -196,15 +191,15 @@ def reservas():
                 "Interior" if reserva["interior"] else "Exterior",
                 reserva["comensales"],
                 reserva["id_mesa"],
-            ]
+            ],
+            "vigente": reserva_vigente
         })
 
     reserva_editar = None
 
     edit_id = request.args.get("edit")
-
+    reservas_data.sort(key=lambda x: (x["vigente"], x["cells"][4] + x["cells"][3]), reverse=True)
     if edit_id:
-
         response = requests.get(
             f"{API_BASE_URL}/reservas/{edit_id}",
             cookies={BACKEND_SESSION_COOKIE_NAME: data}
