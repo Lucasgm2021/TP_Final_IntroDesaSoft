@@ -1,5 +1,5 @@
-from flask import Blueprint, request, render_template,url_for,jsonify, flash, redirect, session
-from services.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva
+from flask import Blueprint, request, render_template,url_for, flash, redirect, session
+from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva
 from datetime import datetime
 from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 

@@ -13,7 +13,6 @@ def enviar_mail_con_qr(mail_destino,asunto,mail_data,ruta_template):
 
     mail_restaurante = os.getenv("MAIL_ACCOUNT")
     app_password = os.getenv("MAIL_PASS")
-    print("app password",app_password)
     msg = MIMEMultipart("related")
     msg["From"] = mail_restaurante
     msg["To"] = mail_destino
@@ -76,17 +75,12 @@ def enviar_mail_con_qr_mailjet(mail_destino,asunto,mail_data,ruta_template):
     msg.attach(image_mime)
 
     with smtplib.SMTP(mail_server, mail_port, timeout=5) as server:
-        print("Connection established. Sending EHLO...")
         server.ehlo()
-        
-        print("Upgrading connection to STARTTLS...")
+
         server.starttls()  
         server.ehlo()
-        
-        print("Logging in...")
+
         server.login(mail_restaurante, app_password)
-        
-        print("Sending message...")
+
         server.send_message(msg)
             
-    print("🚀 Mail sent successfully!")

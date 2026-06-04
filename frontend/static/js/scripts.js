@@ -51,9 +51,7 @@ function eliminarInfo(clave) {
 function toggleResenia(id, aprobada) {
     if (aprobada) {
         window.location.href = `/dashboard/reseñas?desaprobar=${id}`;
-        console.log(`/dashboard/reseñas?desaprobar=${id}`)
     } else {
         window.location.href = `/dashboard/reseñas?aprobar=${id}`;
-        console.log(`/dashboard/reseñas?desaprobar=${id}`)
     }
 }

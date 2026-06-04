@@ -4,15 +4,6 @@
 
 <div style="display: flex; flex-direction: row; justify-content: space-between;">
     <h1 style="width: 70%">RESERVAS</h1>
-    {% from "componentes/circle_comp.html" import circle_comp %}
-    <div class="table-add-btn" style="margin-bottom: 30px; right: 0;">
-        {{ circle_comp(
-            text="+",
-            size=50,
-            type=1,
-            func="window.location.href='/dashboard/reservas?nueva=1'"
-        ) }}
-    </div>
 </div>
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
@@ -25,7 +16,6 @@
         columns=["ID", "Id_usuario","Estado","Hora","Fecha","Ubicacion","Cant.","Mesas"],
         rows=reservas,
         row_height=50,
-        show_delete=true,
         show_edit=true,
         func_edit="editarReserva"
     ) }}

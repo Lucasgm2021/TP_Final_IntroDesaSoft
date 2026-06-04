@@ -5,9 +5,12 @@ from flask import (
 )
 from datetime import date, datetime
 import requests
-from services.verificaciones import usuario_es_admin
-from services.reservas import obtener_reservas_admin, editar_reserva
+
+from servicesfront.reservas import editar_reserva, obtener_reservas_admin
+from servicesfront.verificaciones import usuario_es_admin
 from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
+
+BACKEND_URL = "http://127.0.0.1:5005"
 
 dashboard_bp = Blueprint(
     "dashboard",
@@ -25,8 +28,8 @@ def home():
     hoy = date.today().isoformat()
 
     r_reservas = requests.get(
-        f"http://127.0.0.1:5005/reservas/",
-        cookies={"session": auth}
+        f"{BACKEND_URL}/reservas/",
+        cookies={"backend_session": auth}
     )
     todas = r_reservas.json().get("reservas", [])
     reservas_hoy = [r for r in todas if r["fecha"] == hoy]
@@ -45,14 +48,14 @@ def home():
         })
 
     r_reseñas = requests.get(
-        "http://127.0.0.1:5005/reseñas/todas",
-        cookies={"session": auth}
+        f"{BACKEND_URL}/reseñas/todas",
+        cookies={"backend_session": auth}
     )
     reseñas_todas = r_reseñas.json().get("data", [])
     pendientes = sum(1 for r in reseñas_todas if r["estado"] == "no_aprobada")
     aprobadas = sum(1 for r in reseñas_todas if r["estado"] == "aprobada")
 
-    r_menu = requests.get("http://127.0.0.1:5005/menu")
+    r_menu = requests.get(f"{BACKEND_URL}/menu")
     platos = r_menu.json().get("data", [])
     sin_stock = sum(1 for p in platos if not p["hay_stock"])
 
@@ -80,17 +83,17 @@ def menu():
             id_plato = request.form.get("id_plato")
             body = _body_plato(request.form)
             requests.put(
-                f"http://127.0.0.1:5005/menu/{id_plato}",
+                f"{BACKEND_URL}/menu/{id_plato}",
                 json=body,
-                cookies={"session": auth}
+                cookies={"backend_session": auth}
             )
 
         elif accion == "crear":
             body = _body_plato(request.form)
             requests.post(
-                "http://127.0.0.1:5005/menu",
+                f"{BACKEND_URL}/menu",
                 json=body,
-                cookies={"session": auth}
+                cookies={"backend_session": auth}
             )
 
         return redirect("/dashboard/menu")
@@ -98,12 +101,12 @@ def menu():
     eliminar_id = request.args.get("eliminar")
     if eliminar_id:
         requests.delete(
-            f"http://127.0.0.1:5005/menu/{eliminar_id}",
-            cookies={"session": auth}
+            f"{BACKEND_URL}/menu/{eliminar_id}",
+            cookies={"backend_session": auth}
         )
         return redirect("/dashboard/menu")
 
-    response = requests.get("http://127.0.0.1:5005/menu")
+    response = requests.get(f"{BACKEND_URL}/menu")
     data = response.json()["data"]
 
     menu_rows = []
@@ -123,8 +126,8 @@ def menu():
     edit_id = request.args.get("edit")
     if edit_id:
         r = requests.get(
-            f"http://127.0.0.1:5005/menu/{edit_id}",
-            cookies={"session": auth}
+            f"{BACKEND_URL}/menu/{edit_id}",
+            cookies={"backend_session": auth}
         )
         plato_editar = r.json()["data"]
 
@@ -162,24 +165,24 @@ def reseñas():
 
     if aprobar_id:
         requests.patch(
-            f"http://127.0.0.1:5005/reseñas/{aprobar_id}",
+            f"{BACKEND_URL}/reseñas/{aprobar_id}",
             json={"estado": "aprobada"},
-            cookies={"session": auth}
+            cookies={"backend_session": auth}
         )
         return redirect("/dashboard/reseñas")
 
     if desaprobar_id:
         requests.patch(
-            f"http://127.0.0.1:5005/reseñas/{desaprobar_id}",
+            f"{BACKEND_URL}/reseñas/{desaprobar_id}",
             json={"estado": "no_aprobada"},
-            cookies={"session": auth}
+            cookies={"backend_session": auth}
         )
         return redirect("/dashboard/reseñas")
 
 
     response = requests.get(
-        "http://127.0.0.1:5005/reseñas/todas",
-        cookies={"session": auth}
+        f"{BACKEND_URL}/reseñas/todas",
+        cookies={"backend_session": auth}
     )
     reseñas_data = response.json()["data"]
 
@@ -220,9 +223,9 @@ def configuracion():
                 "valor": request.form.get("valor"),
             }
             requests.patch(
-                f"http://127.0.0.1:5005/info_frontend/{clave_original}",
+                f"{BACKEND_URL}/info_frontend/{clave_original}",
                 json=body,
-                cookies={"session": auth}
+                cookies={"backend_session": auth}
             )
 
         elif accion == "crear":
@@ -231,9 +234,9 @@ def configuracion():
                 "valor": request.form.get("valor"),
             }
             requests.post(
-                "http://127.0.0.1:5005/info_frontend",
+                f"{BACKEND_URL}/info_frontend",
                 json=body,
-                cookies={"session": auth}
+                cookies={"backend_session": auth}
             )
 
         return redirect("/dashboard/configuracion/")
@@ -241,14 +244,14 @@ def configuracion():
     eliminar_clave = request.args.get("eliminar")
     if eliminar_clave:
         requests.delete(
-            f"http://127.0.0.1:5005/info_frontend/{eliminar_clave}",
-            cookies={"session": auth}
+            f"{BACKEND_URL}/info_frontend/{eliminar_clave}",
+            cookies={"backend_session": auth}
         )
         return redirect("/dashboard/configuracion/")
 
     response = requests.get(
-        "http://127.0.0.1:5005/info_frontend",
-        cookies={"session": auth}
+        f"{BACKEND_URL}/info_frontend",
+        cookies={"backend_session": auth}
     )
     informacion = response.json()["data"]
 
@@ -266,8 +269,8 @@ def configuracion():
     edit_clave = request.args.get("edit")
     if edit_clave:
         r = requests.get(
-            f"http://127.0.0.1:5005/info_frontend/{edit_clave}",
-            cookies={"session": auth}
+            f"{BACKEND_URL}/info_frontend/{edit_clave}",
+            cookies={"backend_session": auth}
         )
         valor = r.json().get(edit_clave)
         if valor is not None:
@@ -282,58 +285,79 @@ def configuracion():
         nueva=nueva
     )
 
-@dashboard_bp.route("/reseñas")
-def reseñas():
 
+@dashboard_bp.route("/reservas", methods=["GET", "POST"])
+def reservas():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect("auth.login")
 
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
 
-    response = requests.get(
-        f'{API_BASE_URL}/reseñas/todas',
+    if request.method == "POST":
+        id_reserva = request.form.get("id_reserva")
+
+        body = {
+            "estado_reserva": request.form.get("estado_reserva"),
+            "fecha": request.form.get("fecha"),
+            "hora_reserva": request.form.get("hora_reserva"),
+            "comensales": int(request.form.get("comensales")),
+            "interior": request.form.get("interior") == "True"
+        }
+
+        editar_reserva(
+            id_reserva,
+            body,
+            {BACKEND_SESSION_COOKIE_NAME: data}
+        )
+
+        return redirect("/dashboard/reservas")
+
+    reservas_todas = obtener_reservas_admin(
+        limit=100,
         cookies={BACKEND_SESSION_COOKIE_NAME: data}
-    )
+    ).get("reservas", [])
 
-    reseñas = response.json()["data"]
+    reservas_data = []
 
-    resenias = []
+    for reserva in reservas_todas:
+        reserva_vigente = datetime.strptime(
+            reserva["fecha"] + " " + reserva["hora_reserva"],
+            "%Y-%m-%d %H:%M:%S"
+        ) > datetime.now() and reserva["estado_reserva"] == "pendiente"
 
-    for reseña in reseñas:
-        resenias.append({
-
-            "id": reseña["id_reseña"],
-
+        reservas_data.append({
+            "id": reserva["id_reserva"],
             "cells": [
-
-                reseña["id_reseña"],
-                reseña["id_reserva"],
-                reseña["comentario"],
-                reseña["calificacion"],
-                reseña["estado"],
-                reseña["id_usuario"],
-                reseña["email"]
-
-            ]
+                reserva["id_reserva"],
+                reserva["id_usuario"],
+                reserva["estado_reserva"],
+                reserva["hora_reserva"],
+                reserva["fecha"],
+                "Interior" if reserva["interior"] else "Exterior",
+                reserva["comensales"],
+                reserva["id_mesa"],
+            ],
+            "vigente": reserva_vigente
         })
 
+    reserva_editar = None
+
+    edit_id = request.args.get("edit")
+    reservas_data.sort(key=lambda x: (x["vigente"], x["cells"][4] + x["cells"][3]), reverse=True)
+    if edit_id:
+        response = requests.get(
+            f"{API_BASE_URL}/reservas/{edit_id}",
+            cookies={BACKEND_SESSION_COOKIE_NAME: data}
+        )
+
+        if response.status_code == 200:
+            reserva_editar = response.json()["data"]
+
     return render_template(
-        "dashboard/reseñas.html",
-        resenias=resenias
+        "dashboard/reservas.html",
+        reservas=reservas_data,
+        reserva_editar=reserva_editar
     )
-
-def _body_reserva(form):
-    return {
-        "id_usuario":     form.get("id_usuario"),
-        "estado_reserva": form.get("estado_reserva"),
-        "hora_reserva":   form.get("hora_reserva"),
-        "fecha":          form.get("fecha"),
-        "interior":       "interior" in form,
-        "comensales":     form.get("comensales"),
-        "id_mesa":        form.get("id_mesa"),
-    }
-
-
 @dashboard_bp.route("/usuarios", methods=["GET", "POST"])
 def usuarios():
     if not usuario_es_admin():
@@ -342,8 +366,8 @@ def usuarios():
     auth = session.get("usuario") or ""
 
     response = requests.get(
-        "http://127.0.0.1:5005/usuarios",
-        cookies={"session": auth}
+        f"{BACKEND_URL}/usuarios",
+        cookies={"backend_session": auth}
     )
     users = response.json()["data"]
 
@@ -374,6 +398,7 @@ def _body_usuario(form):
         body["password"] = password
     return body
 
+
 @dashboard_bp.route("/mesas", methods=["GET", "POST"])
 def mesas():
     if not usuario_es_admin():
@@ -393,7 +418,7 @@ def mesas():
 
         if id_mesa:
             requests.patch(
-                f"http://localhost:5005/mesas/{id_mesa}",
+                f"{BACKEND_URL}/mesas/{id_mesa}",
                 json=body,
                 cookies={'session': data_sesion}
             )
@@ -407,7 +432,7 @@ def mesas():
         return redirect("/dashboard/mesas")
 
     response = requests.get(
-        "http://localhost:5005/mesas",
+        f"{BACKEND_URL}/mesas",
         cookies={'session': data_sesion}
     )
 
@@ -438,7 +463,7 @@ def mesas():
     edit_id = request.args.get("edit")
     if edit_id:
         response_individual = requests.get(
-            f"http://localhost:5005/mesas/{edit_id}",
+            f"{BACKEND_URL}/mesas/{edit_id}",
             cookies={'session': data_sesion}
         )
         mesa_editar = response_individual.json().get("data")
@@ -450,6 +475,7 @@ def mesas():
         crear_nuevo=crear_nuevo
     )
 
+
 @dashboard_bp.route("/mesas/eliminar/<int:id_mesa>")
 def eliminar_mesa_ruta(id_mesa):
     if not usuario_es_admin():
@@ -458,7 +484,7 @@ def eliminar_mesa_ruta(id_mesa):
     data_sesion = session.get("usuario") or ''
 
     requests.delete(
-        f"http://localhost:5005/mesas/{id_mesa}",
+        f"{BACKEND_URL}/mesas/{id_mesa}",
         cookies={'session': data_sesion}
     )
 

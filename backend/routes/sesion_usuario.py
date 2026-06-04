@@ -36,7 +36,6 @@ def logout():
 #temp
 @sesion_usuario_bp.route("/perfil")
 def perfil():
-    print("sesion:", session)
     if "id_usuario" not in session:
         return jsonify({"error": "No iniciaste sesion"}), 401
     return jsonify({
