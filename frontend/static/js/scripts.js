@@ -2,6 +2,17 @@ function comprar_porsche() {
     alert("100 virus detectados!!!");
 }
 
+const selectFecha = document.getElementById('fechaReservaCreacion');
+if (selectFecha) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    selectFecha.setAttribute('min', formattedDate);
+}
+
+
 function editarPlato(id){
 
     window.location.href =
@@ -14,12 +25,11 @@ function eliminarPlato(id){
         `/dashboard/menu?eliminar=${id}`
 }
 
-function editarReserva(id) {
-    window.location.href = `/dashboard/reservas?edit=${id}`;
-}
 
-function eliminarReserva(id) {
-    window.location.href = `/dashboard/reservas?eliminar=${id}`;
+function editarReserva(id){
+
+    window.location.href =
+        `/dashboard/reservas?edit=${id}`
 }
 
 function editarUsuario(id) {
@@ -41,9 +51,7 @@ function eliminarInfo(clave) {
 function toggleResenia(id, aprobada) {
     if (aprobada) {
         window.location.href = `/dashboard/reseñas?desaprobar=${id}`;
-        console.log(`/dashboard/reseñas?desaprobar=${id}`)
     } else {
         window.location.href = `/dashboard/reseñas?aprobar=${id}`;
-        console.log(`/dashboard/reseñas?desaprobar=${id}`)
     }
 }

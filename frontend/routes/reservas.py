@@ -1,0 +1,120 @@
+from flask import Blueprint, request, render_template,url_for, flash, redirect, session
+from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva
+from datetime import datetime
+from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
+
+reserva_bp = Blueprint("reservas",__name__)
+
+@reserva_bp.route("/",methods=["GET","POST"])
+def crear_reserva_form():
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
+    if request.method == "GET":
+        mesas = None
+        fecha = request.args.get("fecha")
+        hora = request.args.get("hora")
+        ubicacion = request.args.get("ubicacion")
+        comensales = request.args.get("comensales")
+        mesas_claves_modificadas = []
+        horarios = [{"id":f"{hora:02d}:00","nombre":f"{hora:02d}:00"} for hora in range(9, 23)]
+        if fecha and hora and ubicacion and comensales:
+            ubicacion_bool = ubicacion == "interior"
+            mesas = obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies)
+            if mesas.get('errors'):
+                for e in resultado.get('errores', ['Error desconocido.']):
+                    flash(e, 'error')
+                mesas = None
+            else:
+                mesas = mesas.get("data")
+                if not mesas:
+                    flash("No hay mesas disponibles para los datos ingresados.", 'info')
+
+            nuevas_claves_dict = {
+                "id_mesa": "id",
+                "numero": "nombre"
+            }
+            mesas_claves_modificadas = [
+                {nuevas_claves_dict.get(clave, clave): valor for clave, valor in mesa.items()}
+                for mesa in mesas
+            ]
+        return render_template("reservas/creacion_reserva.html", mesas=mesas_claves_modificadas, horarios=horarios)
+
+    hora = request.form.get('hora', '').strip()
+    fecha = request.form.get('fecha', '').strip()
+    nro_comensales = int(request.form.get('comensales', 0))
+    interior = request.form.get("ubicacion") == "interior"
+    ids_mesas = request.form.getlist("id_mesas[]")
+    hora_datetime = datetime.strptime(hora, "%H:%M")
+    hora_formateada = hora_datetime.strftime("%H:%M:%S")
+    hora_formateada = hora_formateada[0:2] + ":00:00"
+
+    resultado = crear_reserva(hora_formateada,fecha,nro_comensales,interior,ids_mesas,cookies)
+
+    if resultado.get('ok'):
+        flash('Reserva creada con exito', 'success')
+    else:
+        for e in resultado.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+    return redirect(url_for('reservas.crear_reserva_form'))
+
+@reserva_bp.route("/mis_reservas", methods=["GET"])
+def mis_reservas():
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
+    reservas = obtener_mis_reservas(cookies)
+    if not reservas.get("reservas",[]):
+        for e in reservas.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+        reservas = []
+    else:
+        reservas = reservas.get("reservas",[])
+    return render_template("reservas/mis_reservas.html", reservas=reservas)
+
+@reserva_bp.route("/reservas_admin", methods=["GET"])
+def reservas_admin():
+    return render_template("reservas_admin.html")
+
+@reserva_bp.route("/home_admin", methods=["GET"])
+def home_admin():
+
+    return render_template(
+        "home_admin.html",
+
+        mesas_ocupadas=12,
+        mesas_totales=30,
+
+        estacionamientos_ocupados=8,
+        estacionamientos_totales=20,
+
+        reservas_pendientes=[
+            {
+                "id_reserva": 1,
+                "estado_reserva": "pendiente",
+                "nombre_usuario": "Lionel Messi",
+                "comensales": 4,
+                "fecha": "2026-05-26",
+                "hora_reserva": "21:00:00",
+                "id_mesa": 12,
+                "interior": True
+            },
+            {
+                "id_reserva": 2,
+                "estado_reserva": "pendiente",
+                "nombre_usuario": "Maria Gomez",
+                "comensales": 2,
+                "fecha": "2026-05-26",
+                "hora_reserva": "22:00:00",
+                "id_mesa": 4,
+                "interior": False
+            }
+        ]
+    )
+
+@reserva_bp.route("/cancelar_reserva/<uuid_reserva>", methods=["POST"])
+def cancelar_reserva_route(uuid_reserva):
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
+    resultado = cancelar_reserva(uuid_reserva, cookies)
+    if resultado.get('ok'):
+        flash('Reserva cancelada con exito', 'success')
+    else:
+        for e in resultado.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+    return redirect(url_for('reservas.mis_reservas')) 
