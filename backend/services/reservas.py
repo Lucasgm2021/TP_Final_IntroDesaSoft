@@ -7,6 +7,7 @@ import db.reservas as queries_reservas
 import db.menu as queries_mesas
 import services.mail as servicios_mail
 from services.messages import error_msg, error_msg_lista,paginacion_msg
+from services.mesas import obtener_mesas
 import db.usuarios as queries_usuarios
 
 import db.usuarios as queries_usuarios
@@ -108,7 +109,7 @@ def crear_reserva(data):
     fecha = data.get("fecha")
     hora = data.get("hora")
     nro_comensales = data.get("nro_comensales")    
-    
+    ids_mesas = data.get("ids_mesas", [])
     if not "id_usuario" in data:
         id_usuario = session["id_usuario"]
     else:
@@ -117,20 +118,19 @@ def crear_reserva(data):
         id_usuario = data["id_usuario"]
     errores = []
     fecha_hora = datetime.strptime(fecha + " " + hora, "%Y-%m-%d %H:%M:%S")
-    if fecha_hora <= datetime.now():
-        errores.append("Parametros invalidos","La fecha y hora ingresadas no pueden ser anteriores al instante actual.")  
-    if ":00:00" not in hora:    
-        errores.append("Parametros invalidos","Solo se permiten ingresar horas en punto.")  
-
-    if errores:
-        errores = [{"message":"Parametros invalidos","description": error} for error in errores]
-        return error_msg_lista(errores,400)  
-
-    ids_mesas = data.get("ids_mesas", [])
-    if not ids_mesas:
-        return error_msg(400,"Error: No se seleccionaron mesas",description="Debe seleccionar al menos una mesa para crear la reserva.")
 
     try:
+        mesas = obtener_mesas()
+        capacidades = sorted([mesa["capacidad"] for mesa in mesas if str(mesa["id_mesa"]) in ids_mesas], reverse=True) #ordeno de mayor a menor capacidad.
+        print("Capacidades:", capacidades,nro_comensales,nro_comensales < sum(capacidades[:len(capacidades)-1])+1)
+        #Reviso que la cantidad de comensales minimo requiera a todas las mesas menos la mas chica + 1.
+        if nro_comensales < sum(capacidades[:len(capacidades)-1])+1:
+            return error_msg(400,"Error: Capacidad excedida",description=f"La capacidad de las mesas seleccionadas sobrepasa la cantidad de comensales.")
+        
+        #Reviso que la cantidad de comensales maximo no exceda la capacidad total de las mesas seleccionadas.
+        if nro_comensales > sum(capacidades):
+            return error_msg(400,"Error: Capacidad insuficiente",description=f"La capacidad total de las mesas seleccionadas es {sum(capacidades)}, pero se necesitan {nro_comensales} para acomodar a todos los comensales.")
+
         fecha_hora_mas_30min = fecha_hora + timedelta(minutes=30)
         uuid_qr = str(uuid.uuid4()).replace("-","")
         #creo reserva
