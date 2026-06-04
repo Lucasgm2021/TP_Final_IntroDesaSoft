@@ -17,6 +17,8 @@
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
     {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/select_comp.html" import select_comp %}
 
     {{ tabla_comp(
         id="tabla-delete-edit",
@@ -25,119 +27,119 @@
         row_height=50,
         show_delete=true,
         show_edit=true,
-        func_delete="eliminarReserva",
         func_edit="editarReserva"
     ) }}
 
     {% if reserva_editar %}
-    <div class="modal-overlay">
 
-        <form method="POST" action="/dashboard/reservas/" class="dropshadow modal-card">
+<div class="modal-overlay">
 
-            <input type="hidden" name="accion" value="editar">
-            <input type="hidden" name="id_reserva" value="{{ reserva_editar.id_reserva }}">
+    <form method="POST" class="modal-form">
 
-            <div class="modal-header">
-                <h2 class="modal-title">Editar reserva</h2>
-                <span class="modal-subtitle">ID {{ reserva_editar.id_reserva }}</span>
-            </div>
+        <input
+            type="hidden"
+            name="id_reserva"
+            value="{{ reserva_editar.id_reserva }}"
+        >
+        <div style="
+                display:flex;
+                flex-direction:column;
+                gap:4px;"
+        >
+        <h2 style="margin:0;font-size:2rem;">
+            Editar Reserva
+        </h2>
+        <span style="opacity:0.7;font-size:1rem;">
+            ID {{ reserva_editar.id_reserva }}
+        </span>
+        </div>
+        <div
+                        style="
+                display:flex;
+                flex-direction:column;
+                gap:18px;
+            ">
+        {{ input_comp(
+            name="fecha",
+            type="date",
+            label="Fecha",
+            value=reserva_editar.fecha,
+            width="100%",
+            height="45px",
+            required=true
+        ) }}
 
-            <div class="modal-fields">
+        {{ input_comp(
+            name="hora_reserva",
+            type="time",
+            label="Hora",
+            value=reserva_editar.hora_reserva[:5],
+            width="100%",
+            height="45px",
+            required=true
+        ) }}
 
-                {{ input_comp(name="estado_reserva", label="Estado",
-                    value=reserva_editar.estado_reserva,
-                    placeholder="pendiente / confirmada / cancelada",
-                    width="100%", height="45px") }}
+        {{ input_comp(
+            name="comensales",
+            type="number",
+            label="Comensales",
+            value=reserva_editar.comensales,
+            width="100%",
+            height="45px",
+            required=true
+        ) }}
+        </div>
 
-                {{ input_comp(name="hora_reserva", label="Hora",
-                    value=reserva_editar.hora_reserva,
-                    placeholder="19:00",
-                    width="100%", height="45px") }}
+        {{ select_comp(
+            name="estado_reserva",
+            label="Estado",
+            opciones=[{"id":"pendiente","nombre":"Pendiente"},{"id":"confirmada","nombre":"Confirmada"},{"id":"cancelada","nombre":"Cancelada"}],
+            classes="dropshadow input-default select-form fields-form-reserva",
+            width="100%",
+            selected_value=reserva_editar.estado_reserva
+        ) }}
 
-                {{ input_comp(name="fecha", label="Fecha",
-                    value=reserva_editar.fecha,
-                    placeholder="2024-12-31",
-                    width="100%", height="45px") }}
+        <label>
 
-                {{ input_comp(name="comensales", type="number", label="Comensales",
-                    value=reserva_editar.comensales,
-                    placeholder="2",
-                    width="100%", height="45px") }}
+            <input
+                type="checkbox"
+                name="interior"
+                value="True"
 
-                {{ input_comp(name="id_mesa", label="Mesa(s)",
-                    value=reserva_editar.id_mesa,
-                    placeholder="1",
-                    width="100%", height="45px") }}
+                {% if reserva_editar.interior %}
+                checked
+                {% endif %}
+            >
 
-            </div>
+            Interior
 
-            <div class="modal-checks">
-                <label>
-                    <input type="checkbox" name="interior"
-                        {% if reserva_editar.interior %}checked{% endif %}>
-                    Interior
-                </label>
-            </div>
+        </label>
 
-            <div class="modal-actions">
-                {% from "componentes/button1_comp.html" import button1_comp %}
-                {{ button1_comp(text="Cancelar", height=50,
-                    func="window.location.href='/dashboard/reservas'; return false;") }}
-                {{ button1_comp(text="Guardar", height=50, type="submit") }}
-            </div>
+        <div style="
+                display:flex;
+                justify-content:flex-end;
+                gap:18px;
+                margin-top:10px;
+            ">
 
-        </form>
-    </div>
-    {% endif %}
+            {{ button1_comp(
+                text="Cancelar",
+                height=50,
+                func="window.location.href='/dashboard/reservas'; return false;"
+            ) }}
 
-    {% if nueva %}
-    <div class="modal-overlay">
+                    {{ button1_comp(
+                text="Guardar",
+                height=50,
+                type="submit"
+            ) }}
 
-        <form method="POST" action="/dashboard/reservas/" class="dropshadow modal-card">
+        </div>
 
-            <input type="hidden" name="accion" value="crear">
+    </form>
 
-            <div class="modal-header">
-                <h2 class="modal-title">Nueva reserva</h2>
-            </div>
+</div>
 
-            <div class="modal-fields">
-
-                {{ input_comp(name="id_usuario", type="number", label="ID Usuario",
-                    placeholder="1", width="100%", height="45px", required=true) }}
-
-                {{ input_comp(name="estado_reserva", label="Estado",
-                    placeholder="pendiente", width="100%", height="45px") }}
-
-                {{ input_comp(name="hora_reserva", label="Hora",
-                    placeholder="19:00", width="100%", height="45px") }}
-
-                {{ input_comp(name="fecha", label="Fecha",
-                    placeholder="2024-12-31", width="100%", height="45px") }}
-
-                {{ input_comp(name="comensales", type="number", label="Comensales",
-                    placeholder="2", width="100%", height="45px") }}
-
-                {{ input_comp(name="id_mesa", label="Mesa(s)",
-                    placeholder="1", width="100%", height="45px") }}
-
-            </div>
-
-            <div class="modal-checks">
-                <label>
-                    <input type="checkbox" name="interior"> Interior
-                </label>
-            </div>
-
-            <div class="modal-actions">
-                {% from "componentes/button1_comp.html" import button1_comp %}
-                {{ button1_comp(text="Cancelar", height=50,
-                    func="window.location.href='/dashboard/reservas'; return false;") }}
-                {{ button1_comp(text="Crear", height=50, type="submit") }}
-            </div>
-
-        </form>
-    </div>
-    {% endif %}
+{% endif %}
 
 {% endblock %}

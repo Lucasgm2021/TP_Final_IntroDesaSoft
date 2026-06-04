@@ -16,8 +16,6 @@ from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from flask_cors import CORS
 
-
-
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
@@ -26,6 +24,8 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@127.0.0.1:3306/restaurante"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
+# Inside your BACKEND app configuration file:
+app.config["SESSION_COOKIE_NAME"] = "backend_session"
 
 app.json.sort_keys = False
 

@@ -6,7 +6,7 @@ def usuario_es_valido():
 
     sesion = requests.get(
         f'http://127.0.0.1:5005/sesion/perfil',
-        cookies={'session': data }
+        cookies={'backend_session': data }
     )
 
     if sesion.status_code == 200:
@@ -19,7 +19,7 @@ def usuario_es_admin():
 
     sesion = requests.get(
         f'http://127.0.0.1:5005/sesion/perfil',
-        cookies={'session': data }
+        cookies={'backend_session': data }
     )
 
     if sesion.status_code == 200 and sesion.json()["admin"]:

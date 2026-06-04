@@ -91,6 +91,14 @@ body {
     flex-shrink: 0;
 }
 
+.button-icon:disabled {
+  background-color: #CCCCCC;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
 .button-delete {
     background: #CF4444;
     color: white;
@@ -99,6 +107,17 @@ body {
 .button-edit {
     background: #555e6e;
     color: #d4cdc6;
+}
+
+.button-nueva-reserva {
+    background: #C8906D;
+}
+
+.button-generic {
+    border-radius: 20px;
+    margin: 0 10px;
+    font-size: 1.2rem;
+    height: 100%;
 }
 
 .input-default {
@@ -382,6 +401,77 @@ body {
     border-radius: 50%;
 }
 
+#form-crear-reserva {
+    gap: 20px;
+    width: 400px;
+    max-width: 90%;
+    /*margin: 0 auto;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-items: center; */
+    background-color: #835740;
+    text-align: center;
+    border-radius: 20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+#form-crear-reserva-title {
+    position: relative;
+}
+
+#form-crear-reserva-title > h1 {
+    margin: 0;
+}
+
+#form-crear-reserva-title > button {
+    position: absolute;
+    left: -50px;
+    top: 10px;
+}
+
+#body-creacion-reserva {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;                   /* Removes default browser margins */
+    min-height: 100vh;            /*Forces body to be at least the full height of the screen */
+
+    background-image: url("../images/background.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Keeps image fixed during scroll */
+    background-position: center;
+    background-size: cover; /* Scales to cover entire screen */
+}
+
+.body-usuario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;                   /* Removes default browser margins */
+    min-height: 100vh;            /*Forces body to be at least the full height of the screen */
+
+    background-image: url("../images/background.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Keeps image fixed during scroll */
+    background-position: center;
+    background-size: cover; /* Scales to cover entire screen */
+}
+
+#horarios-select{
+    height: 40px;
+}
+
+.select-form {
+    width: 100%;
+    padding-left: 18px;
+    border: none;
+    border-radius: 12px;
+}
+
 .flex-center {
     display: flex;
     align-items: center;
@@ -398,6 +488,176 @@ body {
     border: 1px solid #320101;
     background-color: #872020;
     padding: 5px 15px 5px 15px;
+}
+
+/*Vista mis reservas*/
+.contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #674C3E;
+    width: 65%;
+    padding: 20px;
+}
+
+.contenedor-reservas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #4A413C;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.seccion-mis-reservas {
+    width: 90%;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    /* The Magic Magnet: Pushes the left group to the far left and right group to the far right */
+    justify-content: space-between;
+    width: 100%;
+    height: 150px;
+    box-sizing: border-box;
+}
+
+/* Aligns the circle and the text side-by-side */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Adds space between the circle arrow and your h1 text */
+}
+
+/* Aligns the two buttons side-by-side */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Adds space between your two navigation buttons */
+    height: 100%;
+}
+
+.header-right form, .header-right > button {
+    height: 35%;
+}
+
+/* The Grid Container */
+.info-reserva {
+    display: grid;
+    /* 3 equal fractional units (1fr), plus 1 auto-sized width at the end for the button */
+    grid-template-columns: 1fr 1fr 1fr auto;
+    align-items: center; /* Centers all icons and text vertically across the track */
+    padding: 15px;
+    background-color: #cfba9c; /* Matching your image background color */
+    border-radius: 15px;
+    margin: 10px;
+    width: 65%;
+}
+
+/* Individual Data Columns (1, 2, and 3) */
+.col-reserva {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Center content horizontally inside the column */
+    text-align: center;
+    padding: 0 10px;
+
+    /* The Magic Line: Creates the vertical borders between data sections */
+    border-right: 2px solid #000000;
+}
+
+/* Inner alignment for the Icons next to text */
+.dato-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 5px;
+    font-size: 1.2rem;
+    color: #ffffff; /* White text matching your image layout */
+}
+
+/* Vertical text stack specifically for the Date + Time column */
+.fecha-hora-stack {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+/* Column 4: The Button Alignment */
+.col-actions {
+    padding-left: 20px;
+    padding-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* The red circular delete button matching your card design */
+.button-cancelar-reserva {
+    width: 40px;
+    height: 40px;
+    background-color: #c94444;
+    color: white;
+    border: none;
+    border-radius: 50%; /* Makes it a perfect circle */
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.button-cancelar-reserva:hover {
+    background-color: #a83232;
+}
+
+/* Alternative: If you want it to be a grey circle matching the red X size */
+.btn-disabled-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #d1d1d1;
+    color: #888888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: not-allowed;
+}
+/* fin estilos mis reservas*/
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-form {
+    width: 700px;
+    background: #1d2732;
+    border-radius: 24px;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.fields-form-reserva {
+    height: 45px;
+    font-size: 26px;
+    font-weight: bold;
 }
 
 /* pagina menu (publica) */

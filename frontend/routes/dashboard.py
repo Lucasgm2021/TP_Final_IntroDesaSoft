@@ -3,9 +3,11 @@ from flask import (
     render_template,
     redirect, session, request
 )
-from datetime import date
+from datetime import date, datetime
 import requests
-from servicesfront.verificaciones import usuario_es_admin
+from services.verificaciones import usuario_es_admin
+from services.reservas import obtener_reservas_admin, editar_reserva
+from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 dashboard_bp = Blueprint(
     "dashboard",
@@ -280,38 +282,44 @@ def configuracion():
         nueva=nueva
     )
 
-@dashboard_bp.route("/reservas", methods=["GET", "POST"])
-def reservas():
+@dashboard_bp.route("/reseñas")
+def reseñas():
+
     if not usuario_es_admin():
         return redirect("/")
 
-    auth = session.get("usuario") or ""
+    data = session.get(FRONTEND_COOKIE_CLAVE) or ''
 
     response = requests.get(
-        "http://127.0.0.1:5005/reservas/",
-        cookies={"session": auth}
+        f'{API_BASE_URL}/reseñas/todas',
+        cookies={BACKEND_SESSION_COOKIE_NAME: data}
     )
-    reservas_todas = response.json()["reservas"]
 
-    reservas_data = []
-    for r in reservas_todas:
-        reservas_data.append({
-            "id": r["id_reserva"],
+    reseñas = response.json()["data"]
+
+    resenias = []
+
+    for reseña in reseñas:
+        resenias.append({
+
+            "id": reseña["id_reseña"],
+
             "cells": [
-                r["id_reserva"],
-                r["id_usuario"],
-                r["estado_reserva"],
-                r["hora_reserva"],
-                r["fecha"],
-                "Interior" if r["interior"] else "Exterior",
-                r["comensales"],
-                r["id_mesa"],
+
+                reseña["id_reseña"],
+                reseña["id_reserva"],
+                reseña["comentario"],
+                reseña["calificacion"],
+                reseña["estado"],
+                reseña["id_usuario"],
+                reseña["email"]
+
             ]
         })
 
     return render_template(
-        "dashboard/reservas.html",
-        reservas=reservas_data,
+        "dashboard/reseñas.html",
+        resenias=resenias
     )
 
 def _body_reserva(form):
