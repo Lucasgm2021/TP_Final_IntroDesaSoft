@@ -122,7 +122,6 @@ def crear_reserva(data):
     try:
         mesas = obtener_mesas()
         capacidades = sorted([mesa["capacidad"] for mesa in mesas if str(mesa["id_mesa"]) in ids_mesas], reverse=True) #ordeno de mayor a menor capacidad.
-        print("Capacidades:", capacidades,nro_comensales,nro_comensales < sum(capacidades[:len(capacidades)-1])+1)
         #Reviso que la cantidad de comensales minimo requiera a todas las mesas menos la mas chica + 1.
         if nro_comensales < sum(capacidades[:len(capacidades)-1])+1:
             return error_msg(400,"Error: Capacidad excedida",description=f"La capacidad de las mesas seleccionadas sobrepasa la cantidad de comensales.")

@@ -53,8 +53,8 @@ def register_service(data):
     usuario_existe = (obtener_usuario_por_email(email))
 
     if not usuario_existe:
-        hashed_password = PasswordHasher().hash(password)
-        id_usuario = crear_usuario(email, hashed_password)
+        contraseña_hasheada = PasswordHasher().hash(password)
+        id_usuario = crear_usuario(email, contraseña_hasheada)
 
         session["id_usuario"] = id_usuario
         session["email"] = email
