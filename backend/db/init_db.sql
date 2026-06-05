@@ -217,6 +217,6 @@ INSERT INTO usuarios (
 )
 VALUES (
     'admin@puertohermoso.com',
-    '1234',
+    '$argon2id$v=19$m=65536,t=3,p=4$m5AvBTrBh8qpLGxmbBn7fQ$AQBPgc+tCPt5Z7SUTXD4eZcgizgkYz3StMtqj4FRUiw',
     TRUE
 );

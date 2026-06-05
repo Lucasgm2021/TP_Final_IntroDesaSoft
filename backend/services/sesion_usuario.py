@@ -1,5 +1,7 @@
 from flask import session
 from services.messages import error_msg
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 from db.sesion_usuario import (
     obtener_usuario_por_email,
@@ -23,7 +25,9 @@ def login_service(data):
             404,
             "El usuario no existe",description="No se encontró ningún usuario registrado con el email proporcionado."
         )
-    if usuario["password"] != password:
+    try:
+        PasswordHasher().verify(usuario["password"], password)
+    except VerifyMismatchError:
         return error_msg(
             401,
             "Contraseña incorrecta",description="La contraseña ingresada no coincide con la registrada para este email."
@@ -49,7 +53,8 @@ def register_service(data):
     usuario_existe = (obtener_usuario_por_email(email))
 
     if not usuario_existe:
-        id_usuario = crear_usuario(email, password)
+        hashed_password = PasswordHasher().hash(password)
+        id_usuario = crear_usuario(email, hashed_password)
 
         session["id_usuario"] = id_usuario
         session["email"] = email
