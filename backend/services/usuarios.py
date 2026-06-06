@@ -1,6 +1,5 @@
 from flask import session
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
+from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from db.usuarios import (
     crear_cliente,
@@ -28,7 +27,7 @@ def crear_cliente_service(data):
     if obtener_usuario_email(email):
         return error_msg(409, "El email ya está registrado")
 
-    contraseña_hasheada = PasswordHasher().hash(contraseña)
+    contraseña_hasheada = generate_password_hash(contraseña)
     crear_cliente(email,contraseña_hasheada)
 
     return {
@@ -55,7 +54,7 @@ def crear_usuario_service(data):
     if obtener_usuario_email(email):
         return error_msg(409, "El email ya está registrado")
 
-    contraseña_hasheada = PasswordHasher().hash(contraseña)
+    contraseña_hasheada = generate_password_hash(contraseña)
     crear_usuario(email,contraseña_hasheada,es_admin)
 
     return {
@@ -104,12 +103,14 @@ def actualizar_mi_perfil_service(data):
 
     try:
         contraseña_actual = obtener_usuario_email(session["email"])["password"]
-        PasswordHasher().verify(contraseña_actual, contraseña)
-        contraseña_hasheada = contraseña_actual
-    except VerifyMismatchError:
-        contraseña_hasheada = PasswordHasher().hash(contraseña)
     except:
-        return error_msg(500, "Error al verificar la contraseña actual")
+        return error_msg(500, "Error al obtener el usuario actual")
+    
+    es_misma_contraseña = check_password_hash(contraseña_actual, contraseña)
+    if not es_misma_contraseña:
+        contraseña_hasheada = generate_password_hash(contraseña)
+    else:   
+        contraseña_hasheada = contraseña_actual
 
     try:
         actualizar_mi_perfil(session["id_usuario"],nuevo_email,contraseña_hasheada)
