@@ -2,12 +2,34 @@
 
 {% block content %}
 
-<h1>
-    Home
-</h1>
+{% from "componentes/tabla_comp.html" import tabla_comp %}
 
-<p>
-    Bienvenido al dashboard
-</p>
+<div class="parent">
+
+    <div class="div1">
+        <h2>Reservas de hoy — {{ fecha_hoy }}</h2>
+        {{ tabla_comp(
+            id="tabla-reservas-hoy",
+            columns=["ID", "Hora", "Comensales", "Ubicación", "Estado"],
+            rows=reservas_hoy,
+            row_height=75
+        ) }}
+    </div>
+
+    <div class="div2">WIP</div>
+
+    <div class="div3">
+        <div class="stat-card dropshadow">
+            <span class="stat-label">Reseñas pendientes / aprobadas</span>
+            <span class="stat-number"><span style="color: darkred">{{ pendientes }}</span> / {{ aprobadas }}</span>
+        </div>
+        <div class="stat-card dropshadow">
+            <span class="stat-label">Platos sin stock</span>
+            <span class="stat-number">{{ sin_stock }}</span>
+        </div>
+    </div>
+
+</div>
+
 
 {% endblock %}

@@ -2,7 +2,7 @@
     text="CONFIRMAR RESERVA",
     height=100,
     func = "",
-    type = ""
+    type = "button"
     )
         %}
 
@@ -17,8 +17,8 @@
         background: #6f5143;
         font-size: calc({{ height }}px * 0.25);
     "
-    type = {{ type }},
-    onclick= {{ func }}
+    type = "{{ type }}"
+    {% if func %} onclick="{{ func }}" {% endif %}
 
 >
 

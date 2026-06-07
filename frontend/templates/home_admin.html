@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Home | Puerto Hermoso</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}"
+    >
+</head>
+
+<body id="body-admin-home">
+
+    <!-- Flask flash sintaxis -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+
+        <div class="flash-container">
+
+            {% for category, message in messages %}
+
+            <div class="flash flash--{{ category }}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+    {% endwith %}
+
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button3_comp.html" import button3_comp %}
+
+    <div id="contenedor-admin-home">
+
+        <!-- Sidebar -->
+
+        <div id="sidebar-admin">
+
+            <h1>Puerto Hermoso</h1>
+
+            <div id="sidebar-buttons">
+
+                <a href="#">
+
+                    {{ button1_comp(
+                        text="HOME",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="#">
+
+                    {{ button1_comp(
+                        text="RESERVAS",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="#">
+
+                    {{ button1_comp(
+                        text="CONFIGURACIÓN IN-PAGE",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="#">
+
+                    {{ button1_comp(
+                        text="RESEÑAS",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="#">
+
+                    {{ button1_comp(
+                        text="MENÚ",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="#">
+
+                    {{ button1_comp(
+                        text="USUARIOS",
+                        height=50,
+                        func=""
+                    ) }}
+
+                </a>
+
+                <a href="#">
+
+                    {{ button3_comp(
+                        text="CERRAR SESIÓN",
+                        height=50,
+                        acceptordeny="deny",
+                        func=""
+                    ) }}
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- Contenido -->
+
+        <div id="contenido-admin-home">
+
+            <div id="header-admin-home">
+
+                <h1>
+                    Dashboard General
+                </h1>
+
+            </div>
+
+            <!-- Dashboard -->
+
+            <div id="dashboard-admin">
+
+                <!-- Mesas -->
+
+                <div class="dashboard-card">
+
+                    <h2>
+                        Mesas Reservadas
+                    </h2>
+
+                    <div class="grafico-circular">
+
+                        <div class="circulo-dashboard">
+
+                            <span class="dashboard-valor">
+                                {{ mesas_ocupadas }}/{{ mesas_totales }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="dashboard-info">
+
+                        <p>
+                            Mesas ocupadas actualmente
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- Estacionamientos -->
+
+                <div class="dashboard-card">
+
+                    <h2>
+                        Estacionamientos Ocupados
+                    </h2>
+
+                    <div class="grafico-circular">
+
+                        <div class="circulo-dashboard">
+
+                            <span class="dashboard-valor">
+                                {{ estacionamientos_ocupados }}/{{ estacionamientos_totales }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="dashboard-info">
+
+                        <p>
+                            Estacionamientos en uso
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Próximas reservas -->
+
+            <div id="proximas-reservas-admin">
+
+                <div class="header-proximas-reservas">
+
+                    <h1>
+                        Próximas Reservas Pendientes
+                    </h1>
+
+                </div>
+
+                <div id="lista-proximas-reservas">
+
+                    {% for reserva in reservas_pendientes %}
+
+                    <div class="card-proxima-reserva">
+
+                        <div class="card-header-proxima">
+
+                            <h2>
+                                Reserva #{{ reserva.id_reserva }}
+                            </h2>
+
+                            <span class="estado-reserva estado-{{ reserva.estado_reserva }}">
+                                {{ reserva.estado_reserva.upper() }}
+                            </span>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="info-proxima-reserva">
+
+                            <div class="dato-proxima-reserva">
+
+                                <strong>
+                                    A nombre de
+                                </strong>
+
+                                <span>
+                                    {{ reserva.nombre_usuario }}
+                                </span>
+
+                            </div>
+
+                            <div class="dato-proxima-reserva">
+
+                                <strong>
+                                    Cantidad de comensales
+                                </strong>
+
+                                <span>
+                                    {{ reserva.comensales }}
+                                </span>
+
+                            </div>
+
+                            <div class="dato-proxima-reserva">
+
+                                <strong>
+                                    Fecha
+                                </strong>
+
+                                <span>
+                                    {{ reserva.fecha }}
+                                </span>
+
+                            </div>
+
+                            <div class="dato-proxima-reserva">
+
+                                <strong>
+                                    Hora
+                                </strong>
+
+                                <span>
+                                    {{ reserva.hora_reserva }}
+                                </span>
+
+                            </div>
+
+                            <div class="dato-proxima-reserva">
+
+                                <strong>
+                                    Mesa
+                                </strong>
+
+                                <span>
+                                    #{{ reserva.id_mesa }}
+                                </span>
+
+                            </div>
+
+                            <div class="dato-proxima-reserva">
+
+                                <strong>
+                                    Información extra
+                                </strong>
+
+                                <span>
+
+                                    {% if reserva.interior %}
+                                        Interior
+                                    {% else %}
+                                        Exterior
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="acciones-admin-reserva">
+
+                            <form
+                                action="#"
+                                method="POST"
+                            >
+
+                                {{ button3_comp(
+                                    text="FINALIZAR",
+                                    height=45,
+                                    acceptordeny="accept",
+                                    func=""
+                                ) }}
+
+                            </form>
+
+                            <form
+                                action="#"
+                                method="POST"
+                            >
+
+                                {{ button3_comp(
+                                    text="CANCELAR",
+                                    height=45,
+                                    acceptordeny="deny",
+                                    func=""
+                                ) }}
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
