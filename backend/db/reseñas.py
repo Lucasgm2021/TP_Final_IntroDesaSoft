@@ -38,6 +38,7 @@ def reserva_puede_reseñarse(
 
 
 def crear_reseña(
+    id_usuario,
     id_reserva,
     calificacion,
     comentario
