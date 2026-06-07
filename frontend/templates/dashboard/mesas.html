@@ -4,17 +4,14 @@
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
     {% from "componentes/input_comp.html" import input_comp %}
-    {% from "componentes/circle_comp.html" import circle_comp %}
     {% from "componentes/button1_comp.html" import button1_comp %}
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1 style="margin: 0;">
-            MESAS
-        </h1>
+    <div class="mesas-header">
+        <h1>MESAS</h1>
         
-        {{ circle_comp(
-            text="+",
-            size=45,
+        {{ button1_comp(
+            text="+ Nueva Mesa",
+            height=45,
             func="window.location.href='/dashboard/mesas?create=true'; return false;"
         ) }}
     </div>
@@ -32,42 +29,21 @@
 
     {% if mesa_editar or crear_nuevo %}
 
-        <div
-        style="
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;"
-        >
+        <div class="modal-overlay">
 
-            <form method="POST"
-                  class="dropshadow"
-                  style="
-                  width: 700px;
-                  background: #1d2732;
-                  border-radius: 24px;
-                  padding: 40px;
-                  box-sizing: border-box;
-                  display: flex;
-                  flex-direction: column;
-                  gap: 22px;
-        "
-            >
+            <form method="POST" class="modal-form dropshadow">
                 <input type="hidden" name="id_mesa" value="{{ mesa_editar.id_mesa if mesa_editar else '' }}">
 
-                <div style="display:flex; flex-direction:column; gap:4px;">
-                    <h2 style="margin:0; font-size:2rem;">
+                <div class="modal-title-group">
+                    <h2>
                         {% if mesa_editar %}Editar Mesa{% else %}Crear Nueva Mesa{% endif %}
                     </h2>
                     {% if mesa_editar %}
-                    <span style="opacity:0.7; font-size:1rem;">ID Sistema: {{ mesa_editar.id_mesa }}</span>
+                    <span>ID Sistema: {{ mesa_editar.id_mesa }}</span>
                     {% endif %}
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:18px;">
+                <div class="modal-inputs-group">
                     {{ input_comp(
                         name="numero",
                         type="number",
@@ -91,7 +67,7 @@
                     ) }}
                 </div>
 
-                <div style="display:flex; flex-wrap:wrap; gap:18px; font-size:1.1rem;">
+                <div class="modal-checkbox-group">
                     <label>
                         <input type="checkbox" name="interior" {% if mesa_editar and (mesa_editar.interior == 1 or mesa_editar.interior is sameas true) %}checked{% endif %}>
                         Salón Interior
@@ -103,7 +79,7 @@
                     </label>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:18px; margin-top:10px;">
+                <div class="modal-actions">
                     {{ button1_comp(
                         text="Cancelar",
                         height=50,
