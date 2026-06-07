@@ -11,6 +11,7 @@ import requests
 
 from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
 from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
+from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 auth_front_bp = Blueprint(
     "auth_front",
@@ -59,7 +60,7 @@ def login():
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
 
-@auth_front_bp.route("/logout", methods=["GET"])
+@auth_front_bp.route("/logout", methods=["POST"])
 def logout():
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
     requests.post(
@@ -67,7 +68,7 @@ def logout():
         cookies={BACKEND_SESSION_COOKIE_NAME: data}
     )
     session.clear()
-    return redirect('/?error=Deslogueado con exito')
+    return redirect('/')
 
 @auth_front_bp.route("/profile")
 def profile():
