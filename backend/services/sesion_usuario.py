@@ -9,7 +9,7 @@ from db.sesion_usuario import (
 def login_service(data):
     email = data.get("email")
     password = data.get("password")
-
+    print(email, password)
     if not email or not password:
         return error_msg(
             400,
