@@ -27,8 +27,6 @@ app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 # Inside your BACKEND app configuration file:
 app.config["SESSION_COOKIE_NAME"] = "backend_session"
 
-app.config["SESSION_COOKIE_NAME"] = "backend_session"
-
 app.json.sort_keys = False
 
 db = SQLAlchemy(app)
