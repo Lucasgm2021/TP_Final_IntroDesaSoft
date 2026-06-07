@@ -29,9 +29,9 @@
 
     {% if mesa_editar or crear_nuevo %}
 
-        <div class="modal-overlay">
+        <div class="modal-mesas-overlay">
 
-            <form method="POST" class="modal-form dropshadow">
+            <form method="POST" class="modal-mesas-form dropshadow">
                 <input type="hidden" name="id_mesa" value="{{ mesa_editar.id_mesa if mesa_editar else '' }}">
 
                 <div class="modal-title-group">
@@ -79,7 +79,7 @@
                     </label>
                 </div>
 
-                <div class="modal-actions">
+                <div class="modal-mesas-actions">
                     {{ button1_comp(
                         text="Cancelar",
                         height=50,
