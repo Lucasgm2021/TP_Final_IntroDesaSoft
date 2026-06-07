@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template,url_for, flash, redirect, session
-from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva
+from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva,obtener_mis_reseñas
 from datetime import datetime
 from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
@@ -62,13 +62,23 @@ def crear_reserva_form():
 def mis_reservas():
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     reservas = obtener_mis_reservas(cookies)
+    reseñas = obtener_mis_reseñas(cookies)
+
     if not reservas.get("reservas",[]):
         for e in reservas.get('errores', ['Error desconocido.']):
             flash(e, 'error')
         reservas = []
     else:
         reservas = reservas.get("reservas",[])
-    return render_template("reservas/mis_reservas.html", reservas=reservas)
+
+    if not reseñas.get("data",[]):
+        for e in reseñas.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+        reseñas = {}
+    else:
+        reseñas = reseñas.get("data")
+
+    return render_template("reservas/mis_reservas.html", reservas=reservas, reseñas=reseñas)
 
 @reserva_bp.route("/reservas_admin", methods=["GET"])
 def reservas_admin():

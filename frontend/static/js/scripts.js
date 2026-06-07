@@ -101,3 +101,17 @@ function toggleResenia(id, aprobada) {
         window.location.href = `/dashboard/reseñas?aprobar=${id}`;
     }
 }
+
+function openReviewModal(reservaId) {
+    const modal = document.getElementById('modal-' + reservaId);
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeReviewModal(reservaId) {
+    const modal = document.getElementById('modal-' + reservaId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}

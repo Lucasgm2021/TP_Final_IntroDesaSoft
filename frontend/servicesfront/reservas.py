@@ -108,3 +108,23 @@ def obtener_reservas_admin(limit,cookies,estado_reserva=None):
         return {'errores': ['No se pudo conectar con el servidor.']}
     except:
         return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}
+
+def obtener_mis_reseñas(cookies):
+    try:
+        print("cookies: ",cookies)
+        response = requests.get(f"{API_BASE_URL}/reseñas/usuario", timeout=10, cookies=cookies)
+        print("response:",response)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            error_data = response.json()
+            errores = error_data.get('errors', [])
+            mensajes = [e.get('description') if len(e.get('description', '')) > 0 else e.get('message', 'Error desconocido') for e in errores]
+            if not mensajes:
+                mensajes = [f'Error del servidor: HTTP {response.status_code}']
+
+            return {'errores': mensajes,"code":response.status_code}
+    except requests.exceptions.ConnectionError:
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}

@@ -189,3 +189,25 @@ def obtener_todas_las_reseñables_usuario():
             "id_usuario": session["id_usuario"]
         }
     )
+
+def obtener_mis_reseñas_query(id_usuario):
+    query = """
+        SELECT
+            re.id_reseña,
+            re.id_reserva,
+            re.fecha,
+            re.calificacion,
+            re.comentario,
+            re.estado,
+
+            u.id_usuario,
+            u.email
+
+        FROM reseña re
+
+        LEFT JOIN usuarios u
+            ON re.id_usuario = u.id_usuario
+        WHERE re.id_usuario = :id_usuario
+        ORDER BY re.fecha DESC
+    """
+    return ejecutar_query_lectura(query,params={"id_usuario": id_usuario})

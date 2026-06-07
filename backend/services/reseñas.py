@@ -6,7 +6,8 @@ from db.reseñas import (
     marcar_reserva_reseñada,
     obtener_reseñas_aprobadas,
     obtener_todas_las_reseñas,
-    modificar_estado_reseña, obtener_todas_las_reseñables_usuario
+    modificar_estado_reseña, obtener_todas_las_reseñables_usuario,
+    obtener_mis_reseñas_query
 )
 
 from services.messages import error_msg
@@ -112,3 +113,13 @@ def modificar_reseña_service(
 def reservas_reseñables_service():
     reseñas = obtener_todas_las_reseñables_usuario()
     return [dict(row) for row in reseñas]
+
+def obtener_mis_reseñas_service():
+    id_usuario = session.get("id_usuario")
+    print(session)
+    reseñas = obtener_mis_reseñas_query(id_usuario)
+    reseñas = {row["id_reserva"]:dict(row) for row in reseñas}
+    print("reseñas backend:",reseñas)
+    return {
+        "data": reseñas
+    }, 200
