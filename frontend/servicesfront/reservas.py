@@ -13,19 +13,19 @@ def crear_reserva(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,coo
         }, timeout=10,cookies=cookies)
         if response.status_code == 201:
             return {"ok":True}
-        try:
-            error_data = response.json()
-            errores = error_data.get('errors', [])
-            mensajes = [e.get('description', 'Error desconocido') for e in errores]
-            if not mensajes:
-                mensajes = [f'Error del servidor: HTTP {response.status_code}']
 
-            return {'errores': mensajes,"code":response.status_code}
-        except Exception:
-            return {'errores': [f'Error del servidor: HTTP {response.status_code}']}
+        error_data = response.json()
+        errores = error_data.get('errors', [])
+        mensajes = [e.get('description') if len(e.get('description', '')) > 0 else e.get('message', 'Error desconocido') for e in errores]
+        if not mensajes:
+            mensajes = [f'Error del servidor: HTTP {response.status_code}']
+
+        return {'errores': mensajes,"code":response.status_code}
+
     except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
-
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al crear la reserva. Inténtalo de nuevo más tarde.']}
     return data
 
 def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
@@ -40,14 +40,16 @@ def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
         else:
             error_data = response.json()
             errores = error_data.get('errors', [])
-            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
+            mensajes = [e.get('description') if len(e.get('description', '')) > 0 else e.get('message', 'Error desconocido') for e in errores]
 
             if not mensajes:
                 mensajes = [f'Error del servidor: HTTP {response.status_code}']
 
             return {'errores': mensajes,"code":response.status_code}
     except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al obtener las mesas. Inténtalo de nuevo más tarde.']}
 
 def obtener_mis_reservas(cookies):
     try:
@@ -57,13 +59,15 @@ def obtener_mis_reservas(cookies):
         else:
             error_data = response.json()
             errores = error_data.get('errors', [])
-            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
+            mensajes = [e.get('description') if len(e.get('description', '')) > 0 else e.get('message', 'Error desconocido') for e in errores]
             if not mensajes:
                 mensajes = [f'Error del servidor: HTTP {response.status_code}']
 
             return {'errores': mensajes,"code":response.status_code}
     except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}
 
 def cancelar_reserva(uuid_reserva,cookies):
     try:
@@ -73,14 +77,16 @@ def cancelar_reserva(uuid_reserva,cookies):
         else:
             error_data = response.json()
             errores = error_data.get('errors', [])
-            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
+            mensajes = [e.get('description') if len(e.get('description', '')) > 0 else e.get('message', 'Error desconocido') for e in errores]
 
             if not mensajes:
                 mensajes = [f'Error del servidor: HTTP {response.status_code}']
 
             return {'errores': mensajes,"code":response.status_code}
     except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al cancelar la reserva. Inténtalo de nuevo más tarde.']}
 
 def obtener_reservas_admin(limit,cookies,estado_reserva=None):
     try:
@@ -89,16 +95,16 @@ def obtener_reservas_admin(limit,cookies,estado_reserva=None):
             params['estado'] = estado_reserva
         response = requests.get(f"{API_BASE_URL}/reservas", params=params, timeout=10, cookies=cookies)
         if response.status_code == 200:
-            data = response.json()
-
             return response.json()
         else:
             error_data = response.json()
             errores = error_data.get('errors', [])
-            mensajes = [e.get('description', e.get('message', 'Error desconocido')) for e in errores]
+            mensajes = [e.get('description') if len(e.get('description', '')) > 0 else e.get('message', 'Error desconocido') for e in errores]
             if not mensajes:
                 mensajes = [f'Error del servidor: HTTP {response.status_code}']
 
             return {'errores': mensajes,"code":response.status_code}
     except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor. Verifica que la API este corriendo.']}
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}

@@ -386,7 +386,7 @@ def mesas():
             )
         else:
             requests.post(
-                "http://localhost:5005/mesas",
+                f"{BACKEND_URL}/mesas",
                 json=body,
                 cookies={'session': data_sesion}
             )
