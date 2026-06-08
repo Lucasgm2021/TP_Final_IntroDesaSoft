@@ -111,9 +111,8 @@ def obtener_reservas_admin(limit,cookies,estado_reserva=None):
 
 def obtener_mis_reseñas(cookies):
     try:
-        print("cookies: ",cookies)
         response = requests.get(f"{API_BASE_URL}/reseñas/usuario", timeout=10, cookies=cookies)
-        print("response:",response)
+
         if response.status_code == 200:
             return response.json()
         else:

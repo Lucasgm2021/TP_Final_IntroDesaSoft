@@ -69,8 +69,8 @@ def mis_reservas():
             flash(e, 'error')
         reservas = []
     else:
-        reservas = reservas.get("reservas",[])
-
+        reservas = [{**reserva,"id_reserva": str(reserva["id_reserva"])}for reserva in reservas.get("reservas",[])]
+    
     if not reseñas.get("data",[]):
         for e in reseñas.get('errores', ['Error desconocido.']):
             flash(e, 'error')

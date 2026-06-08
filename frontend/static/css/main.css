@@ -99,14 +99,6 @@ body {
   box-shadow: none;
 }
 
-.button-icon:disabled {
-  background-color: #CCCCCC;
-  color: #666666;
-  cursor: not-allowed;
-  opacity: 0.7;
-  box-shadow: none;
-}
-
 .button-delete {
     background: #CF4444;
     color: white;
@@ -115,17 +107,6 @@ body {
 .button-edit {
     background: #555e6e;
     color: #d4cdc6;
-}
-
-.button-nueva-reserva {
-    background: #C8906D;
-}
-
-.button-generic {
-    border-radius: 20px;
-    margin: 0 10px;
-    font-size: 1.2rem;
-    height: 100%;
 }
 
 .button-nueva-reserva {
@@ -1093,23 +1074,6 @@ body {
   padding-left: 20px;
 }
 
-.action-form-wrapper {
-  width: 100%;
-}
-
-.button-action {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 8px; /* Clean rectangular shapes to match card curves */
-  border: none;
-}
-
 /* Form wrapper helper to let the button fill out its container width */
 .action-form-wrapper {
   width: 100%;
@@ -1163,6 +1127,13 @@ body {
 .col-reserva:nth-child(4) {
     border-right: none;
 }
+
+/* By default, if an element has display: flex, it might ignore the 'hidden' attribute. 
+   This CSS rule ensures that if the 'hidden' attribute is present, it forces invisibility. */
+#my-popup-overlay[hidden] {
+    display: none;
+}
+
 /* fin estilos mis reservas*/
 
 .modal-overlay {

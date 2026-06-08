@@ -1,7 +1,3 @@
-function comprar_porsche() {
-    alert("100 virus detectados!!!");
-}
-
 const selectFecha = document.getElementById('fechaReservaCreacion');
 if (selectFecha) {
     const today = new Date();
@@ -11,18 +7,6 @@ if (selectFecha) {
     const formattedDate = `${year}-${month}-${day}`;
     selectFecha.setAttribute('min', formattedDate);
 }
-
-
-const selectFecha = document.getElementById('fechaReservaCreacion');
-if (selectFecha) {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-    selectFecha.setAttribute('min', formattedDate);
-}
-
 
 function editarPlato(id){
 
@@ -102,16 +86,9 @@ function toggleResenia(id, aprobada) {
     }
 }
 
-function openReviewModal(reservaId) {
-    const modal = document.getElementById('modal-' + reservaId);
-    if (modal) {
-        modal.style.display = 'flex';
-    }
-}
+function togglePopup(id_reserva) {
+    const popup = document.getElementById('my-popup-overlay');
 
-function closeReviewModal(reservaId) {
-    const modal = document.getElementById('modal-' + reservaId);
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    // Invert the boolean state of the hidden attribute
+    popup.hidden = !popup.hidden;
 }

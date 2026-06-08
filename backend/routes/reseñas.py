@@ -73,7 +73,7 @@ def obtener_mis_reseñas():
     respuesta, status = (
         obtener_mis_reseñas_service()
     )
-    print("respuesta:", respuesta)
+
     return jsonify(respuesta), status
 
 @reseñas_bp.route("/<int:id>", methods=["PATCH"])
