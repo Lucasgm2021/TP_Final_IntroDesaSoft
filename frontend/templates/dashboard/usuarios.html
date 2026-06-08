@@ -2,32 +2,19 @@
 
 {% block content %}
 
-<div style="display: flex; flex-direction: row; justify-content: space-between;">
+
     <h1 style="width: 70%">USUARIOS</h1>
-    {% from "componentes/circle_comp.html" import circle_comp %}
-    <div class="table-add-btn" style="margin-bottom: 30px; right: 0;">
-        {{ circle_comp(
-            text="+",
-            size=50,
-            type=1,
-            func="window.location.href='/dashboard/usuarios?nueva=1'"
-        ) }}
-    </div>
-</div>
+
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
     {% from "componentes/input_comp.html" import input_comp %}
     {% from "componentes/button1_comp.html" import button1_comp %}
 
     {{ tabla_comp(
-        id="tabla-delete-edit",
+        id="tabla-sin-acciones",
         columns=["ID", "Email", "Es Admin?"],
         rows=usuarios,
-        row_height=50,
-        show_delete=true,
-        show_edit=true,
-        func_delete="eliminarUsuario",
-        func_edit="editarUsuario"
+        row_height=50
     ) }}
 
 {% endblock %}

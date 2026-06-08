@@ -204,8 +204,9 @@ def reseñas():
         resenias=resenias
     )
 
-@dashboard_bp.route("/configuracion/", methods=["GET", "POST"])
+@dashboard_bp.route("/configuracion", methods=["GET", "POST"])
 def configuracion():
+    print("ENTRE A CONFIG")
     if not usuario_es_admin():
         return redirect("/")
 
@@ -216,6 +217,7 @@ def configuracion():
 
         if accion == "editar":
             clave_original = request.form.get("clave_original")
+
             body = {
                 "clave": request.form.get("clave"),
                 "valor": request.form.get("valor"),
@@ -225,6 +227,9 @@ def configuracion():
                 json=body,
                 cookies={BACKEND_SESSION_COOKIE_NAME: auth}
             )
+
+            print("STATUS:", resp.status_code)
+            print("RESP:", resp.text)
 
         elif accion == "crear":
             body = {
@@ -237,7 +242,7 @@ def configuracion():
                 cookies={BACKEND_SESSION_COOKIE_NAME: auth}
             )
 
-        return redirect("/dashboard/configuracion/")
+        return redirect("/dashboard/configuracion")
 
     eliminar_clave = request.args.get("eliminar")
     if eliminar_clave:
@@ -245,7 +250,7 @@ def configuracion():
             f"{API_BASE_URL}/info_frontend/{eliminar_clave}",
             cookies={BACKEND_SESSION_COOKIE_NAME: auth}
         )
-        return redirect("/dashboard/configuracion/")
+        return redirect("/dashboard/configuracion")
 
     response = requests.get(
         f"{API_BASE_URL}/info_frontend",
@@ -339,7 +344,7 @@ def usuarios():
     usuarios_data = []
     for u in users:
         usuarios_data.append({
-            "id": u["id_usuario"],
+            "id": u["email"],
             "cells": [
                 u["id_usuario"],
                 u["email"],
