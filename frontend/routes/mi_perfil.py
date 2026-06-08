@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from servicesfront.mi_perfil import eliminar_mi_perfil, obtener_mi_perfil, actualizar_mi_perfil
+from servicesfront.verificaciones import usuario_es_valido
 
 usuarios_bp = Blueprint(
     "usuarios",
@@ -10,7 +11,7 @@ usuarios_bp = Blueprint(
 @usuarios_bp.route("/cliente/mi_perfil", methods=["GET", "POST"])
 def mi_perfil():
 
-    if "usuario" not in session:
+    if not usuario_es_valido():
         return redirect(url_for("auth_front.login"))
     usuario = obtener_mi_perfil()
 
