@@ -20,7 +20,7 @@ def crear_reserva_form():
             ubicacion_bool = ubicacion == "interior"
             mesas = obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies)
             if mesas.get('errors'):
-                for e in resultado.get('errores', ['Error desconocido.']):
+                for e in mesas.get('errors', ['Error desconocido.']):
                     flash(e, 'error')
                 mesas = None
             else:
@@ -36,6 +36,8 @@ def crear_reserva_form():
                 {nuevas_claves_dict.get(clave, clave): valor for clave, valor in mesa.items()}
                 for mesa in mesas
             ]
+            for mesa in mesas_claves_modificadas:
+                mesa["nombre"] = str(mesa["nombre"]) + " - Capacidad: " + str(mesa["capacidad"])
         return render_template("reservas/creacion_reserva.html", mesas=mesas_claves_modificadas, horarios=horarios)
 
     hora = request.form.get('hora', '').strip()
