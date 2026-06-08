@@ -1,7 +1,3 @@
-function comprar_porsche() {
-    alert("100 virus detectados!!!");
-}
-
 const selectFecha = document.getElementById('fechaReservaCreacion');
 if (selectFecha) {
     const today = new Date();
@@ -22,6 +18,10 @@ function eliminarPlato(id){
 
     window.location.href =
         `/dashboard/menu?eliminar=${id}`
+}
+
+function volverAlInicio() {
+    window.location.href = '/';
 }
 
 
@@ -45,4 +45,42 @@ function toggleResenia(id, aprobada) {
     } else {
         window.location.href = `/dashboard/reseñas?aprobar=${id}`;
     }
+}
+
+
+function editarReserva(id){
+
+    window.location.href =
+        `/dashboard/reservas?edit=${id}`
+}
+
+function editarUsuario(id) {
+    window.location.href = `/dashboard/usuarios?edit=${id}`;
+}
+
+function eliminarUsuario(id) {
+    window.location.href = `/dashboard/usuarios?eliminar=${id}`;
+}
+
+function editarInfo(clave) {
+    window.location.href = `/dashboard/configuracion/?edit=${clave}`;
+}
+
+function eliminarInfo(clave) {
+    window.location.href = `/dashboard/configuracion/?eliminar=${clave}`;
+}
+
+function toggleResenia(id, aprobada) {
+    if (aprobada) {
+        window.location.href = `/dashboard/reseñas?desaprobar=${id}`;
+    } else {
+        window.location.href = `/dashboard/reseñas?aprobar=${id}`;
+    }
+}
+
+function togglePopup(id_reserva) {
+    const popup = document.getElementById('my-popup-overlay');
+
+    // Invert the boolean state of the hidden attribute
+    popup.hidden = !popup.hidden;
 }

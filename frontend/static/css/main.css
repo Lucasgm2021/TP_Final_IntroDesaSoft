@@ -606,6 +606,7 @@ body {
     border-bottom-style: solid;
     font-weight: bold;
     word-break: break-word;
+    word-break: break-word;
 }
 
 .table-row {
@@ -1274,6 +1275,69 @@ así no queda todo apretado y se lee bien */
     margin-top: 24px;
 }
 
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-card {
+    width: 700px;
+    background: #1d2732;
+    border-radius: 24px;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.modal-subtitle {
+    opacity: 0.7;
+    font-size: 1rem;
+}
+
+.modal-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 1.1rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+    margin-top: 10px;
+}
+
+.table-add-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
 /* genericos */
 
 .dropshadow {
@@ -1285,19 +1349,51 @@ así no queda todo apretado y se lee bien */
 }
 
 #form-crear-reserva {
-    gap: 20px;
     width: 400px;
     max-width: 90%;
-    /*margin: 0 auto;*/
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-items: center; */
     background-color: #835740;
     text-align: center;
     border-radius: 20px;
     padding-bottom: 20px;
     padding-top: 20px;
+}
+
+#form-crear-reseña {
+    width: 400px;
+    max-width: 90%;
+    background-color: #835740;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+#form-crear-reseña > form {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    text-align: center;
+    gap: 15px;
+}
+
+#form-crear-reserva > form {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    text-align: center;
+    gap: 15px;
+}
+
+.radio-select {
+    font-size: 26px;
+    font-weight: bold;
 }
 
 #form-crear-reserva-title {
@@ -1312,21 +1408,6 @@ así no queda todo apretado y se lee bien */
     position: absolute;
     left: -50px;
     top: 10px;
-}
-
-#body-creacion-reserva {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0;                   /* Removes default browser margins */
-    min-height: 100vh;            /*Forces body to be at least the full height of the screen */
-
-    background-image: url("../images/background.png");
-    background-repeat: no-repeat;
-    background-attachment: fixed; /* Keeps image fixed during scroll */
-    background-position: center;
-    background-size: cover; /* Scales to cover entire screen */
 }
 
 .body-usuario {
@@ -1345,6 +1426,10 @@ así no queda todo apretado y se lee bien */
 }
 
 #horarios-select{
+    height: 40px;
+}
+
+#clasificacion-select{
     height: 40px;
 }
 
@@ -1373,148 +1458,118 @@ así no queda todo apretado y se lee bien */
     padding: 5px 15px 5px 15px;
 }
 
-/*Vista mis reservas*/
-.contenedor {
+/* =========================================
+   VISTA DE RESEÑAS PÚBLICAS
+   ========================================= */
+
+/* Contenedor marron oscuro exterior */
+.reseñas-caja-exterior {
+    width: 95%;
+    max-width: 800px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #674C3E;
-    width: 65%;
-    padding: 20px;
-}
-
-.contenedor-reservas {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 5px;
-    background-color: #4A413C;
-    border-radius: 20px;
-    padding: 15px;
-}
-
-.seccion-mis-reservas {
-    width: 90%;
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    /* The Magic Magnet: Pushes the left group to the far left and right group to the far right */
-    justify-content: space-between;
-    width: 100%;
-    height: 150px;
+    padding: 30px 40px;
+    background-color: #5f4436;
+    border-radius: 0px;
     box-sizing: border-box;
 }
 
-/* Aligns the circle and the text side-by-side */
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Adds space between the circle arrow and your h1 text */
-}
-
-/* Aligns the two buttons side-by-side */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* Adds space between your two navigation buttons */
-    height: 100%;
-}
-
-.header-right form, .header-right > button {
-    height: 35%;
-}
-
-/* The Grid Container */
-.info-reserva {
-    display: grid;
-    /* 3 equal fractional units (1fr), plus 1 auto-sized width at the end for the button */
-    grid-template-columns: 1fr 1fr 1fr auto;
-    align-items: center; /* Centers all icons and text vertically across the track */
-    padding: 15px;
-    background-color: #cfba9c; /* Matching your image background color */
-    border-radius: 15px;
-    margin: 10px;
-    width: 65%;
-}
-
-/* Individual Data Columns (1, 2, and 3) */
-.col-reserva {
-    display: flex;
-    flex-direction: column;
-    align-items: center;    /* Center content horizontally inside the column */
-    text-align: center;
-    padding: 0 10px;
-
-    /* The Magic Line: Creates the vertical borders between data sections */
-    border-right: 2px solid #000000;
-}
-
-/* Inner alignment for the Icons next to text */
-.dato-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 5px;
-    font-size: 1.2rem;
-    color: #ffffff; /* White text matching your image layout */
-}
-
-/* Vertical text stack specifically for the Date + Time column */
-.fecha-hora-stack {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-/* Column 4: The Button Alignment */
-.col-actions {
-    padding-left: 20px;
-    padding-right: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* The red circular delete button matching your card design */
-.button-cancelar-reserva {
-    width: 40px;
-    height: 40px;
-    background-color: #c94444;
-    color: white;
-    border: none;
-    border-radius: 50%; /* Makes it a perfect circle */
+/* Título de reseñas */
+.reseñas-titulo {
+    font-family: 'ArefRuqaa', serif;
+    font-size: 2.2rem;
+    color: black;
+    margin: 0;
     font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
+    letter-spacing: 2px;
 }
 
-.button-cancelar-reserva:hover {
-    background-color: #a83232;
+/* Envuelve la caja clara para obligarla a estirarse */
+.reseñas-contenedor-interior {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-/* Alternative: If you want it to be a grey circle matching the red X size */
-.btn-disabled-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #d1d1d1;
-    color: #888888;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    cursor: not-allowed;
+/* Caja interior clara con scroll */
+.reseñas-caja-interior {
+    background-color: #8d6a4e;
+    border-radius: 15px;
+    padding: 25px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-grow: 1;
+    overflow-y: auto;
+    box-shadow: inset 0px 4px 10px rgba(0,0,0,0.1);
 }
-/* fin estilos mis reservas*/
+
+/* Lista que agrupa las reseñas (reemplaza los gap y flexbox) */
+.reseñas-lista {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Tarjeta individual de cada reseña */
+.reseña-tarjeta {
+    background-color: rgba(255, 255, 255, 0.76);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Fila para las estrellas y la fecha */
+.reseña-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Textos dentro del header de la tarjeta */
+.reseña-estrellas {
+    font-size: 1.1em;
+    color: #444;
+}
+
+.reseña-fecha {
+    color: #2d3947;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* Comentario dentro de la caja azul */
+.reseña-comentario {
+    background-color: #2d3947;
+    color: white;
+    margin: 0;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1.05em;
+}
+
+.estrellas-caja {
+    display: inline-block;
+    position: relative;
+}
+
+/* Las 5 estrellas grises/apagadas de fondo */
+.estrellas-fondo {
+    opacity: 0.3;
+}
+
+/* Las 5 estrellas encendidas superpuestas */
+.estrellas-progreso {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden; 
+}
 
 .modal-overlay {
     position: fixed;
@@ -1524,23 +1579,6 @@ así no queda todo apretado y se lee bien */
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.modal-form {
-    width: 700px;
-    background: #1d2732;
-    border-radius: 24px;
-    padding: 40px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-}
-
-.fields-form-reserva {
-    height: 45px;
-    font-size: 26px;
-    font-weight: bold;
 }
 
 /* pagina menu (publica) */
@@ -1814,6 +1852,202 @@ así no queda todo apretado y se lee bien */
     line-height: 1;
 }
 
+/*Vista mis reservas*/
+.contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #674C3E;
+    width: 85%;
+    padding: 20px;
+}
+
+.contenedor-reservas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #4A413C;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.seccion-mis-reservas {
+    width: 90%;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    /* The Magic Magnet: Pushes the left group to the far left and right group to the far right */
+    justify-content: space-between;
+    width: 100%;
+    height: 150px;
+    box-sizing: border-box;
+}
+
+/* Aligns the circle and the text side-by-side */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Adds space between the circle arrow and your h1 text */
+}
+
+/* Aligns the two buttons side-by-side */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Adds space between your two navigation buttons */
+    height: 100%;
+}
+
+.header-right form, .header-right > button {
+    height: 35%;
+}
+
+/* The Grid Container */
+.info-reserva {
+    display: grid;
+    /* 3 equal fractional units (1fr), plus 1 auto-sized width at the end for the button */
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    align-items: center; /* Centers all icons and text vertically across the track */
+    padding: 15px;
+    background-color: #cfba9c; /* Matching your image background color */
+    border-radius: 15px;
+    margin: 10px;
+    width: 80%;
+}
+
+/* Individual Data Columns (1, 2, and 3) */
+.col-reserva {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* Center content horizontally inside the column */
+    text-align: center;
+    padding: 0 10px;
+
+    /* The Magic Line: Creates the vertical borders between data sections */
+    border-right: 2px solid #000000;
+}
+
+/* Inner alignment for the Icons next to text */
+.dato-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 5px;
+    font-size: 1.2rem;
+    color: #ffffff; /* White text matching your image layout */
+}
+
+/* Vertical text stack specifically for the Date + Time column */
+.fecha-hora-stack {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.col-actions {
+  display: flex;
+  flex-direction: column; /* Forces vertical stacking */
+  justify-content: center;
+  gap: 8px;              /* Space between buttons */
+  min-width: 150px;      /* Prevents the text from wrapping awkwardly */
+  padding-left: 20px;
+}
+
+/* Form wrapper helper to let the button fill out its container width */
+.action-form-wrapper {
+  width: 100%;
+  display: block;
+}
+
+/* Base Uniform Rectangular Styles */
+.button-action {
+  display: block;
+  width: 100%;            /* Forces both buttons to be exactly the same width */
+  box-sizing: border-box; /* Includes padding in width calculation */
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;     /* Slight rounding for a clean rectangular look */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Individual Color Theme Styles */
+.button-cancelar {
+  background-color: #d32f2f; /* Red */
+  color: #ffffff;
+}
+
+.button-cancelar:hover {
+  background-color: #b71c1c;
+}
+
+.button-review {
+  background-color: #ffca28; /* Gold/Yellow */
+  color: #212121;
+}
+
+.button-review:hover {
+  background-color: #ffb300;
+}
+
+/* Single uniform style for ANY disabled action button state */
+.button-action.btn-action-disabled {
+  background-color: #e0e0e0;
+  color: #9e9e9e;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Removes the trailing black border line from the last data column (Estado) */
+.col-reserva:nth-child(4) {
+    border-right: none;
+}
+
+/* By default, if an element has display: flex, it might ignore the 'hidden' attribute. 
+   This CSS rule ensures that if the 'hidden' attribute is present, it forces invisibility. */
+#my-popup-overlay[hidden] {
+    display: none;
+}
+
+/* fin estilos mis reservas*/
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-form {
+    width: 700px;
+    background: #1d2732;
+    border-radius: 24px;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.fields-form-reserva {
+    height: 45px;
+    font-size: 26px;
+    font-weight: bold;
+}
 /* Estilo mesas */
 
 .mesas-header {

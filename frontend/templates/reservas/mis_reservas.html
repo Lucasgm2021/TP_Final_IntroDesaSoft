@@ -5,6 +5,35 @@
     {% from "componentes/button3_comp.html" import button3_comp %}
     {% from "componentes/circle_comp.html" import circle_comp %}
     {% from "componentes/reserva_comp.html" import reserva_comp %}
+    <div id="my-popup-overlay" class='modal-overlay' hidden>
+        <article class="reseña-tarjeta">
+            <header class="reseña-header">
+                <span class="reseña-estrellas">
+                    <strong>4/5</strong> 
+                    
+                    <span class="estrellas-caja">
+                        <span class="estrellas-fondo">⭐⭐⭐⭐⭐</span>
+                        <span class="estrellas-progreso" style="width: calc(4 * 20%);">
+                            ⭐⭐⭐⭐⭐
+                        </span>
+                    </span>
+                    
+                </span>
+                
+                <span class="reseña-fecha">
+                    Fecha: 07/06/2026
+                </span>
+            </header>
+            
+            <p class="reseña-comentario">
+                Not bad
+            </p>
+        <button class="button-action button-view-review" onclick="togglePopup()">
+            Volver
+        </button>
+        </article>
+    </div>
+
     <div class="contenedor">
         <div class="header">
             <div class="header-left">
@@ -32,7 +61,7 @@
             <h2>Mis Reservas</h2>
             <div class="contenedor-reservas">
                 {% for reserva in reservas %}
-                    {{ reserva_comp(reserva) }}
+                    {{ reserva_comp(reserva,reseñas) }}
                 {% endfor %}
             </div>
         </div>

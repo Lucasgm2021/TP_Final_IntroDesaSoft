@@ -304,6 +304,11 @@ def reservas():
     reservas_data = []
 
     for reserva in reservas_todas:
+        reserva_vigente = datetime.strptime(
+            reserva["fecha"] + " " + reserva["hora_reserva"],
+            "%Y-%m-%d %H:%M:%S"
+        ) > datetime.now() and reserva["estado_reserva"] == "pendiente"
+
         reservas_data.append({
             "id": reserva["id_reserva"],
             "cells": [

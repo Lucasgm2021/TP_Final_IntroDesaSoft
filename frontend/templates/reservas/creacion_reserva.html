@@ -1,22 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear reserva</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-</head>
-<body id="body-creacion-reserva">
-    <!-- Flask flash sintaxis-->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class="flash-container">
-            {% for category, message in messages %}
-            <div class="flash flash--{{ category }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    {% endwith %}
+{% extends "base_usuario.html" %}
+
+{% block content %}
     {% from "componentes/input_comp.html" import input_comp %}
     {% from "componentes/circle_comp.html" import circle_comp %}
     {% from "componentes/button1_comp.html" import button1_comp %}
@@ -67,7 +51,8 @@
             value=request.args.get('comensales', ''),
             required=True
         ) }}
-        <div>
+        <div class="radio-select">
+            <p>Ubicación:</p>
             <input type="radio" name="ubicacion" id="interior" value="interior" {% if request.args.get('ubicacion', 'interior') == 'interior' %} checked {% endif %}>
             <label for="interior">Interior</label>
             <input type="radio" name="ubicacion" id="exterior" value="exterior" {% if request.args.get('ubicacion', 'interior') == 'exterior' %} checked {% endif %}>
@@ -93,8 +78,7 @@
             width="250px",
             name="id_mesas[]",
             size=6,
-            classes="dropshadow input-default select-form",
-            multiple=True,
+            classes="dropshadow input-default select-form"
             ) }}
             <div>
                 <input type="submit" value="CONFIRMAR" class="button1 dropshadow" style="width: 250px; height: 55px; font-size: 18px; border-radius: 12px; margin-top: 20px;">
@@ -102,6 +86,4 @@
     </form>
     {% endif %}
     </div>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-</body>
-</html>
+{% endblock %}

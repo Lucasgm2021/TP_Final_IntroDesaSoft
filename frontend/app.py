@@ -3,6 +3,9 @@ load_dotenv()
 from routes.reservas import reserva_bp
 from routes.dashboard import dashboard_bp
 from routes.auth import auth_front_bp
+from routes.reseñas import reseñas_front_bp
+
+from servicesfront.verificaciones import usuario_es_valido
 from routes.public import public_bp
 from datetime import timedelta
 from flask import Flask, render_template
@@ -19,6 +22,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 def examples():
     return render_template("examples/example.html")
 
+
 @app.route("/")
 def inicio():
     user = usuario_es_valido()
@@ -29,7 +33,6 @@ def inicio():
 
     print(servicios)
     print(type(servicios))
-
     return render_template(
         "inicio/inicio.html",
         usuario_logueado=user,
@@ -38,6 +41,8 @@ def inicio():
         reseñas=reseñas,
         servicios=servicios,
     )
+
+app.register_blueprint(reseñas_front_bp, url_prefix="/reseñas")
 app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
 app.register_blueprint(auth_front_bp, url_prefix="/auth")
 app.register_blueprint(public_bp)
