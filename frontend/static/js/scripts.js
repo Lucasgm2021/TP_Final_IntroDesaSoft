@@ -12,7 +12,6 @@ if (selectFecha) {
     selectFecha.setAttribute('min', formattedDate);
 }
 
-
 function editarPlato(id){
 
     window.location.href =
@@ -30,14 +29,6 @@ function editarReserva(id){
 
     window.location.href =
         `/dashboard/reservas?edit=${id}`
-}
-
-function editarUsuario(id) {
-    window.location.href = `/dashboard/usuarios?edit=${id}`;
-}
-
-function eliminarUsuario(id) {
-    window.location.href = `/dashboard/usuarios?eliminar=${id}`;
 }
 
 function editarInfo(clave) {

@@ -206,8 +206,9 @@ def reseñas():
         resenias=resenias
     )
 
-@dashboard_bp.route("/configuracion/", methods=["GET", "POST"])
+@dashboard_bp.route("/configuracion", methods=["GET", "POST"])
 def configuracion():
+    print("ENTRE A CONFIG")
     if not usuario_es_admin():
         return redirect("/")
 
@@ -239,7 +240,7 @@ def configuracion():
                 cookies={"backend_session": auth}
             )
 
-        return redirect("/dashboard/configuracion/")
+        return redirect("/dashboard/configuracion")
 
     eliminar_clave = request.args.get("eliminar")
     if eliminar_clave:
@@ -247,7 +248,7 @@ def configuracion():
             f"{BACKEND_URL}/info_frontend/{eliminar_clave}",
             cookies={"backend_session": auth}
         )
-        return redirect("/dashboard/configuracion/")
+        return redirect("/dashboard/configuracion")
 
     response = requests.get(
         f"{BACKEND_URL}/info_frontend",
@@ -374,7 +375,7 @@ def usuarios():
     usuarios_data = []
     for u in users:
         usuarios_data.append({
-            "id": u["id_usuario"],
+            "id": u["email"],
             "cells": [
                 u["id_usuario"],
                 u["email"],
