@@ -59,7 +59,7 @@ def login():
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
 
-@auth_front_bp.route("/logout", methods=["POST"])
+@auth_front_bp.route("/logout", methods=["GET","POST"])
 def logout():
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
     requests.post(
