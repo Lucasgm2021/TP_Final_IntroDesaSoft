@@ -263,6 +263,7 @@ components:
         - fecha
         - hora
         - nro_comensales
+        - ids_mesas
       properties:
         interior:
           type: boolean
@@ -278,6 +279,12 @@ components:
         nro_comensales:
           type: integer
           example: 2
+        ids_mesas:
+          type: array
+          items:
+            type: string
+          description: "IDs de las mesas elegidas por el cliente (como strings). El backend valida que la capacidad total cubra a los comensales."
+          example: ["3", "4"]
         id_usuario:
           type: integer
           description: "Si no se envía se usa el id del usuario en sesión. Solo admins pueden reservar en nombre de otro usuario."
@@ -457,6 +464,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+    get:
+      tags: [Sesión]
+      summary: Cerrar sesión (también disponible por GET)
+      responses:
+        "201":
+          description: Sesión cerrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: No estás logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /sesion/perfil:
     get:
@@ -464,11 +487,27 @@ paths:
       summary: Ver perfil del usuario en sesión (endpoint temporal)
       responses:
         "200":
-          description: HTML con id, email y rol del usuario.
+          description: Datos del usuario en sesión
           content:
-            text/html:
+            application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  id_usuario:
+                    type: integer
+                  email:
+                    type: string
+                  es_admin:
+                    type: boolean
+        "401":
+          description: No iniciaste sesión
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   # ==========================================================================
   # USUARIOS
@@ -560,7 +599,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /usuarios/admin:
     post:
       tags: [Usuarios]
       summary: Crear un usuario con rol explícito (admin o cliente)
@@ -649,7 +687,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /usuarios/admin/{email}:
+  /usuarios/{email}:
     get:
       tags: [Usuarios]
       summary: Obtener un usuario por email
@@ -730,6 +768,35 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   /usuarios/cliente/mi_perfil:
+    get:
+      tags: [Usuarios]
+      summary: Ver el perfil propio (usuario en sesión)
+      responses:
+        "200":
+          description: Datos del perfil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id_usuario:
+                    type: integer
+                  email:
+                    type: string
+                  es_admin:
+                    type: boolean
+        "401":
+          description: No hay sesión activa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
     patch:
       tags: [Usuarios]
       summary: Actualizar email y contraseña propios
@@ -771,6 +838,31 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "409":
           description: Ya hay un usuario registrado con ese email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Usuarios]
+      summary: Eliminar la cuenta propia (cierra la sesión)
+      responses:
+        "200":
+          description: Perfil eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: No hay sesión activa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Usuario no encontrado
           content:
             application/json:
               schema:
@@ -841,6 +933,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+  /mesas/validacion:
+    get:
+      tags: [Mesas]
+      summary: Mesas disponibles para una fecha/hora/ubicación
+      description: Devuelve las mesas funcionales no ocupadas en la fecha/hora indicada según la ubicación (interior/exterior).
+      parameters:
+        - name: fecha
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          example: "2026-05-26"
+        - name: hora
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "20:00:00"
+        - name: interior
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Lista de mesas disponibles según los parámetros
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Mesa"
 
   /mesas/{id_mesa}:
     get:
@@ -1141,7 +1270,7 @@ paths:
       tags: [Reservas]
       summary: Crear una reserva
       description: |
-        Busca automáticamente la mesa disponible más pequeña que cubra la cantidad de comensales.
+        El cliente envía en `ids_mesas` las mesas elegidas; el backend valida que su capacidad total cubra la cantidad de comensales.
         Al crearse, envía un email al usuario con un QR para confirmar la llegada y un enlace de cancelación.
         El QR vence a los 30 minutos de la hora de reserva.
       requestBody:
@@ -1151,16 +1280,6 @@ paths:
             schema:
               $ref: "#/components/schemas/ReservaInput"
       responses:
-        "200":
-          description: No hay mesas disponibles (se devuelve 200 con mensaje)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  msg:
-                    type: string
-                    example: "No hay mesas disponibles para esa cantidad de comensales"
         "201":
           description: Reserva creada. Email enviado con QR.
           content:
@@ -1173,7 +1292,7 @@ paths:
                   id:
                     type: integer
         "400":
-          description: Fecha/hora inválida o en el pasado, o hora no en punto
+          description: La capacidad de las mesas seleccionadas no es compatible con la cantidad de comensales
           content:
             application/json:
               schema:
@@ -1358,6 +1477,43 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   /reservas/{id_reserva}:
+    get:
+      tags: [Reservas]
+      summary: "[Admin] Obtener una reserva por ID"
+      parameters:
+        - name: id_reserva
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Datos de la reserva
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Reserva"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: No es administrador
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Reserva no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
     patch:
       tags: [Reservas]
       summary: Modificar campos de una reserva
@@ -1452,6 +1608,29 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Reserva"
+
+  /rese%C3%B1as/usuario:
+    get:
+      tags: [Resenas]
+      summary: "[Auth] Obtener las resenas del usuario en sesion"
+      responses:
+        "200":
+          description: Resenas propias, indexadas por id_reserva
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Resena"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /rese%C3%B1as/todas:
     get:
