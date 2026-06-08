@@ -1,0 +1,138 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <h1 style="width: 70%">MENU</h1>
+    {% from "componentes/circle_comp.html" import circle_comp %}
+    <div class="table-add-btn" style="margin-bottom: 30px; right: 0;">
+        {{ circle_comp(
+            text="+",
+            size=50,
+            type=1,
+            func="window.location.href='/dashboard/menu?nueva=1'"
+        ) }}
+    </div>
+</div>
+    {% from "componentes/tabla_comp.html" import tabla_comp %}
+    {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+
+
+    {{ tabla_comp(
+        id="tabla-delete-edit",
+        columns=["ID", "Plato", "Categoría", "Precio","Hay stock?"],
+        rows=menu,
+        row_height=50,
+        show_delete=true,
+        show_edit=true,
+        func_delete="eliminarPlato",
+        func_edit="editarPlato"
+    ) }}
+
+
+    {% if plato_editar %}
+    <div class="modal-overlay">
+
+        <form method="POST" class="dropshadow modal-card">
+
+            <input type="hidden" name="accion" value="editar">
+            <input type="hidden" name="id_plato" value="{{ plato_editar.id_plato }}">
+
+            <div class="modal-header">
+                <h2 class="modal-title">Editar plato</h2>
+                <span class="modal-subtitle">ID {{ plato_editar.id_plato }}</span>
+            </div>
+
+            <div class="modal-fields">
+
+                {{ input_comp(name="nombre", label="Nombre",
+                    value=plato_editar.nombre, placeholder="Nombre del plato",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="precio", type="number", label="Precio",
+                    value=plato_editar.precio, placeholder="10000",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="id_categoria", type="number", label="Categoria",
+                    value=plato_editar.id_categoria, placeholder="1",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="link_imagen", type="text", label="Imagen",
+                    value=plato_editar.link_imagen, placeholder="https://...",
+                    width="100%", height="45px") }}
+
+            </div>
+
+            <div class="modal-checks">
+                <label><input type="checkbox" name="hay_stock"
+                    {% if plato_editar.hay_stock %}checked{% endif %}> Hay stock</label>
+                <label><input type="checkbox" name="gluten"
+                    {% if plato_editar.gluten %}checked{% endif %}> Gluten</label>
+                <label><input type="checkbox" name="producto_animal"
+                    {% if plato_editar.producto_animal %}checked{% endif %}> Producto animal</label>
+                <label><input type="checkbox" name="carnes"
+                    {% if plato_editar.carnes %}checked{% endif %}> Carnes</label>
+                <label><input type="checkbox" name="lactosa"
+                    {% if plato_editar.lactosa %}checked{% endif %}> Lactosa</label>
+            </div>
+
+            <div class="modal-actions">
+                {{ button1_comp(text="Cancelar", height=50,
+                    func="window.location.href='/dashboard/menu'; return false;") }}
+                {{ button1_comp(text="Guardar", height=50, type="submit") }}
+            </div>
+
+        </form>
+    </div>
+    {% endif %}
+
+    {% if nuevo %}
+    <div class="modal-overlay">
+
+        <form method="POST" action="/dashboard/menu" class="dropshadow modal-card">
+
+            <input type="hidden" name="accion" value="crear">
+
+            <div class="modal-header">
+                <h2 class="modal-title">Nuevo plato</h2>
+            </div>
+
+            <div class="modal-fields">
+
+                {{ input_comp(name="nombre", label="Nombre",
+                    placeholder="Nombre del plato",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="precio", type="number", label="Precio",
+                    placeholder="10000",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="id_categoria", type="number", label="Categoria",
+                    placeholder="1",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="link_imagen", type="text", label="Imagen",
+                    placeholder="https://...",
+                    width="100%", height="45px") }}
+
+            </div>
+
+            <div class="modal-checks">
+                <label><input type="checkbox" name="hay_stock"> Hay stock</label>
+                <label><input type="checkbox" name="gluten"> Gluten</label>
+                <label><input type="checkbox" name="producto_animal"> Producto animal</label>
+                <label><input type="checkbox" name="carnes"> Carnes</label>
+                <label><input type="checkbox" name="lactosa"> Lactosa</label>
+            </div>
+
+            <div class="modal-actions">
+                {{ button1_comp(text="Cancelar", height=50,
+                    func="window.location.href='/dashboard/menu'; return false;") }}
+                {{ button1_comp(text="Crear", height=50, type="submit") }}
+            </div>
+
+        </form>
+    </div>
+    {% endif %}
+
+{% endblock %}

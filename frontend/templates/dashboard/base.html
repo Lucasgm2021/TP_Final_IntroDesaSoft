@@ -1,0 +1,120 @@
+{% from "componentes/navbtn_comp.html" import navbtn_comp %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="{{ url_for('static',filename='js/scripts.js') }}"></script>
+</head>
+
+<body class="body-dashboard">
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar dropshadow">
+
+        <div class="sidebar-top">
+
+            <div class="sidebar-brand">
+
+                <h1 class="sidebar-title">
+                    DASHBOARD:
+                </h1>
+
+                <div class="sidebar-subtitle puerto-hermoso">
+                    Puerto Hermoso
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Home",
+                        selected=request.endpoint == "dashboard.home",
+                        func="window.location.href='/dashboard'"
+                    ) }}
+                </div>
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Reservas",
+                        selected=request.endpoint == "dashboard.reservas",
+                        func="window.location.href='/dashboard/reservas'"
+                    ) }}
+                </div>
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Config. In-page",
+                        selected=request.endpoint == "dashboard.configuracion",
+                        func="window.location.href='/dashboard/configuracion'"
+                    ) }}
+                </div>
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Reseñas",
+                        selected=request.endpoint == "dashboard.reseñas",
+                        func="window.location.href='/dashboard/reseñas'"
+                    ) }}
+                </div>
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Menu",
+                        selected=request.endpoint == "dashboard.menu",
+                        func="window.location.href='/dashboard/menu'"
+                    ) }}
+                </div>
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Mesas",
+                        selected=request.endpoint == "dashboard.mesas",
+                        func="window.location.href='/dashboard/mesas'"
+                    ) }}
+                </div>
+
+                <div class="sidebar-btn-wrapper">
+                    {{ navbtn_comp(
+                        text="Usuarios",
+                        selected=request.endpoint == "dashboard.usuarios",
+                        func="window.location.href='/dashboard/usuarios'"
+                    ) }}
+                </div>
+
+            </nav>
+
+        </div>
+
+        <div class="sidebar-btn-wrapper">
+
+            {{ navbtn_comp(
+                text="Cerrar Sesion",
+                func="window.location.href='../auth/logout'"
+            ) }}
+
+        </div>
+
+    </aside>
+
+    <main
+        id="main-content"
+        class="dashboard-content"
+    >
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+</body>
+</html>

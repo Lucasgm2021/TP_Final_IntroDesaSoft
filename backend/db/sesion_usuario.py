@@ -6,7 +6,6 @@ from db.config import (
 def obtener_usuario_por_email(email):
     query = "SELECT * FROM usuarios WHERE email = :email"
     resultado = ejecutar_query_lectura(query, {"email": email})
-
     return resultado[0] if resultado else None
 
 def crear_usuario(email,password):

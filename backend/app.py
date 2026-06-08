@@ -4,6 +4,7 @@ load_dotenv()
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
+
 from datetime import timedelta
 from routes.usuarios import usuarios_bp
 from routes.menu import menu_bp
@@ -15,16 +16,18 @@ from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from flask_cors import CORS
 
-
-
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@localhost:3306/restaurante"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@127.0.0.1:3306/restaurante"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
+# Inside your BACKEND app configuration file:
+app.config["SESSION_COOKIE_NAME"] = "backend_session"
+
+app.config["SESSION_COOKIE_NAME"] = "backend_session"
 
 app.json.sort_keys = False
 
@@ -34,6 +37,7 @@ app.config["SESSION_SQLALCHEMY"] = db
 
 Session(app)
 CORS(app)
+
 
 @app.route("/")
 def index():
@@ -49,4 +53,4 @@ app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
 app.register_blueprint(reservas_bp, url_prefix="/reservas")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,port=5005)
