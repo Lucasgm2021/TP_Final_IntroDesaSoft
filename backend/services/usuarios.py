@@ -4,6 +4,7 @@ import re
 from db.usuarios import (
     crear_cliente,
     crear_usuario,
+    obtener_usuario_id,
     obtener_usuarios,
     obtener_usuario_email,
     actualizar_mi_perfil,
@@ -86,7 +87,21 @@ def obtener_usuario_email_service(email):
         return error_msg(404, "Usuario no encontrado")
     return usuario, 200
 
+def obtener_mi_perfil_service():
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+    return usuario, 200
+
 def actualizar_mi_perfil_service(data):
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
     for campo in ["nuevo_email", "nueva_contraseña"]:
         if campo not in data:
             return error_msg(400, f"Falta {campo}")
@@ -105,11 +120,11 @@ def actualizar_mi_perfil_service(data):
         contraseña_actual = obtener_usuario_email(session["email"])["password"]
     except:
         return error_msg(500, "Error al obtener el usuario actual")
-    
+
     es_misma_contraseña = check_password_hash(contraseña_actual, contraseña)
     if not es_misma_contraseña:
         contraseña_hasheada = generate_password_hash(contraseña)
-    else:   
+    else:
         contraseña_hasheada = contraseña_actual
 
     try:
@@ -163,6 +178,24 @@ def eliminar_usuario_service(email):
             "email": email
         }
     }, 200
+
+def eliminar_mi_perfil_service():
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+
+    borrar_usuario(usuario["id_usuario"])
+    session.clear()
+
+    return {
+        "message": (
+            "Perfil eliminado"
+        )
+    }, 200
+
 
 def validar_email(email):
     patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\.[a-zA-Z]+$"

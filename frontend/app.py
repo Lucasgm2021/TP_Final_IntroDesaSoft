@@ -12,16 +12,18 @@ from flask import Flask, render_template
 from servicesfront.inicio import obtener_info_restaurante, obtener_servicios_extra, obtener_reseñas_aprobadas, obtener_menu_publico
 from servicesfront.verificaciones import usuario_es_valido
 
+from routes.mi_perfil import usuarios_bp
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
+
+
 @app.route("/examples")
 def examples():
     return render_template("examples/example.html")
-
 
 @app.route("/")
 def inicio():
@@ -46,6 +48,7 @@ app.register_blueprint(reseñas_front_bp, url_prefix="/reseñas")
 app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
 app.register_blueprint(auth_front_bp, url_prefix="/auth")
 app.register_blueprint(public_bp)
+app.register_blueprint(usuarios_bp)
 app.register_blueprint(reserva_bp,url_prefix="/reservas")
 
 
