@@ -27,7 +27,7 @@ def register():
     respuesta, status = register_service(data)
     return jsonify(respuesta), status
 
-@sesion_usuario_bp.route("/logout",methods=["POST"])
+@sesion_usuario_bp.route("/logout",methods=["GET","POST"])
 def logout():
     respuesta, status = logout_service()
     return jsonify(respuesta), status
@@ -37,10 +37,9 @@ def logout():
 @sesion_usuario_bp.route("/perfil")
 def perfil():
     if "id_usuario" not in session:
-        return jsonify({"sesion": False}), 401
-    return dict({
-        "sesion":True,
-        "usuario": session["id_usuario"],
-        "email": session["email"],
-        "admin": True if session['es_admin'] else False
+        return jsonify({"error": "No iniciaste sesion"}), 401
+    return jsonify({
+        "id_usuario": session['id_usuario'],
+        "email": session['email'],
+        "es_admin": session['es_admin']
     }),200

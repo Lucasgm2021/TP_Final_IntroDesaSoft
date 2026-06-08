@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from services.menu import obtener_menu
+from servicesfront.menu import obtener_menu
 
 public_bp = Blueprint("public", __name__)
 

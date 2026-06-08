@@ -2,11 +2,22 @@
 
 {% block content %}
 
-<h1>
-    Config Info.
-</h1>
+<div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <h1 style="width: 70%">CONFIG. INFO</h1>
+    {% from "componentes/circle_comp.html" import circle_comp %}
+    <div class="table-add-btn" style="margin-bottom: 30px; right: 0;">
+        {{ circle_comp(
+            text="+",
+            size=50,
+            type=1,
+            func="window.location.href='/dashboard/configuracion?nueva=1'"
+        ) }}
+    </div>
+</div>
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/input_comp.html" import input_comp %}
 
     {{ tabla_comp(
         id="tabla-delete-edit",
@@ -15,9 +26,78 @@
         row_height=50,
         show_delete=true,
         show_edit=true,
-        func_delete="",
-        func_edit=""
+        func_delete="eliminarInfo",
+        func_edit="editarInfo"
     ) }}
 
+    {% if info_editar %}
+    <div class="modal-overlay">
+
+        <form method="POST" action="/dashboard/configuracion" class="dropshadow modal-card">
+
+            <input type="hidden" name="accion" value="editar">
+            <input type="hidden" name="clave_original" value="{{ info_editar.clave }}">
+
+            <div class="modal-header">
+                <h2 class="modal-title">Editar entrada</h2>
+                <span class="modal-subtitle">Clave: {{ info_editar.clave }}</span>
+            </div>
+
+            <div class="modal-fields">
+
+                {{ input_comp(name="clave", label="Clave",
+                    value=info_editar.clave,
+                    placeholder="nombre_clave",
+                    width="100%", height="45px", required=true, disabled=true) }}
+
+                {{ input_comp(name="valor", label="Valor",
+                    value=info_editar.valor,
+                    placeholder="valor",
+                    width="100%", height="45px", required=true) }}
+
+            </div>
+
+            <div class="modal-actions">
+                {{ button1_comp(text="Cancelar", height=50,
+                    func="window.location.href='/dashboard/configuracion'; return false;") }}
+                {{ button1_comp(text="Guardar", height=50, type="submit") }}
+            </div>
+
+        </form>
+    </div>
+    {% endif %}
+
+    {% if nueva %}
+    <div class="modal-overlay">
+
+        <form method="POST" action="/dashboard/configuracion" class="dropshadow modal-card">
+
+            <input type="hidden" name="accion" value="crear">
+
+            <div class="modal-header">
+                <h2 class="modal-title">Nueva entrada</h2>
+            </div>
+
+            <div class="modal-fields">
+
+                {{ input_comp(name="clave", label="Clave",
+                    placeholder="nombre_clave",
+                    width="100%", height="45px", required=true) }}
+
+                {{ input_comp(name="valor", label="Valor",
+                    placeholder="valor",
+                    width="100%", height="45px", required=true) }}
+
+            </div>
+
+            <div class="modal-actions">
+                {{ button1_comp(text="Cancelar", height=50,
+                    func="window.location.href='/dashboard/configuracion'; return false;") }}
+                {{ button1_comp(text="Crear", height=50, type="submit") }}
+            </div>
+
+        </form>
+    </div>
+    {% endif %}
 
 {% endblock %}

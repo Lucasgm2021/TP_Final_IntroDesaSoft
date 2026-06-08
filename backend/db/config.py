@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 
 # mysql+pymysql://usuario:password@host/db
 engine = create_engine(
-    "mysql+pymysql://root:1234@localhost/restaurante",
+    "mysql+pymysql://root:1234@127.0.0.1/restaurante",
     echo=False,
     future=True
 )

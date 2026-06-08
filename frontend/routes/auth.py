@@ -10,6 +10,8 @@ from flask import (
 import requests
 
 from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
+from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
+from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
 auth_front_bp = Blueprint(
     "auth_front",
@@ -24,7 +26,7 @@ def register():
         return render_template('auth/register.html')
 
     resp = requests.post(
-        'http://localhost:5005/sesion/register',
+        f'{API_BASE_URL}/sesion/register',
         json={
             'email': request.form['email'],
             'password': request.form['password']
@@ -32,10 +34,12 @@ def register():
     )
 
     if resp.status_code in (200, 201):
-        session['usuario'] = resp.cookies.get('session')
+        session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
         return redirect('profile')
-    else:
+    elif resp.status_code == 409:
         return render_template('auth/register.html', error="Email ya utilizado")
+    else:
+        return render_template('auth/register.html', error=f"Error:{resp.status_code}")
 
 
 @auth_front_bp.route("/login", methods=["GET","POST"])
@@ -44,28 +48,27 @@ def login():
         return render_template('auth/login.html')
 
     resp = requests.post(
-        'http://localhost:5005/sesion/login',
+        f'{API_BASE_URL}/sesion/login',
         json={
             'email': request.form['email'],
             'password': request.form['password']
         }
     )
-
-    if resp.status_code == 200:
-        session['usuario'] = resp.cookies.get('session')
+    if resp.status_code == 201:
+        session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
         return redirect('profile')
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
 
-@auth_front_bp.route("/logout")
+@auth_front_bp.route("/logout", methods=["GET","POST"])
 def logout():
-    data = session.get('usuario') or ''
+    data = session.get(FRONTEND_COOKIE_CLAVE) or ''
     requests.post(
-        'http://localhost:5005/sesion/logout',
-        cookies={'session': data}
+        f'{API_BASE_URL}/sesion/logout',
+        cookies={BACKEND_SESSION_COOKIE_NAME: data}
     )
     session.clear()
-    return redirect('login')
+    return redirect('/')
 
 @auth_front_bp.route("/profile")
 def profile():

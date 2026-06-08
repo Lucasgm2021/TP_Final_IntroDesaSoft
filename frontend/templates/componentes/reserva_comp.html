@@ -1,0 +1,56 @@
+{% macro reserva_comp(reserva,reseñas) %}
+    <div class="info-reserva" data-reserva-id="{{ reserva.id_reserva }}">
+        <div class="col-reserva">
+            <strong style="display: block; margin-bottom: 4px;">ID: {{ reserva.id_reserva }}</strong>
+            <div>
+                 <span>Comensales: <i class="icon-user">👤</i>{{ reserva.comensales }}</span>
+            </div>
+        </div>
+        <div class="col-reserva">
+            <strong>Fecha</strong>
+            <div class="dato-content">
+                <i class="icon-calendar">📅</i> <div class="fecha-hora-stack">
+                    <span>{{ reserva.fecha }}</span>
+                    <span>{{ reserva.hora_reserva }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-reserva">
+            <strong>Ubicacion:</strong>
+            <div class="dato-content">
+                <i class="icon-table">🪑</i> <span>
+                    {% if reserva.interior %} Salon Interior {% else %} Patio Exterior {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="col-reserva">
+            <strong>Estado:</strong>
+            <div class="dato-content">
+                <i class="icon-status">🔔</i> 
+                <span class="estado-text">{{ reserva.estado_reserva }}</span>
+            </div>
+        </div>
+        <div class="col-actions">
+            {% if reserva.estado_reserva == "pendiente" %}
+            <form action="{{ url_for('reservas.cancelar_reserva_route', uuid_reserva=reserva.uuid_qr) }}" method="POST" class="action-form-wrapper">
+                <button class="button-action button-cancelar" type="submit">Cancelar Reserva</button>
+            </form>
+            {% else %}
+            <span class="button-action btn-action-disabled">Cancelar Reserva</span>
+            {% endif %}
+
+            {% if (not reserva.id_reserva in reseñas) and reserva.estado_reserva == "finalizada"%}
+            <a href="{{ url_for('reseñas.formulario_reseña', id_reserva=reserva.id_reserva) }}" class="button-action button-review">
+                Dejar Reseña
+            </a>
+            {% elif reserva.id_reserva in reseñas and reserva.estado_reserva == "finalizada" %}
+            <button class="button-action button-view-review" onclick="togglePopup('{{ reserva.id_reserva }}')">
+                Ver Reseña
+            </button>
+          
+            {% else %}
+            <span class="button-action btn-action-disabled">Dejar Reseña</span>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

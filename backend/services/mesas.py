@@ -1,5 +1,6 @@
 from db.mesas import (
     obtener_mesas,
+    obtener_mesas_validas,
     obtener_mesa_por_id,
     existe_numero_mesa,
     crear_mesa,
@@ -15,6 +16,11 @@ def obtener_mesas_service():
     mesas = obtener_mesas()
     mesas = [dict(row) for row in mesas]
 
+    return {"data": mesas}, 200
+
+def obtener_mesas_validas_service(data):
+    mesas = obtener_mesas_validas(data)
+    mesas = [dict(row) for row in mesas]
     return {"data": mesas}, 200
 
 def obtener_mesa_service(id_mesa):

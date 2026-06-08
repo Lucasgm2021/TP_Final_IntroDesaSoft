@@ -25,102 +25,80 @@ VALUES
 ('Postre'),
 ('Bebida');
 
-INSERT INTO configuracion (clave, valor)
-VALUES
-(
-    'nombre_restaurante',
-    'PUERTO HERMOSO'
-),
-(
-    'telefono',
-    '+54 11 1234-5678'
-),
-(
-    'horario',
-    'Lunes a Domingo 12:00 - 00:00'
-),
-(
-    'historia',
-    'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeño sueño familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas.
-Hoy, tres generaciones después, mantenemos intacta la esencia que nos dio origen: la calidez del trato familiar y el respeto por la cocina bien hecha. Somos la historia viva de un barrio que amamos, evolucionando con el tiempo pero conservando siempre el corazón en nuestros fuegos.
-Medio siglo de familia, encuentros y pasión por la mesa.'
-);
+INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
+(101, 2, TRUE, TRUE),  (102, 2, TRUE, TRUE),  (103, 4, TRUE, TRUE),  (104, 4, TRUE, TRUE),
+(105, 4, TRUE, TRUE),  (106, 6, TRUE, TRUE),  (107, 6, TRUE, TRUE),  (108, 8, TRUE, TRUE),
+(109, 2, TRUE, TRUE),  (110, 4, TRUE, TRUE),
+(201, 2, FALSE, TRUE), (202, 2, FALSE, TRUE), (203, 4, FALSE, TRUE), (204, 4, FALSE, TRUE),
+(205, 4, FALSE, TRUE), (206, 6, FALSE, TRUE), (207, 6, FALSE, TRUE), (208, 8, FALSE, TRUE),
+(209, 2, FALSE, TRUE), (210, 4, FALSE, TRUE);
 
-INSERT INTO usuarios (
-    email,
-    password,
-    es_admin,
-    reservas,
-    canceladas
-)
-VALUES
-(
-    'admin@puertohermoso.com',
-    '1234',
-    TRUE,
-    0,
-    0
-),
-(
-    'juan.perez@email.com',
-    '1234',
-    FALSE,
-    3,
-    1
-),
-(
-    'maria.gomez@email.com',
-    '1234',
-    FALSE,
-    5,
-    0
-),
-(
-    'diego.maradona@email.com',
-    '1234',
-    FALSE,
-    2,
-    1
-),
-(
-    'carla.rodriguez@email.com',
-    '1234',
-    FALSE,
-    1,
-    0
-),
-(
-    'luis.vazquez@email.com',
-    '1234',
-    FALSE,
-    4,
-    2
-),
-(
-    'ana.martinez@email.com',
-    '1234',
-    FALSE,
-    2,
-    0
-);
+INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, reseñada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
+(1, 1, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000001', 'pendiente', '2026-05-21 14:00:00', 2),
+(2, 2, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000002', 'pendiente', '2026-05-21 14:00:00', 4),
+(3, 3, 'pendiente', FALSE, '13:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000003', 'pendiente', '2026-05-21 15:00:00', 2),
+(4, 4, 'pendiente', FALSE, '13:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000004', 'pendiente', '2026-05-21 15:00:00', 5),
+(5, 5, 'pendiente', FALSE, '14:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000005', 'pendiente', '2026-05-21 16:00:00', 3),
+(6, 6, 'pendiente', FALSE, '20:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000006', 'pendiente', '2026-05-21 22:00:00', 2),
+(7, 7, 'pendiente', FALSE, '20:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000007', 'pendiente', '2026-05-21 22:00:00', 4),
+(8, 8, 'pendiente', FALSE, '21:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000008', 'pendiente', '2026-05-21 23:00:00', 6),
+(9, 9, 'pendiente', FALSE, '21:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000009', 'pendiente', '2026-05-21 23:00:00', 2),
+(10, 10, 'pendiente', FALSE, '22:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000010', 'pendiente', '2026-05-22 00:00:00', 4),
+(11, 11, 'pendiente', FALSE, '12:00:00', '2026-05-22', TRUE, '00000000-0000-0000-0000-000000000011', 'pendiente', '2026-05-22 14:00:00', 2),
+(12, 1, 'pendiente', FALSE, '12:00:00', '2026-05-22', FALSE, '00000000-0000-0000-0000-000000000012', 'pendiente', '2026-05-22 14:00:00', 3),
+(13, 2, 'pendiente', FALSE, '13:00:00', '2026-05-22', TRUE, '00000000-0000-0000-0000-000000000013', 'pendiente', '2026-05-22 15:00:00', 4),
+(14, 3, 'pendiente', FALSE, '13:00:00', '2026-05-22', TRUE, '00000000-0000-0000-0000-000000000014', 'pendiente', '2026-05-22 15:00:00', 2),
+(15, 4, 'pendiente', FALSE, '14:00:00', '2026-05-22', FALSE, '00000000-0000-0000-0000-000000000015', 'pendiente', '2026-05-22 16:00:00', 5),
+(16, 5, 'pendiente', FALSE, '20:00:00', '2026-05-22', TRUE, '00000000-0000-0000-0000-000000000016', 'pendiente', '2026-05-22 22:00:00', 4),
+(17, 6, 'pendiente', FALSE, '20:00:00', '2026-05-22', FALSE, '00000000-0000-0000-0000-000000000017', 'pendiente', '2026-05-22 22:00:00', 2),
+(18, 7, 'pendiente', FALSE, '21:00:00', '2026-05-22', TRUE, '00000000-0000-0000-0000-000000000018', 'pendiente', '2026-05-22 23:00:00', 6),
+(19, 8, 'pendiente', FALSE, '21:00:00', '2026-05-22', TRUE, '00000000-0000-0000-0000-000000000019', 'pendiente', '2026-05-22 23:00:00', 2),
+(20, 9, 'pendiente', FALSE, '22:00:00', '2026-05-22', FALSE, '00000000-0000-0000-0000-000000000020', 'pendiente', '2026-05-23 00:00:00', 4),
+(21, 10, 'pendiente', FALSE, '12:00:00', '2026-05-23', TRUE, '00000000-0000-0000-0000-000000000021', 'pendiente', '2026-05-23 14:00:00', 3),
+(22, 11, 'pendiente', FALSE, '12:00:00', '2026-05-23', TRUE, '00000000-0000-0000-0000-000000000022', 'pendiente', '2026-05-23 14:00:00', 2),
+(23, 1, 'pendiente', FALSE, '13:00:00', '2026-05-23', FALSE, '00000000-0000-0000-0000-000000000023', 'pendiente', '2026-05-23 15:00:00', 4),
+(24, 2, 'pendiente', FALSE, '13:00:00', '2026-05-23', TRUE, '00000000-0000-0000-0000-000000000024', 'pendiente', '2026-05-23 15:00:00', 6),
+(25, 3, 'pendiente', FALSE, '14:00:00', '2026-05-23', FALSE, '00000000-0000-0000-0000-000000000025', 'pendiente', '2026-05-23 16:00:00', 2),
+(26, 4, 'pendiente', FALSE, '20:00:00', '2026-05-23', TRUE, '00000000-0000-0000-0000-000000000026', 'pendiente', '2026-05-23 22:00:00', 4),
+(27, 5, 'pendiente', FALSE, '20:00:00', '2026-05-23', TRUE, '00000000-0000-0000-0000-000000000027', 'pendiente', '2026-05-23 22:00:00', 2),
+(28, 6, 'pendiente', FALSE, '21:00:00', '2026-05-23', FALSE, '00000000-0000-0000-0000-000000000028', 'pendiente', '2026-05-23 23:00:00', 5),
+(29, 7, 'pendiente', FALSE, '21:00:00', '2026-05-23', TRUE, '00000000-0000-0000-0000-000000000029', 'pendiente', '2026-05-23 23:00:00', 3),
+(30, 8, 'pendiente', FALSE, '22:00:00', '2026-05-23', FALSE, '00000000-0000-0000-0000-000000000030', 'pendiente', '2026-05-24 00:00:00', 4),
+(31, 9, 'pendiente', FALSE, '12:00:00', '2026-05-24', TRUE, '00000000-0000-0000-0000-000000000031', 'pendiente', '2026-05-24 14:00:00', 2),
+(32, 10, 'pendiente', FALSE, '12:00:00', '2026-05-24', FALSE, '00000000-0000-0000-0000-000000000032', 'pendiente', '2026-05-24 14:00:00', 4),
+(33, 11, 'pendiente', FALSE, '13:00:00', '2026-05-24', TRUE, '00000000-0000-0000-0000-000000000033', 'pendiente', '2026-05-24 15:00:00', 4),
+(34, 1, 'pendiente', FALSE, '13:00:00', '2026-05-24', TRUE, '00000000-0000-0000-0000-000000000034', 'pendiente', '2026-05-24 15:00:00', 2),
+(35, 2, 'pendiente', FALSE, '14:00:00', '2026-05-24', FALSE, '00000000-0000-0000-0000-000000000035', 'pendiente', '2026-05-24 16:00:00', 6),
+(36, 3, 'pendiente', FALSE, '20:00:00', '2026-05-24', TRUE, '00000000-0000-0000-0000-000000000036', 'pendiente', '2026-05-24 22:00:00', 3),
+(37, 4, 'pendiente', FALSE, '20:00:00', '2026-05-24', FALSE, '00000000-0000-0000-0000-000000000037', 'pendiente', '2026-05-24 22:00:00', 2),
+(38, 5, 'pendiente', FALSE, '21:00:00', '2026-05-24', TRUE, '00000000-0000-0000-0000-000000000038', 'pendiente', '2026-05-24 23:00:00', 4),
+(39, 6, 'pendiente', FALSE, '21:00:00', '2026-05-24', TRUE, '00000000-0000-0000-0000-000000000039', 'pendiente', '2026-05-24 23:00:00', 5),
+(40, 7, 'pendiente', FALSE, '22:00:00', '2026-05-24', FALSE, '00000000-0000-0000-0000-000000000040', 'pendiente', '2026-05-25 00:00:00', 2),
+(41, 8, 'pendiente', FALSE, '12:00:00', '2026-05-25', TRUE, '00000000-0000-0000-0000-000000000041', 'pendiente', '2026-05-25 14:00:00', 4),
+(42, 9, 'pendiente', FALSE, '13:00:00', '2026-05-25', TRUE, '00000000-0000-0000-0000-000000000042', 'pendiente', '2026-05-25 15:00:00', 3),
+(43, 10, 'pendiente', FALSE, '14:00:00', '2026-05-25', FALSE, '00000000-0000-0000-0000-000000000043', 'pendiente', '2026-05-25 16:00:00', 2),
+(44, 11, 'pendiente', FALSE, '20:00:00', '2026-05-25', TRUE, '00000000-0000-0000-0000-000000000044', 'pendiente', '2026-05-25 22:00:00', 4),
+(45, 1, 'pendiente', FALSE, '21:00:00', '2026-05-25', FALSE, '00000000-0000-0000-0000-000000000045', 'pendiente', '2026-05-25 23:00:00', 6),
+(46, 2, 'pendiente', FALSE, '12:00:00', '2026-05-26', TRUE, '00000000-0000-0000-0000-000000000046', 'pendiente', '2026-05-26 14:00:00', 2),
+(47, 3, 'pendiente', FALSE, '13:00:00', '2026-05-26', FALSE, '00000000-0000-0000-0000-000000000047', 'pendiente', '2026-05-26 15:00:00', 4),
+(48, 4, 'pendiente', FALSE, '20:00:00', '2026-05-26', TRUE, '00000000-0000-0000-0000-000000000048', 'pendiente', '2026-05-26 22:00:00', 3),
+(49, 5, 'pendiente', FALSE, '21:00:00', '2026-05-26', TRUE, '00000000-0000-0000-0000-000000000049', 'pendiente', '2026-05-26 23:00:00', 2),
+(50, 6, 'pendiente', FALSE, '13:00:00', '2026-05-27', FALSE, '00000000-0000-0000-0000-000000000050', 'pendiente', '2026-05-27 15:00:00', 4);
 
-INSERT INTO mesa (
-    numero,
-    capacidad,
-    interior,
-    funcional
-)
-VALUES
-(101, 2, TRUE, TRUE),
-(102, 2, TRUE, TRUE),
-(103, 4, TRUE, TRUE),
-(104, 4, TRUE, TRUE),
-(105, 6, TRUE, TRUE),
-(201, 2, FALSE, TRUE),
-(202, 4, FALSE, TRUE),
-(203, 6, FALSE, TRUE),
-(204, 8, FALSE, TRUE),
-(205, 4, FALSE, FALSE);
+INSERT INTO reserva_mesa (id_reserva, id_mesa) VALUES
+(1, 1),  (2, 2),  (3, 3),  (4, 4),  (5, 5),
+(6, 6),  (7, 7),  (8, 8),  (9, 9),  (10, 10),
+(11, 11), (12, 12), (13, 13), (14, 14), (15, 15),
+(16, 16), (17, 17), (18, 18), (19, 19), (20, 20),
+(21, 1),  (22, 2),  (23, 3),  (24, 4),  (25, 5),
+(26, 6),  (27, 7),  (28, 8),  (29, 9),  (30, 10),
+(31, 11), (32, 12), (33, 13), (34, 14), (35, 15),
+(36, 16), (37, 17), (38, 18), (39, 19), (40, 20),
+(41, 5),  (42, 10), (43, 15), (44, 2),  (45, 18),
+(46, 3),  (47, 8),  (48, 12), (49, 14), (50, 1);
+-- =========================
+-- SERVICIOS EXTRA
+-- =========================
 
 INSERT INTO servicios_extra (
     nombre,
@@ -210,112 +188,4 @@ VALUES
     FALSE,
     FALSE,
     FALSE
-);
-
-INSERT INTO reserva (
-    id_usuario,
-    estado_reserva,
-    reseñada,
-    hora_reserva,
-    fecha,
-    interior,
-    uuid_qr,
-    estado_qr,
-    qr_expiracion,
-    comensales
-)
-VALUES
-(
-    2,
-    'finalizada',
-    TRUE,
-    '20:00:00',
-    '2026-05-20',
-    TRUE,
-    '00000000-0000-0000-0000-000000000001',
-    'usado',
-    '2026-05-20 22:00:00',
-    2
-),
-(
-    3,
-    'finalizada',
-    TRUE,
-    '21:00:00',
-    '2026-05-21',
-    FALSE,
-    '00000000-0000-0000-0000-000000000002',
-    'usado',
-    '2026-05-21 23:00:00',
-    4
-),
-(
-    4,
-    'cancelada',
-    FALSE,
-    '13:00:00',
-    '2026-05-22',
-    TRUE,
-    '00000000-0000-0000-0000-000000000003',
-    'expirado',
-    '2026-05-22 15:00:00',
-    2
-),
-(
-    5,
-    'pendiente',
-    FALSE,
-    '20:30:00',
-    '2026-05-28',
-    TRUE,
-    '00000000-0000-0000-0000-000000000004',
-    'pendiente',
-    '2026-05-28 22:30:00',
-    6
-),
-(
-    6,
-    'pendiente',
-    FALSE,
-    '22:00:00',
-    '2026-05-29',
-    FALSE,
-    '00000000-0000-0000-0000-000000000005',
-    'pendiente',
-    '2026-05-30 00:00:00',
-    3
-);
-
-INSERT INTO reserva_mesa (
-    id_reserva,
-    id_mesa
-)
-VALUES
-(1, 1),
-(2, 7),
-(3, 3),
-(4, 5),
-(5, 8);
-
-INSERT INTO reseña (
-    id_usuario,
-    id_reserva,
-    calificacion,
-    comentario,
-    estado
-)
-VALUES
-(
-    2,
-    1,
-    5,
-    'Excelente atencion y muy buena comida.',
-    'aprobada'
-),
-(
-    3,
-    2,
-    4,
-    'Muy rico todo aunque demoraron un poco.',
-    'aprobada'
 );

@@ -9,11 +9,12 @@
     {% from "componentes/tabla_comp.html" import tabla_comp %}
     
     {{ tabla_comp(
-        id="tabla-check",
-        columns=["ID", "Id_Reserva","Comentario","Calificacion","Estado","Id_Usuario","Email Cliente"],
+        id="table-empty",
+        columns=["ID", "Id_Reserva","Comentario","Calificacion","Id_Usuario","Email Cliente"],
         rows=resenias,
         row_height=50,
-        show_check=true
+        show_check=true,
+        func_check="toggleResenia"
     ) }}
 
 
