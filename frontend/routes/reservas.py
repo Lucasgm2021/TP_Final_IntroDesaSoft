@@ -9,7 +9,7 @@ reserva_bp = Blueprint("reservas",__name__)
 @reserva_bp.route("/",methods=["GET","POST"])
 def crear_reserva_form():
     if not usuario_es_valido():
-        redirect(url_for("auth.login"))
+        return redirect(url_for("auth_front.login"))
 
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if request.method == "GET":
@@ -65,7 +65,7 @@ def crear_reserva_form():
 @reserva_bp.route("/mis_reservas", methods=["GET"])
 def mis_reservas():
     if not usuario_es_valido():
-        redirect(url_for("auth.login"))
+        return redirect(url_for("auth_front.login"))
 
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     reservas = obtener_mis_reservas(cookies)

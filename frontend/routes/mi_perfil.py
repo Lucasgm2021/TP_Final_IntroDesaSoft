@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
-from services.mi_perfil import eliminar_mi_perfil, obtener_mi_perfil, actualizar_mi_perfil
+from servicesfront.mi_perfil import eliminar_mi_perfil, obtener_mi_perfil, actualizar_mi_perfil
 
 usuarios_bp = Blueprint(
     "usuarios",

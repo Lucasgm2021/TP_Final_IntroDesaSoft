@@ -2,7 +2,6 @@ import requests
 from constants import API_BASE_URL
 
 def crear_reserva(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,cookies):
-    data = {}
     try:
         response = requests.post(f"{API_BASE_URL}/reservas",json={
             "hora": hora_reserva,
@@ -26,7 +25,6 @@ def crear_reserva(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,coo
         return {'errores': ['No se pudo conectar con el servidor.']}
     except:
         return {'errores': ['Ocurrió un error inesperado al crear la reserva. Inténtalo de nuevo más tarde.']}
-    return data
 
 def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
     try:

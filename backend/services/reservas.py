@@ -21,7 +21,7 @@ CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
       
 def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):        
     offset = int(offset)
-    limit = int(limit)
+    limit = 1000 #int(limit)
     data={}
     if not "id_usuario" in data:
         if not session["es_admin"]:

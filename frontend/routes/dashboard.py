@@ -30,7 +30,11 @@ def home():
         cookies={BACKEND_SESSION_COOKIE_NAME: auth}
     )
     todas = r_reservas.json().get("reservas", [])
-    reservas_hoy = [r for r in todas if r["fecha"] == hoy]
+    reservas_hoy=[]
+    for r in todas:
+        if r["fecha"] == hoy:
+            reservas_hoy.append(r)
+
 
     reservas_rows = []
     for r in reservas_hoy:
@@ -227,9 +231,6 @@ def configuracion():
                 json=body,
                 cookies={BACKEND_SESSION_COOKIE_NAME: auth}
             )
-
-            print("STATUS:", resp.status_code)
-            print("RESP:", resp.text)
 
         elif accion == "crear":
             body = {

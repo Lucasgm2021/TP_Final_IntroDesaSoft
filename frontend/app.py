@@ -10,7 +10,7 @@ from routes.public import public_bp
 from datetime import timedelta
 from flask import Flask, render_template
 from servicesfront.inicio import obtener_info_restaurante, obtener_servicios_extra, obtener_reseñas_aprobadas, obtener_menu_publico
-from servicesfront.verificaciones import usuario_es_valido
+from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
 
 from routes.mi_perfil import usuarios_bp
 app = Flask(__name__)
@@ -21,23 +21,25 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
 
 
+
 @app.route("/examples")
 def examples():
+    print(app.url_map)
     return render_template("examples/example.html")
 
 @app.route("/")
 def inicio():
     user = usuario_es_valido()
     info = obtener_info_restaurante()
+    admin = usuario_es_admin()
     menu = obtener_menu_publico()
     reseñas = obtener_reseñas_aprobadas()
     servicios = obtener_servicios_extra()
 
-    print(servicios)
-    print(type(servicios))
     return render_template(
         "inicio/inicio.html",
         usuario_logueado=user,
+        usuario_admin=admin,
         info=info,
         menu=menu,
         reseñas=reseñas,

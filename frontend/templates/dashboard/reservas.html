@@ -5,9 +5,6 @@
 <div style="display: flex; flex-direction: row; justify-content: space-between;">
     <h1 style="width: 70%">RESERVAS</h1>
 </div>
-<div style="display: flex; flex-direction: row; justify-content: space-between;">
-    <h1 style="width: 70%">RESERVAS</h1>
-</div>
 
     {% from "componentes/tabla_comp.html" import tabla_comp %}
     {% from "componentes/input_comp.html" import input_comp %}
@@ -19,7 +16,7 @@
 
     {{ tabla_comp(
         id="table-empty",
-        columns=["ID", "Id_usuario","Estado","Hora","Fecha","Ubicacion","Cant.","Mesas"],
+        columns=["ID", "Id_usuario","Estado","Hora","Fecha","Ubicacion","Cant.","Mesa/s"],
         rows=reservas,
         row_height=50
     ) }}
