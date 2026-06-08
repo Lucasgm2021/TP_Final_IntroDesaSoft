@@ -1,6 +1,6 @@
-import requests
+import requests, json
 
-BACKEND_URL = "http://localhost:5005"
+BACKEND_URL = "http://127.0.0.1:5005"
 
 
 def obtener_info_restaurante():
@@ -33,11 +33,14 @@ def obtener_reseñas_aprobadas():
     except requests.RequestException:
         return []
 
-
 def obtener_servicios_extra():
-    try:
-        respuesta = requests.get(BACKEND_URL + "/servicios_extra")
-        respuesta.raise_for_status()
-        return respuesta.json().get("data", [])
-    except requests.RequestException:
-        return []
+    info = obtener_info_restaurante()
+    servicios = info.get("servicios_extra", "[]")
+
+    if isinstance(servicios, str):
+        try:
+            servicios = json.loads(servicios)
+        except json.JSONDecodeError:
+            return []
+
+    return servicios

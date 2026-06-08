@@ -31,19 +31,37 @@
             height=50,
             func="window.location.href='/menu'"
         ) }}
-
-        <div id="hero-reservas">
-
-            <span>RESERVAS</span>
-
+        <div class="flex-row" style="margin:10px;">
             {{ button1_comp(
-                text="RESERVAR",
+                text="RESERVAS",
                 height=50,
                 func="window.location.href='/reservas'"
             ) }}
 
+        {% if not usuario_logueado %}
+            {{ button1_comp(
+                text="LOG-IN",
+                height=50,
+                func="window.location.href='/auth/login'"
+            ) }}
+            {{ button1_comp(
+                text="REGISTER",
+                height=50,
+                func="window.location.href='/auth/register'"
+            ) }}
+        {% else %}
+            {{ button1_comp(
+                text="PERFIL",
+                height=50,
+                func="window.location.href='/auth/profile'"
+            ) }}
+            {{ button1_comp(
+                text="LOG OUT",
+                height=50,
+                func="window.location.href='/auth/logout'"
+            ) }}
+        {% endif %}
         </div>
-
     </div>
 
 
@@ -85,7 +103,7 @@
                 <div id="servicios-tags">
 
                     {% for s in servicios %}
-                    <span>{{ s.nombre | upper }}</span>
+                    <span>{{ s | upper }}</span>
                     {% endfor %}
 
                 </div>
@@ -171,9 +189,9 @@
 
         <p>PUERTO HERMOSO</p>
 
-        <p>Thames 1810, Palermo Soho, Buenos Aires | 1154171123 | reservas.puertohermoso@gmail.com</p>
+        <p>Thames {{ info.get("ubicacion","1810, Palermo Soho, Buenos Aires") }} | {{ info.get("telefono","+54 11 2345-6789") }} | reservas.puertohermoso@gmail.com</p>
 
-        <a href="#">
+        <a target="_blank" href={{ info.get("instagram", "#") }} >
             <img src="{{ url_for('static', filename='images/inicio/instagram.png') }}" alt="Instagram" width="24">
         </a>
 

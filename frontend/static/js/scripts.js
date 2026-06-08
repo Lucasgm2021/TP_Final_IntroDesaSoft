@@ -32,11 +32,11 @@ function editarReserva(id){
 }
 
 function editarInfo(clave) {
-    window.location.href = `/dashboard/configuracion/?edit=${clave}`;
+    window.location.href = `/dashboard/configuracion?edit=${clave}`;
 }
 
 function eliminarInfo(clave) {
-    window.location.href = `/dashboard/configuracion/?eliminar=${clave}`;
+    window.location.href = `/dashboard/configuracion?eliminar=${clave}`;
 }
 
 function toggleResenia(id, aprobada) {

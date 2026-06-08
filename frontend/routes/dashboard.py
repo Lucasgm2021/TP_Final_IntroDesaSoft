@@ -219,15 +219,23 @@ def configuracion():
 
         if accion == "editar":
             clave_original = request.form.get("clave_original")
+
             body = {
                 "clave": request.form.get("clave"),
                 "valor": request.form.get("valor"),
             }
-            requests.patch(
+
+            print("CLAVE ORIGINAL:", clave_original)
+            print("BODY:", body)
+
+            resp = requests.patch(
                 f"{BACKEND_URL}/info_frontend/{clave_original}",
                 json=body,
                 cookies={"backend_session": auth}
             )
+
+            print("STATUS:", resp.status_code)
+            print("RESP:", resp.text)
 
         elif accion == "crear":
             body = {
