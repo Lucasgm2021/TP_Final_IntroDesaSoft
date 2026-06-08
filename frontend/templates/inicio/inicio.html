@@ -35,7 +35,7 @@
             {{ button1_comp(
                 text="RESERVAS",
                 height=50,
-                func="window.location.href='/reservas'"
+                func="window.location.href='/reservas/mis_reservas'"
             ) }}
 
         {% if not usuario_logueado %}
@@ -154,8 +154,15 @@
 
                 {% endfor %}
 
-                {% if reseñas | length > 3 %}
-                <a href="#">Más reseñas...</a>
+                {% if reseñas | length >= 2 %}
+                    <div class="flex-center">
+                    {{ button2_comp(
+                        text="MAS RESEÑAS",
+                        height=65,
+                        func="window.location.href='/reseñas'"
+                    ) }}
+                    </div>
+
                 {% endif %}
 
             {% else %}

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template,url_for, flash, redirect, session
 from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva
+from servicesfront.verificaciones import usuario_es_valido
 from datetime import datetime
 from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
@@ -7,6 +8,9 @@ reserva_bp = Blueprint("reservas",__name__)
 
 @reserva_bp.route("/",methods=["GET","POST"])
 def crear_reserva_form():
+    if not usuario_es_valido():
+        redirect(url_for("auth.login"))
+
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if request.method == "GET":
         mesas = None
@@ -60,6 +64,9 @@ def crear_reserva_form():
 
 @reserva_bp.route("/mis_reservas", methods=["GET"])
 def mis_reservas():
+    if not usuario_es_valido():
+        redirect(url_for("auth.login"))
+
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     reservas = obtener_mis_reservas(cookies)
     if not reservas.get("reservas",[]):

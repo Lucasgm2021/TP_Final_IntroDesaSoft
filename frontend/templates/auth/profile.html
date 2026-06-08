@@ -4,12 +4,9 @@
 <h2>
     PROFILE
 </h2>
+    {% from "componentes/button1_comp.html" import button1_comp %}
 {% if admin %}
-
-{% from "componentes/button1_comp.html" import button1_comp %}
-
-{{ button1_comp(text="ADMIN DASHBOARD",height=50,func="window.location.href='../dashboard/'")}}
-
+    {{ button1_comp(text="ADMIN DASHBOARD",height=50,func="window.location.href='../dashboard/'")}}
 {% endif %}
-
+    {{ button1_comp(text="Mis Reservas",height=50,func="window.location.href='../reservas/mis_reservas'")}}
 {% endblock %}
