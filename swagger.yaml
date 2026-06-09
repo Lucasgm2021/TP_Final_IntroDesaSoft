@@ -768,35 +768,6 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   /usuarios/cliente/mi_perfil:
-    get:
-      tags: [Usuarios]
-      summary: Ver el perfil propio (usuario en sesión)
-      responses:
-        "200":
-          description: Datos del perfil
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id_usuario:
-                    type: integer
-                  email:
-                    type: string
-                  es_admin:
-                    type: boolean
-        "401":
-          description: No hay sesión activa
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
-          description: Usuario no encontrado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
     patch:
       tags: [Usuarios]
       summary: Actualizar email y contraseña propios
@@ -838,31 +809,6 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "409":
           description: Ya hay un usuario registrado con ese email
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-    delete:
-      tags: [Usuarios]
-      summary: Eliminar la cuenta propia (cierra la sesión)
-      responses:
-        "200":
-          description: Perfil eliminado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        "401":
-          description: No hay sesión activa
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "404":
-          description: Usuario no encontrado
           content:
             application/json:
               schema:
