@@ -145,9 +145,11 @@ def crear_reserva(data):
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
         mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
+        url_front = os.getenv("URL_PAGINA_WEB") or "http://localhost:5001"
+        
         datos_mail = {
-            "qr_data": f"http://127.0.0.1:5000/reservas/mostrar_confirmacion?code={uuid_qr}",
-            "url_cancelar": f"http://127.0.0.1:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
+            "qr_data": f"{url_front}/reservas/mostrar_confirmacion?code={uuid_qr}",
+            "url_cancelar": f"{url_front}/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
 
         servicios_mail.enviar_mail_con_qr_gmail(mail_usuario,asunto,datos_mail,mail_template)

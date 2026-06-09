@@ -46,11 +46,6 @@
                 <h1>Puerto Hermoso</h1>
             </div>
             <div class="header-right">
-                <form action="{{ url_for('auth_front.logout') }}" method="POST">
-                    <button type="submit" class="button-default button-delete button-generic">
-                        Cerrar sesion
-                    </button>
-                </form>
                 <button class="button-default button-nueva-reserva button-generic"
                     onclick="window.location.href=window.location.pathname.replace('mis_reservas', '')">
                     Nueva reserva

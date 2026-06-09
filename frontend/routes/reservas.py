@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template,url_for, flash, redirect, session
-from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva,obtener_mis_reseñas
-from servicesfront.verificaciones import usuario_es_valido
+from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva,confirmar_reserva,obtener_mis_reseñas
+from servicesfront.verificaciones import usuario_es_valido,usuario_es_admin
 from datetime import datetime
 from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
@@ -71,14 +71,14 @@ def mis_reservas():
     reservas = obtener_mis_reservas(cookies)
     reseñas = obtener_mis_reseñas(cookies)
 
-    if not reservas.get("reservas",[]):
+    if reservas.get("reservas") is None:
         for e in reservas.get('errores', ['Error desconocido.']):
             flash(e, 'error')
         reservas = []
     else:
         reservas = [{**reserva,"id_reserva": str(reserva["id_reserva"])}for reserva in reservas.get("reservas",[])]
     
-    if not reseñas.get("data",[]):
+    if reseñas.get("data",[]) is None:
         for e in reseñas.get('errores', ['Error desconocido.']):
             flash(e, 'error')
         reseñas = {}
@@ -127,8 +127,26 @@ def home_admin():
         ]
     )
 
+@reserva_bp.route("/mostrar_confirmacion", methods=["GET"])
+def mostrar_confirmacion_reserva():
+    if not usuario_es_admin:
+        return redirect(url_for("auth_front.login"))
+
+    id_qr = request.args.get("code")
+    return render_template("reservas/confirmacion_reserva.html",id_qr=id_qr),200
+    
+@reserva_bp.route("/mostrar_cancelacion", methods=["GET"])
+def mostrar_cancelacion_reserva():
+    if not usuario_es_admin:
+        return redirect(url_for("auth_front.login"))
+
+    id_qr = request.args.get("code")
+    return render_template("reservas/cancelacion_reserva.html",id_qr=id_qr),200
+
 @reserva_bp.route("/cancelar_reserva/<uuid_reserva>", methods=["POST"])
 def cancelar_reserva_route(uuid_reserva):
+    if not usuario_es_valido():
+        return redirect(url_for("auth_front.login"))
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     resultado = cancelar_reserva(uuid_reserva, cookies)
     if resultado.get('ok'):
@@ -137,3 +155,16 @@ def cancelar_reserva_route(uuid_reserva):
         for e in resultado.get('errores', ['Error desconocido.']):
             flash(e, 'error')
     return redirect(url_for('reservas.mis_reservas')) 
+
+@reserva_bp.route("/confirmar_reserva/<uuid_reserva>", methods=["POST"])
+def confirmar_reserva_route(uuid_reserva):
+    if not usuario_es_admin():
+        return redirect(url_for("auth_front.login"))
+    cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
+    resultado = confirmar_reserva(uuid_reserva, cookies)
+    if resultado.get('ok'):
+        flash('Reserva cancelada con exito', 'success')
+    else:
+        for e in resultado.get('errores', ['Error desconocido.']):
+            flash(e, 'error')
+    return redirect(url_for('dashboard.home')) 
