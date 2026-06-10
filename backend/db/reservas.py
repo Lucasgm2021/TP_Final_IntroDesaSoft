@@ -9,6 +9,10 @@ LEFT JOIN reserva_mesa
     ON reserva.id_reserva = reserva_mesa.id_reserva
 """
 
+QUERY_GET_RESERVAS_SIN_MESAS = """
+    SELECT * FROM reserva
+"""
+
 QUERY_GET_RESERVA_ID_QR = """
 SELECT
     reserva.*,
@@ -125,8 +129,16 @@ SET
 
 QUERY_UPDATE_CONTADORES_RESERVA = "UPDATE usuarios"
 
-def obtener_reservas(data,limit=None,offset=None):
-    query = QUERY_GET_RESERVAS
+def obtener_reservas(data):
+    query = ""
+    if data["mesas"]:
+        query = QUERY_GET_RESERVAS
+    else:
+        query = QUERY_GET_RESERVAS_SIN_MESAS
+
+    #borro la clave y valor de mesas ya que no es una condicion para el where.
+    del data["mesas"]
+    
     lista_de_condiciones = []
     params = {}
     for key in data:
@@ -136,13 +148,7 @@ def obtener_reservas(data,limit=None,offset=None):
     if data:
         string_para_query = " and ".join(lista_de_condiciones)
         query += f" WHERE {string_para_query}"
-        
-    if offset is not None and limit is not None:
-        paginacion = " LIMIT :limit OFFSET :offset"
-        query += " " + paginacion
-        params["limit"] = limit
-        params["offset"] = offset
-
+    print(query)
     return config.ejecutar_query_lectura(
         query,
         params

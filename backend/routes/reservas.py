@@ -12,13 +12,12 @@ def obtener_reservas():
         respuesta, status = error
         return jsonify(respuesta), status
 
-    offset = request.args.get("_offset", default=0)
-    limit = request.args.get("_limit", default=10)
     fecha = request.args.get("fecha")
     hora = request.args.get("hora")
     estado = request.args.get("estado")
     id_usuario = request.args.get("id_usuario")
-    res,status = servicios_reservas.obtener_reservas(offset,limit,fecha,hora,estado,id_usuario)
+    mesas = request.args.get("mesas","true").lower() == "true"
+    res,status = servicios_reservas.obtener_reservas(fecha,hora,estado,id_usuario,mesas)
     return jsonify(res),status
 
 

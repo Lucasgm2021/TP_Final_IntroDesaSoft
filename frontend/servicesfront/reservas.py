@@ -32,7 +32,7 @@ def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
 
 def obtener_mis_reservas(cookies):
     try:
-        response = requests.get(f"{API_BASE_URL}/reservas", timeout=10, cookies=cookies)
+        response = requests.get(f"{API_BASE_URL}/reservas", params={"mesas":"false"},timeout=10, cookies=cookies)
         return leer_respuesta_request(response,200,json=True)
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor.']}

@@ -6,7 +6,7 @@ from datetime import datetime,timedelta
 import db.reservas as queries_reservas
 import db.menu as queries_mesas
 import services.mail as servicios_mail
-from services.messages import error_msg, error_msg_lista,paginacion_msg
+from services.messages import error_msg, error_msg_lista
 from services.mesas import obtener_mesas
 import db.usuarios as queries_usuarios
 from constants import URL_PAGINA_WEB,SERVICIO_MAIL,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
@@ -18,9 +18,7 @@ MAS_UNO = 1
 CAMPOS_RESERVA_EDITABLES_ADMIN = {"id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales"}
 CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
       
-def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):        
-    offset = int(offset)
-    limit = 1000 #int(limit)
+def obtener_reservas(fecha,hora,estado,id_usuario,mesas):        
     data={}
     if not "id_usuario" in data:
         if not session["es_admin"]:
@@ -42,28 +40,15 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
         
     if estado:
         data["estado_reserva"]=estado
-    
+    data["mesas"] = mesas
     try:
-        total_reservas = len(queries_reservas.obtener_reservas(data=data))
-        reservas = queries_reservas.obtener_reservas(data=data,limit=limit,offset=offset)
+        reservas = queries_reservas.obtener_reservas(data=data)
         #fecha es datetime.date, hora es datetime.timedelta y qr_expiracion es datetime.datetime
         reservas = [{**reserva, "fecha": reserva["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(reserva["hora_reserva"]), "qr_expiracion": str(reserva["qr_expiracion"])}  for reserva in reservas]
     except:
         return error_msg(500,"Error obteniendo reservas",description=f"Ha ocurrido un error en el servidor.")
 
-    return paginacion_msg(
-        reservas,
-        limit,
-        offset,
-        total_reservas,
-        "http://127.0.0.1:5000/reservas",
-        "reservas",
-        200,
-        data
-    )
-    
-
-    return reservas, total_reservas
+    return {"reservas": reservas},200
 
 def obtener_reserva_con_id(id_reserva):
     try:
