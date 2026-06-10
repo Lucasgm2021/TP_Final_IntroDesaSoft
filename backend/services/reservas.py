@@ -9,8 +9,7 @@ import services.mail as servicios_mail
 from services.messages import error_msg, error_msg_lista,paginacion_msg
 from services.mesas import obtener_mesas
 import db.usuarios as queries_usuarios
-
-import db.usuarios as queries_usuarios
+from constants import URL_PAGINA_WEB,SERVICIO_MAIL,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
 
 
 ESTADOS_RESERVA = {"pendiente","confirmada","finalizada"}
@@ -144,19 +143,20 @@ def crear_reserva(data):
         #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
         asunto = "RESERVA REGISTRADA"
-        url_front = os.getenv("URL_PAGINA_WEB") or "http://localhost:5001"
         
         datos_mail = {
-            "qr_data": f"{url_front}/reservas/mostrar_confirmacion?code={uuid_qr}",
-            "url_cancelar": f"{url_front}/reservas/mostrar_cancelacion?code={uuid_qr}"
+            "qr_data": f"{URL_PAGINA_WEB}/reservas/mostrar_confirmacion?code={uuid_qr}",
+            "url_cancelar": f"{URL_PAGINA_WEB}/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
-        mail_service = os.getenv("MAIL_SERVICE") or "gmail_app_pass"
-        if mail_service == "gmail_app_pass":
+    
+        if SERVICIO_MAIL == SERVICIO_MAIL_GMAIL_APP_PASS:
             mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
-            servicios_mail.enviar_mail_con_qr_gmail(mail_usuario,asunto,datos_mail,mail_template)
-        elif mail_service == "mail_jet_key":
+        elif SERVICIO_MAIL == SERVICIO_MAIL_MAILJET:
             mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
-            servicios_mail.enviar_mail_con_qr_mailjet(mail_usuario,asunto,datos_mail,mail_template)            
+        servicios_mail.enviar_mail_con_qr(
+            proveedor=SERVICIO_MAIL,mail_destino=mail_usuario,
+            asunto=asunto,mail_data=datos_mail,ruta_template=mail_template
+        )  
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except Exception as e:
         return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")
