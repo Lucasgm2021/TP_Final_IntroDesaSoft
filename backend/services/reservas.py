@@ -143,7 +143,6 @@ def crear_reserva(data):
             )
         #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
-        mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
         url_front = os.getenv("URL_PAGINA_WEB") or "http://localhost:5001"
         
@@ -151,8 +150,13 @@ def crear_reserva(data):
             "qr_data": f"{url_front}/reservas/mostrar_confirmacion?code={uuid_qr}",
             "url_cancelar": f"{url_front}/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
-
-        servicios_mail.enviar_mail_con_qr_gmail(mail_usuario,asunto,datos_mail,mail_template)
+        mail_service = os.getenv("MAIL_SERVICE") or "gmail_app_pass"
+        if mail_service == "gmail_app_pass":
+            mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
+            servicios_mail.enviar_mail_con_qr_gmail(mail_usuario,asunto,datos_mail,mail_template)
+        elif mail_service == "mail_jet_key":
+            mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
+            servicios_mail.enviar_mail_con_qr_mailjet(mail_usuario,asunto,datos_mail,mail_template)            
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except Exception as e:
         return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")
