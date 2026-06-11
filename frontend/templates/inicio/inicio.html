@@ -37,6 +37,14 @@
                 height=50,
                 func="window.location.href='/reservas/mis_reservas'"
             ) }}
+        {% if usuario_admin %}
+        {{ button1_comp(
+                text="DASHBOARD",
+                height=50,
+                func="window.location.href='/dashboard/'"
+            ) }}
+        {% endif %}
+
 
         {% if not usuario_logueado %}
             {{ button1_comp(
@@ -50,11 +58,6 @@
                 func="window.location.href='/auth/register'"
             ) }}
         {% else %}
-            {{ button1_comp(
-                text="PERFIL",
-                height=50,
-                func="window.location.href='/auth/profile'"
-            ) }}
             {{ button1_comp(
                 text="LOG OUT",
                 height=50,
@@ -182,7 +185,7 @@
 
                 {% endfor %}
 
-                <a href="#">Más reseñas...</a>
+                <a href="{{url_for('reseñas.mostrar_reseñas')}}">Más reseñas...</a>
 
             {% endif %}
 

@@ -93,7 +93,12 @@
 
         </div>
 
-        <div class="sidebar-btn-wrapper">
+        <div class="sidebar-btn-wrapper flex-column" style="gap:5px;">
+
+            {{ navbtn_comp(
+                text="Volver a inicio",
+                func="window.location.href='../'"
+            ) }}
 
             {{ navbtn_comp(
                 text="Cerrar Sesion",

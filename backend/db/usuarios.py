@@ -70,7 +70,7 @@ def obtener_usuario_email(email):
 
 def obtener_usuario_id(id_usuario):
     query = """
-        SELECT id_usuario, email, es_admin
+        SELECT id_usuario, email, es_admin, password
         FROM usuarios
         WHERE id_usuario = :id_usuario
     """

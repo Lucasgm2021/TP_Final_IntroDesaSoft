@@ -35,7 +35,7 @@ def register():
 
     if resp.status_code in (200, 201):
         session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
-        return redirect('profile')
+        return redirect('/')
     elif resp.status_code == 409:
         return render_template('auth/register.html', error="Email ya utilizado")
     else:
@@ -56,7 +56,7 @@ def login():
     )
     if resp.status_code == 201:
         session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
-        return redirect('profile')
+        return redirect('/')
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
 
@@ -69,10 +69,3 @@ def logout():
     )
     session.clear()
     return redirect('/')
-
-@auth_front_bp.route("/profile")
-def profile():
-    if not usuario_es_valido():
-        return redirect('login')
-    else:
-        return render_template('auth/profile.html',admin=usuario_es_admin())
