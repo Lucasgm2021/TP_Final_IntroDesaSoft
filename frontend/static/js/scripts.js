@@ -49,6 +49,16 @@ function toggleResenia(id, aprobada) {
 
 function togglePopup(id_reserva) {
     const popup = document.getElementById('my-popup-overlay');
-
+    if (id_reserva) {
+        const hidden_reseña = document.getElementById(`hidden-reseña-${id_reserva}`)
+        const fecha = hidden_reseña.getElementsByClassName("fecha")[0].textContent
+        const comentario = hidden_reseña.getElementsByClassName("comentario")[0].textContent
+        const calificacion = hidden_reseña.getElementsByClassName("calificacion")[0].textContent
+        popup.getElementsByTagName("strong")[0].textContent = `${calificacion}/5`
+        popup.getElementsByClassName("reseña-fecha")[0].textContent = `Fecha: ${fecha}`
+        popup.getElementsByClassName("reseña-comentario")[0].textContent = comentario
+        const porcentaje = calificacion * 20
+        popup.getElementsByClassName("estrellas-progreso")[0].style.width = `${porcentaje}%` 
+    }
     popup.hidden = !popup.hidden;
 }

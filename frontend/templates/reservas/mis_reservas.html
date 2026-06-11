@@ -6,32 +6,31 @@
     {% from "componentes/circle_comp.html" import circle_comp %}
     {% from "componentes/reserva_comp.html" import reserva_comp %}
     <div id="my-popup-overlay" class='modal-overlay' hidden>
-        <article class="reseña-tarjeta">
-            <header class="reseña-header">
-                <span class="reseña-estrellas">
-                    <strong>4/5</strong> 
-                    
-                    <span class="estrellas-caja">
-                        <span class="estrellas-fondo">⭐⭐⭐⭐⭐</span>
-                        <span class="estrellas-progreso" style="width: calc(4 * 20%);">
-                            ⭐⭐⭐⭐⭐
-                        </span>
+    <article class="reseña-tarjeta">
+        
+        <header class="reseña-header">
+            <span class="reseña-estrellas">
+                <strong></strong> 
+                
+                <span class="estrellas-caja">
+                    <span class="estrellas-fondo">⭐⭐⭐⭐⭐</span>
+                    <span class="estrellas-progreso">
+                        ⭐⭐⭐⭐⭐
                     </span>
-                    
                 </span>
                 
-                <span class="reseña-fecha">
-                    Fecha: 07/06/2026
-                </span>
-            </header>
+            </span>
             
-            <p class="reseña-comentario">
-                Not bad
-            </p>
+            <span class="reseña-fecha">
+            </span>
+        </header>
+        
+        <p class="reseña-comentario">
+        </p>
         <button class="button-action button-view-review" onclick="togglePopup()">
             Volver
         </button>
-        </article>
+    </article>
     </div>
 
     <div class="contenedor">
@@ -56,8 +55,23 @@
             <h2>Mis Reservas</h2>
             <div class="contenedor-reservas">
                 {% for reserva in reservas %}
+                    {% if reserva.id_reserva in reseñas %}
+                    <div id="hidden-reseña-{{reserva.id_reserva}}">
+                        <p class="calificacion" hidden>{{reseñas[reserva.id_reserva].calificacion}}</p>
+                        <p class="comentario" hidden>{{reseñas[reserva.id_reserva].comentario}}</p>
+                        <p class="fecha" hidden>{{reseñas[reserva.id_reserva].fecha}}</p>
+                    </div>
+                    {% endif %}
                     {{ reserva_comp(reserva,reseñas) }}
                 {% endfor %}
+
+                {% if not reservas %}
+                    <div
+                        class="sin-datos"
+                    >
+                        SIN DATOS
+                    </div>                    
+                {% endif %}
             </div>
         </div>
     </div>

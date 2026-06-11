@@ -1180,6 +1180,8 @@ body {
     background-color: #674C3E;
     width: 85%;
     padding: 20px;
+    min-height: 400px;
+    border-radius: 20px;
 }
 
 .contenedor-reservas {
@@ -1224,14 +1226,29 @@ body {
 }
 
 .info-reserva {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 15px;
     padding: 15px;
     background-color: #cfba9c;
     border-radius: 15px;
     margin: 10px;
     width: 80%;
+}
+
+.sin-datos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background-color: #cfba9c;
+    border-radius: 15px;
+    width: 80%;
+    font-weight: bold;
+    font-size: 1em;
+    margin: 15px;    
 }
 
 .col-reserva {
@@ -1240,10 +1257,14 @@ body {
     align-items: center;
     text-align: center;
     padding: 0 10px;
+    flex: 1;            
     border-right: 2px solid #000000;
+
+    align-self: stretch;
+    justify-content: center;
 }
 
-.col-reserva:nth-child(4) {
+.col-reserva:nth-of-type(4) {
     border-right: none;
 }
 
@@ -1255,6 +1276,10 @@ body {
     margin-top: 5px;
     font-size: 1.2rem;
     color: #ffffff;
+}
+
+.col-reserva i {
+    font-style: normal;
 }
 
 .fecha-hora-stack {
