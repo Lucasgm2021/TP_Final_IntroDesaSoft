@@ -12,7 +12,6 @@ from routes.reservas import reservas_bp
 from routes.reseñas import reseñas_bp
 from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
-#from routes.estadisticas import estadisticas_bp
 from routes.mesas import mesas_bp
 from flask_cors import CORS
 
@@ -24,7 +23,6 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@127.0.0.1:3306/restaurante"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
-# Inside your BACKEND app configuration file:
 
 app.json.sort_keys = False
 

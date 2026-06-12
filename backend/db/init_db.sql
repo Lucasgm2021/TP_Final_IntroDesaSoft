@@ -1,3 +1,7 @@
+CREATE DATABASE restaurante;
+
+USE restaurante;
+
 CREATE TABLE usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
 
@@ -73,33 +77,6 @@ CREATE TABLE reserva (
     
     comensales INT NOT NULL,
 
-    
-    estado_reserva ENUM(
-        'pendiente',
-        'cancelada',
-        'finalizada'
-    ) DEFAULT 'pendiente' NOT NULL, 
-
-    reseñada BOOLEAN DEFAULT FALSE NOT NULL,
-
-    hora_reserva TIME NOT NULL,
-
-    fecha DATE DEFAULT (CURRENT_DATE) NOT NULL,
-
-    interior BOOLEAN DEFAULT TRUE NOT NULL,
-
-    uuid_qr CHAR(36) not null UNIQUE,
-
-    estado_qr ENUM(
-        'pendiente',
-        'usado',
-        'expirado'
-    ) DEFAULT 'pendiente',
- 
-    qr_expiracion TIMESTAMP NOT NULL,
-    
-    comensales INT NOT NULL,
-
     CONSTRAINT fk_reserva_usuario
         FOREIGN KEY (id_usuario)
         REFERENCES usuarios(id_usuario)
@@ -147,7 +124,7 @@ CREATE TABLE reserva_mesa (
     CONSTRAINT fk_reserva_mesa_mesa
         FOREIGN KEY (id_mesa)
         REFERENCES mesa(id_mesa)
-        ON DELETE SET NULL
+        ON DELETE cascade
 );
 
 CREATE TABLE reseña (

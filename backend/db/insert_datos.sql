@@ -33,6 +33,27 @@ INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (205, 4, FALSE, TRUE), (206, 6, FALSE, TRUE), (207, 6, FALSE, TRUE), (208, 8, FALSE, TRUE),
 (209, 2, FALSE, TRUE), (210, 4, FALSE, TRUE);
 
+INSERT INTO usuarios (
+    email,
+    password,
+    es_admin
+)
+VALUES
+    ('admin@puertohermoso.com',
+    'scrypt:32768:8:1$AQdBA7UUcfyCWWpn$6495b90ec151405cde68f8d6bdc97ebf00643fb8e905ca583e861b5d83537efa362cec9dc3191fda54584a80d8b9cdf0e96a71144102e930a986ceb5d087575e',
+    TRUE),
+('u1@test.com', 'hash', FALSE),
+('u2@test.com', 'hash', FALSE),
+('u3@test.com', 'hash', FALSE),
+('u4@test.com', 'hash', FALSE),
+('u5@test.com', 'hash', FALSE),
+('u6@test.com', 'hash', FALSE),
+('u7@test.com', 'hash', FALSE),
+('u8@test.com', 'hash', FALSE),
+('u9@test.com', 'hash', FALSE),
+('u10@test.com', 'hash', FALSE);
+
+
 INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, reseñada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
 (1, 1, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000001', 'pendiente', '2026-05-21 14:00:00', 2),
 (2, 2, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000002', 'pendiente', '2026-05-21 14:00:00', 4),
@@ -96,31 +117,6 @@ INSERT INTO reserva_mesa (id_reserva, id_mesa) VALUES
 (36, 16), (37, 17), (38, 18), (39, 19), (40, 20),
 (41, 5),  (42, 10), (43, 15), (44, 2),  (45, 18),
 (46, 3),  (47, 8),  (48, 12), (49, 14), (50, 1);
--- =========================
--- SERVICIOS EXTRA
--- =========================
-
-INSERT INTO servicios_extra (
-    nombre,
-    descripcion,
-    disponible
-)
-VALUES
-(
-    'Decoracion romantica',
-    'Velas y flores para ocasiones especiales',
-    TRUE
-),
-(
-    'Menu vegano',
-    'Opciones 100% vegetales',
-    TRUE
-),
-(
-    'Show en vivo',
-    'Musica en vivo viernes y sabados',
-    FALSE
-);
 
 INSERT INTO plato (
     id_categoria,
