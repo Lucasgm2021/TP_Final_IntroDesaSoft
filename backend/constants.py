@@ -2,7 +2,7 @@ import os
 
 CUENTA_MAIL_LOGIN = os.getenv("CUENTA_MAIL_LOGIN") or "tpintrodesasoftware@gmail.com"
 CUENTA_MAIL_FROM = os.getenv("CUENTA_MAIL_FROM") or "tpintrodesasoftware@gmail.com"
-CONTRASEÑA_MAIL =os.getenv("CONTRASEÑA_MAIL") or ""
+CONTRASENA_MAIL =os.getenv("CONTRASENA_MAIL") or ""
 PUERTO_MAIL = int(os.getenv("PUERTO_MAIL",0)) or 465
 SERVIDOR_MAIL = os.getenv("SERVIDOR_MAIL") or "smtp.gmail.com"
 URL_PAGINA_WEB=os.getenv("URL_PAGINA_WEB") or "http://localhost:5001"

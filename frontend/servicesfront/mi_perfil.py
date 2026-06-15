@@ -1,13 +1,12 @@
 from flask import session
 import requests
-
-BACKEND_URL = "http://localhost:5005"
+from constants import API_BASE_URL
 
 
 def obtener_mi_perfil():
     cookie_backend = session.get("usuario") or ""
     try:
-        respuesta = requests.get(f"{BACKEND_URL}/usuarios/cliente/mi_perfil", cookies={"session": cookie_backend})
+        respuesta = requests.get(f"{API_BASE_URL}/usuarios/cliente/mi_perfil", cookies={"session": cookie_backend})
         if respuesta.status_code == 200:
             return respuesta.json()
         return {}
@@ -22,7 +21,7 @@ def actualizar_mi_perfil(email, password):
             "nuevo_email": email,
             "nueva_contraseña": password
         }
-        respuesta = requests.patch(f"{BACKEND_URL}/usuarios/cliente/mi_perfil", json=payload,
+        respuesta = requests.patch(f"{API_BASE_URL}/usuarios/cliente/mi_perfil", json=payload,
                                    cookies={"session": cookie_backend})
         return respuesta.status_code, respuesta.json()
     except requests.RequestException:
@@ -32,7 +31,7 @@ def actualizar_mi_perfil(email, password):
 def eliminar_mi_perfil():
     cookie_backend = session.get("usuario") or ""
     try:
-        respuesta = requests.delete(f"{BACKEND_URL}/usuarios/cliente/mi_perfil", cookies={"session": cookie_backend})
+        respuesta = requests.delete(f"{API_BASE_URL}/usuarios/cliente/mi_perfil", cookies={"session": cookie_backend})
         return respuesta.status_code
     except requests.RequestException:
         return 500

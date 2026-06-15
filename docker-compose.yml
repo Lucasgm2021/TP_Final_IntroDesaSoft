@@ -42,8 +42,9 @@ services:
       - DB_USER=${MYSQL_USER}
       - DB_PASSWORD=${MYSQL_PASSWORD}
       - DB_NAME=${MYSQL_DATABASE}
-      - MAIL_ACCOUNT=${MAIL_ACCOUNT}      # Placed in your .env
-      - MAIL_PASS=${MAIL_PASS}
+      - CUENTA_MAIL_LOGIN=${CUENTA_MAIL_LOGIN}      # Placed in your .env
+      - CONTRASENA_MAIL=${CONTRASENA_MAIL}
+      - CUENTA_MAIL_FROM=${CUENTA_MAIL_FROM}
     depends_on:
         db:
           condition: service_healthy              # Ensures MySQL starts up before the backend attempts to run

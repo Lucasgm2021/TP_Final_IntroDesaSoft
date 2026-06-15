@@ -1,5 +1,5 @@
 import os
-API_BASE_URL = os.getenv('API_BASE_URL') or 'http://127.0.0.1:5005/'
+API_BASE_URL = os.getenv('API_BASE_URL','http://backend:5000') 
 
 #BACKEND_SESSION_COOKIE_NAME es el nombre que flask le da a la cookie que devuelve (intenta devolver) el backend. Por defecto es session, si se modifica en backend, se modifica acá
 BACKEND_SESSION_COOKIE_NAME = 'session'

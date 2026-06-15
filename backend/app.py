@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@127.0.0.1:3306/restaurante"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@flask_mysql_db:3306/restaurante"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
@@ -48,4 +48,4 @@ app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
 app.register_blueprint(reservas_bp, url_prefix="/reservas")
 
 if __name__ == "__main__":
-    app.run(debug=True,port=5005)
+    app.run(debug=True, host="0.0.0.0", port=5000)
