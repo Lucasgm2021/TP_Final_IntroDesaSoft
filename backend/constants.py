@@ -14,7 +14,7 @@ URL_PAGINA_WEB= f"http://127.0.0.1:{FRONTEND_PORT}"
 CUENTA_MAIL_LOGIN=os.getenv("CUENTA_MAIL_LOGIN","tpintrodesasoftware@gmail.com")
 CUENTA_MAIL_FROM=os.getenv("CUENTA_MAIL_FROM","tpintrodesasoftware@gmail.com")
 CONTRASENA_MAIL =os.getenv("CONTRASENA_MAIL","")
-PUERTO_MAIL=int(os.getenv("PUERTO_MAIL",0))
+PUERTO_MAIL=int(os.getenv("PUERTO_MAIL",465))
 SERVIDOR_MAIL=os.getenv("SERVIDOR_MAIL","smtp.gmail.com")
 
 SERVICIO_MAIL=os.getenv("SERVICIO_MAIL","gmail_app_pass")

@@ -29,7 +29,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "5001:5001"
+      - "${FRONTEND_PORT}:5001"
     volumes:
       - ./frontend:/app
     env_file:
