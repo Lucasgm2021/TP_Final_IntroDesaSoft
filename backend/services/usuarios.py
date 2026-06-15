@@ -129,6 +129,9 @@ def actualizar_mi_perfil_service(data):
 
     try:
         actualizar_mi_perfil(session["id_usuario"],nuevo_email,contraseña_hasheada)
+        session["email"] = nuevo_email
+        session["contraseña"] = contraseña_hasheada
+
     except:
         return error_msg(500, "Error al actualizar el perfil")
     return {
