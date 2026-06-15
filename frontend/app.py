@@ -21,12 +21,6 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
 
 
-
-@app.route("/examples")
-def examples():
-    print(app.url_map)
-    return render_template("examples/example.html")
-
 @app.route("/")
 def inicio():
     user = usuario_es_valido()
