@@ -59,7 +59,7 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=1          # Enables Frontend hot-reloading
-      - BACKEND_URL=http://backend:5000  # Internal URL using Docker's network DNS
+      - API_BASE_URL=${API_BASE_URL}
     depends_on:
       - backend                # Ensures the backend is up before the frontend starts
 

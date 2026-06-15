@@ -4,25 +4,25 @@ from db.config import (
     ejecutar_query_escritura
 )
 
-def crear_cliente( email,contraseña): #usado por cliente
+def crear_cliente( email,contrasenia): #usado por cliente
     #es_admin por defecto es False, el cliente no puede elegir ser admin y la cantidad de reservas y canceladas por default son 0
     query = """
         INSERT INTO usuarios (
             email,
             password
         )
-        VALUES (:email,:contraseña) 
+        VALUES (:email,:contrasenia) 
     """
 
     ejecutar_query_escritura(
         query,
         {
             "email": email,
-            "contraseña": contraseña
+            "contrasenia": contrasenia
         }
     )
 
-def crear_usuario( email,contraseña,es_admin): #usado por admin
+def crear_usuario( email,contrasenia,es_admin): #usado por admin
     query = """
         INSERT INTO usuarios (
             email,
@@ -36,7 +36,7 @@ def crear_usuario( email,contraseña,es_admin): #usado por admin
         query,
         {
             "email": email,
-            "password": contraseña,
+            "password": contrasenia,
             "es_admin": es_admin
         }
     )
@@ -85,7 +85,7 @@ def obtener_usuario_id(id_usuario):
     else:       
         return None
 
-def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contraseña):#usado por cliente
+def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contrasenia):#usado por cliente
     query = """
         UPDATE usuarios
         SET email = :email,
@@ -97,7 +97,7 @@ def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contraseña):#usado por cl
         query,
         {
             "email": nuevo_email,
-            "password": nueva_contraseña,
+            "password": nueva_contrasenia,
             "id_usuario": id_usuario #session["id_|usuario"]
         }
     )

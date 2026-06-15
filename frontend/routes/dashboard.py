@@ -10,7 +10,7 @@ dashboard_bp = Blueprint(
     "dashboard",
     __name__,
     url_prefix="/dashboard",
-    template_folder="templates/dashboard",
+    template_folder="templates/dashboard"
 )
 
 @dashboard_bp.route("/")
@@ -143,7 +143,7 @@ def reseñas():
     return render_template("dashboard/reseñas.html", resenias=resenias)
 
 
-@dashboard_bp.route("/configuracion", methods=["GET", "POST"])
+@dashboard_bp.route("/configuracion/", methods=["GET", "POST"])
 def configuracion():
     if not usuario_es_admin():
         return redirect("/")
