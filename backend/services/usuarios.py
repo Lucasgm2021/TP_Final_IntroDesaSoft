@@ -73,9 +73,9 @@ def obtener_usuarios_service():
     if not usuarios:
         return error_msg(404, "No hay usuarios registrados")
 
-    reseñas = [dict(row) for row in usuarios]
+    usuarios = [dict(row) for row in usuarios]
     return {
-        "data": reseñas
+        "data": usuarios
     }, 200
 
 def obtener_usuario_email_service(email):
