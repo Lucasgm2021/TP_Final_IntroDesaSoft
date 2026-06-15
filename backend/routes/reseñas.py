@@ -4,7 +4,8 @@ from services.reseñas import (
     crear_reseña_service,
     obtener_reseñas_aprobadas_service,
     obtener_todas_las_reseñas_service,
-    modificar_reseña_service, reservas_reseñables_service
+    modificar_reseña_service, reservas_reseñables_service,
+    obtener_mis_reseñas_service
 )
 from services.verificaciones import check_usuario_es_admin, check_usuario
 
@@ -58,6 +59,19 @@ def obtener_todas_las_reseñas():
 
     respuesta, status = (
         obtener_todas_las_reseñas_service()
+    )
+
+    return jsonify(respuesta), status
+
+@reseñas_bp.route("/usuario", methods=["GET"])
+def obtener_mis_reseñas():
+    is_user, error = check_usuario()
+    if not is_user:
+        respuesta, status = error
+        return jsonify(respuesta), status
+
+    respuesta, status = (
+        obtener_mis_reseñas_service()
     )
 
     return jsonify(respuesta), status

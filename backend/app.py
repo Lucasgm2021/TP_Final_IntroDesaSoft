@@ -4,6 +4,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
+
 from datetime import timedelta
 from routes.usuarios import usuarios_bp
 from routes.menu import menu_bp
@@ -11,21 +12,15 @@ from routes.reservas import reservas_bp
 from routes.reseñas import reseñas_bp
 from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
-#from routes.estadisticas import estadisticas_bp
 from routes.mesas import mesas_bp
-
-
-
+from flask_cors import CORS
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-
-# FIXED: Changed 'localhost' to 'db' and added utf8mb4 support
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@db:3306/restaurante?charset=utf8mb4"
-
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@127.0.0.1:3306/restaurante"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
@@ -36,6 +31,8 @@ db = SQLAlchemy(app)
 app.config["SESSION_SQLALCHEMY"] = db
 
 Session(app)
+CORS(app)
+
 
 @app.route("/")
 def index():
@@ -50,7 +47,5 @@ app.register_blueprint(info_frontend_bp, url_prefix="/info_frontend")
 app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
 app.register_blueprint(reservas_bp, url_prefix="/reservas")
 
-#app.register_blueprint(estadisticas_bp, url_prefix="/estadisticas")
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True,port=5005)

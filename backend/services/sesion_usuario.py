@@ -1,5 +1,6 @@
 from flask import session
 from services.messages import error_msg
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from db.sesion_usuario import (
     obtener_usuario_por_email,
@@ -13,7 +14,7 @@ def login_service(data):
     if not email or not password:
         return error_msg(
             400,
-            "Falta email o contraseña"
+            "Falta email o contraseña",description="Uno de los 2 campos de email o contraseña no fue ingresado correctamente."
         )
 
     usuario = obtener_usuario_por_email(email)
@@ -21,24 +22,20 @@ def login_service(data):
     if not usuario:
         return error_msg(
             404,
-            "El usuario no existe"
+            "El usuario no existe",description="No se encontró ningún usuario registrado con el email proporcionado."
         )
-    if usuario["password"] != password:
+    is_password_correct = check_password_hash(usuario["password"], password)
+    if not is_password_correct:
         return error_msg(
             401,
-            "Contraseña incorrecta"
+            "Contraseña incorrecta",description="La contraseña ingresada no coincide con la registrada para este email."
         )
 
     session["id_usuario"] = usuario["id_usuario"]
     session["email"] = usuario["email"]
     session["es_admin"] = usuario["es_admin"]
 
-    return error_msg(
-        200,
-        "Logueado con exito",
-        "confirmacion"
-
-    )
+    return {"msg":"El usuario ha iniciado sesión correctamente."}, 201
 
 
 def register_service(data):
@@ -48,27 +45,24 @@ def register_service(data):
     if not email or not password:
         return error_msg(
             400,
-            "Falta email o contraseña"
+            "Falta email o contraseña",description="Uno de los 2 campos de email o contraseña no fue ingresado correctamente."
         )
 
     usuario_existe = (obtener_usuario_por_email(email))
 
-    if usuario_existe:
-        return error_msg(
-            409,
-            "El usuario ya existe"
-        )
+    if not usuario_existe:
+        contraseña_hasheada = generate_password_hash(password)
+        id_usuario = crear_usuario(email, contraseña_hasheada)
 
-    id_usuario = crear_usuario(email, password)
+        session["id_usuario"] = id_usuario
+        session["email"] = email
+        session["es_admin"] = False
 
-    session["id_usuario"] = id_usuario
-    session["email"] = email
-    session["es_admin"] = False
+        return {"msg": "El usuario ha sido registrado e iniciado sesión correctamente."}, 201
 
     return error_msg(
-        201,
-        "Registrado con exito, sea iniciado sesion automaticamente",
-        "confirmacion"
+        409,
+        "El usuario ya existe",description="Ya existe un usuario registrado con el email proporcionado."
     )
 
 def logout_service():
@@ -77,14 +71,10 @@ def logout_service():
     except:
         return error_msg(
             400,
-            "No estas logueado"
+            "No estas logueado",description="No se encontró una sesión activa para cerrar."
         )
 
     session.clear()
 
-    return error_msg(
-        200,
-        "Deslogueado con exito",
-        "confirmacion"
-    )
+    return {"msg": "El usuario ha cerrado sesión correctamente."}, 201
 

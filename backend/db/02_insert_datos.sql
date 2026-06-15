@@ -1,26 +1,29 @@
-DELETE FROM usuarios WHERE email != 'admin@puertohermoso.com';
-
-DELETE FROM mesa;
-
+DELETE FROM reseña;
+DELETE FROM reserva_mesa;
 DELETE FROM reserva;
 
-DELETE FROM reserva_mesa;
+DELETE FROM mesa;
+DELETE FROM servicios_extra;
+DELETE FROM plato;
+DELETE FROM categoria_plato;
+DELETE FROM configuracion;
+
+DELETE FROM usuarios;
 
 ALTER TABLE usuarios AUTO_INCREMENT = 1;
+ALTER TABLE categoria_plato AUTO_INCREMENT = 1;
+ALTER TABLE plato AUTO_INCREMENT = 1;
 ALTER TABLE reserva AUTO_INCREMENT = 1;
+ALTER TABLE servicios_extra AUTO_INCREMENT = 1;
 ALTER TABLE mesa AUTO_INCREMENT = 1;
+ALTER TABLE reseña AUTO_INCREMENT = 1;
 
-INSERT INTO usuarios (email, password, es_admin, reservas, canceladas) VALUES
-('admin.lucas@restaurant.com', '$2b$12$K7q9...', TRUE, 0, 0),
-('admin.sofia@restaurant.com', '$2b$12$M9w1...', TRUE, 0, 0),
-('juan.perez@email.com', '$2b$12$ExAmPlE1...', FALSE, 3, 1),
-('maria.gomez@email.com', '$2b$12$ExAmPlE2...', FALSE, 2, 0),
-('diego.maradona@email.com', '$2b$12$ExAmPlE3...', FALSE, 5, 2),
-('carla.rodriguez@email.com', '$2b$12$ExAmPlE4...', FALSE, 1, 0),
-('luis.vazquez@email.com', '$2b$12$ExAmPlE5...', FALSE, 0, 0),
-('ana.martinez@email.com', '$2b$12$ExAmPlE6...', FALSE, 4, 0),
-('nico.gonzalez@email.com', '$2b$12$ExAmPlE7...', FALSE, 2, 1),
-('flor.fernandez@email.com', '$2b$12$ExAmPlE8...', FALSE, 1, 0);
+INSERT INTO categoria_plato (categoria)
+VALUES
+('Entrada'),
+('Principal'),
+('Postre'),
+('Bebida');
 
 INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (101, 2, TRUE, TRUE),  (102, 2, TRUE, TRUE),  (103, 4, TRUE, TRUE),  (104, 4, TRUE, TRUE),
@@ -30,7 +33,28 @@ INSERT INTO mesa (numero, capacidad, interior, funcional) VALUES
 (205, 4, FALSE, TRUE), (206, 6, FALSE, TRUE), (207, 6, FALSE, TRUE), (208, 8, FALSE, TRUE),
 (209, 2, FALSE, TRUE), (210, 4, FALSE, TRUE);
 
-INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, resenada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
+INSERT INTO usuarios (
+    email,
+    password,
+    es_admin
+)
+VALUES
+    ('admin@puertohermoso.com',
+    'scrypt:32768:8:1$AQdBA7UUcfyCWWpn$6495b90ec151405cde68f8d6bdc97ebf00643fb8e905ca583e861b5d83537efa362cec9dc3191fda54584a80d8b9cdf0e96a71144102e930a986ceb5d087575e',
+    TRUE),
+('u1@test.com', 'hash', FALSE),
+('u2@test.com', 'hash', FALSE),
+('u3@test.com', 'hash', FALSE),
+('u4@test.com', 'hash', FALSE),
+('u5@test.com', 'hash', FALSE),
+('u6@test.com', 'hash', FALSE),
+('u7@test.com', 'hash', FALSE),
+('u8@test.com', 'hash', FALSE),
+('u9@test.com', 'hash', FALSE),
+('u10@test.com', 'hash', FALSE);
+
+
+INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, reseñada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
 (1, 1, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000001', 'pendiente', '2026-05-21 14:00:00', 2),
 (2, 2, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000002', 'pendiente', '2026-05-21 14:00:00', 4),
 (3, 3, 'pendiente', FALSE, '13:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000003', 'pendiente', '2026-05-21 15:00:00', 2),
@@ -93,35 +117,6 @@ INSERT INTO reserva_mesa (id_reserva, id_mesa) VALUES
 (36, 16), (37, 17), (38, 18), (39, 19), (40, 20),
 (41, 5),  (42, 10), (43, 15), (44, 2),  (45, 18),
 (46, 3),  (47, 8),  (48, 12), (49, 14), (50, 1);
--- =========================
--- SERVICIOS EXTRA
--- =========================
-
-INSERT INTO servicios_extra (
-    nombre,
-    descripcion,
-    disponible
-)
-VALUES
-(
-    'Decoracion romantica',
-    'Velas y flores para ocasiones especiales',
-    TRUE
-),
-(
-    'Menu vegano',
-    'Opciones 100% vegetales',
-    TRUE
-),
-(
-    'Show en vivo',
-    'Musica en vivo viernes y sabados',
-    FALSE
-);
-
--- =========================
--- PLATOS
--- =========================
 
 INSERT INTO plato (
     id_categoria,

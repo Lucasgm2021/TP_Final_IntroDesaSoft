@@ -1,7 +1,7 @@
 <h1>CONFIRMACION DE RESERVA</h1>
 <p>Haga click en el siguiente botón para confirmar la reserva.</p>
 
-<form action="http://localhost:5000/reservas/confirmar/{id_qr}" method="POST">
+<form action="{{url_for('reservas.confirmar_reserva_route',uuid_reserva=id_qr)}}" method="POST">
     <button type="submit" style="padding: 10px 20px; background: green; color: white;">
         Confirmar reserva
     </button>

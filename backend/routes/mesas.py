@@ -1,29 +1,26 @@
 from flask import Blueprint, request, jsonify
 from services import mesas as servicios_mesas
-from services.verificaciones import check_usuario_es_admin, check_usuario
+from services.verificaciones import check_usuario_es_admin
 
 mesas_bp = Blueprint("mesas", __name__)
 
 
 @mesas_bp.route("/", methods=["GET"])
 def obtener_mesas():
-    is_user, error = check_usuario()
-
-    if not is_user:
-        respuesta, status = error
-        return jsonify(respuesta), status
-
     res, status = servicios_mesas.obtener_mesas_service()
+    return jsonify(res), status
+
+@mesas_bp.route("/validacion", methods=["GET"])
+def obtener_mesas_validas():
+    data = {}
+    data["fecha"] = request.args.get("fecha")
+    data["hora_reserva"] = request.args.get("hora")
+    data["interior"] = request.args.get("interior").lower() == "true"
+    res, status = servicios_mesas.obtener_mesas_validas_service(data)
     return jsonify(res), status
 
 @mesas_bp.route("/<int:id_mesa>", methods=["GET"])
 def obtener_mesa(id_mesa):
-    is_user, error = check_usuario()
-
-    if not is_user:
-        respuesta, status = error
-        return jsonify(respuesta), status
-
     res, status = servicios_mesas.obtener_mesa_service(id_mesa)
     return jsonify(res), status
 

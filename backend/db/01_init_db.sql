@@ -1,3 +1,7 @@
+CREATE DATABASE restaurante;
+
+USE restaurante;
+
 CREATE TABLE usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
 
@@ -120,7 +124,7 @@ CREATE TABLE reserva_mesa (
     CONSTRAINT fk_reserva_mesa_mesa
         FOREIGN KEY (id_mesa)
         REFERENCES mesa(id_mesa)
-        ON DELETE CASCADE
+        ON DELETE cascade
 );
 
 CREATE TABLE resena (
@@ -190,6 +194,6 @@ INSERT INTO usuarios (
 )
 VALUES (
     'admin@puertohermoso.com',
-    '1234',
+    'scrypt:32768:8:1$AQdBA7UUcfyCWWpn$6495b90ec151405cde68f8d6bdc97ebf00643fb8e905ca583e861b5d83537efa362cec9dc3191fda54584a80d8b9cdf0e96a71144102e930a986ceb5d087575e',
     TRUE
 );

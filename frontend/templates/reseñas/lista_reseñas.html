@@ -1,0 +1,41 @@
+{% extends "reseñas/base.html" %}
+{% block content %}
+
+<section class="reseñas-lista">
+
+    {% for reseña in reseñas %}
+    <article class="reseña-tarjeta">
+        
+        <header class="reseña-header">
+            <span class="reseña-estrellas">
+                <strong>{{ reseña.calificacion }}/5</strong> 
+                
+                <span class="estrellas-caja">
+                    <span class="estrellas-fondo">⭐⭐⭐⭐⭐</span>
+                    <span class="estrellas-progreso" style="width: calc({{ reseña.calificacion }} * 20%);">
+                        ⭐⭐⭐⭐⭐
+                    </span>
+                </span>
+                
+            </span>
+            
+            <span class="reseña-fecha">
+                Fecha: {{ reseña.fecha }}
+            </span>
+        </header>
+        
+        <p class="reseña-comentario">
+            {{ reseña.comentario }}
+        </p>
+        
+    </article>
+    
+    {% else %}
+    <div style="text-align: center; color: #3A2312; padding: 20px;">
+        <p><strong>Aún no hay reseñas disponibles.</strong></p>
+    </div>
+    {% endfor %}
+
+</section>
+
+{% endblock %}
