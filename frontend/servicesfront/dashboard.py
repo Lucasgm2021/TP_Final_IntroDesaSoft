@@ -201,3 +201,19 @@ def build_body_mesa(form):
         "interior":   1 if "interior"  in form else 0,
         "funcional":  1 if "funcional" in form else 0,
     }
+
+
+def subir_imagen(imagen,nombre, auth):
+    requests.post(
+        f"{API_BASE_URL}/upload-img/{nombre}",
+        files={"imagen": (imagen.filename,imagen.read(),imagen.content_type)},
+        cookies={BACKEND_SESSION_COOKIE_NAME: auth
+        }
+    )
+
+def listar_imagenes():
+    response = requests.get(
+        f"{API_BASE_URL}/imagenes"
+        )
+    lista_imagenes = response.json() or []
+    return lista_imagenes

@@ -157,6 +157,12 @@ CREATE TABLE reseña (
         ON DELETE CASCADE
 );
 
+CREATE TABLE imagenes (
+    id_imagen int primary key auto_increment,
+    unique_name varchar(500) unique not null,
+    img_url varchar(500) not null
+);
+
 -- DATOS INICIALES
 
 INSERT INTO categoria_plato (categoria)

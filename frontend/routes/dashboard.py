@@ -1,3 +1,4 @@
+import requests
 from flask import Blueprint, render_template, redirect, session, request
 from datetime import date
 
@@ -101,6 +102,7 @@ def menu():
         menu=menu_rows,
         plato_editar=plato_editar,
         nuevo="nueva" in request.args,
+        lista_img= svs.listar_imagenes()
     )
 
 
@@ -295,3 +297,15 @@ def eliminar_mesa_ruta(id_mesa):
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
     svs.eliminar_mesa(id_mesa, auth)
     return redirect("/dashboard/mesas")
+
+@dashboard_bp.route("/upload-img", methods=["POST"])
+def subir_imagen():
+    name = request.form.get("file-name")
+    imagen = request.files["imagen"]
+    if not usuario_es_admin():
+        return redirect("/")
+    auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
+
+    svs.subir_imagen(imagen,name,auth)
+
+    return redirect("/dashboard/menu")
