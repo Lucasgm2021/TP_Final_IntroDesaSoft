@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine, text
-
+from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
 # mysql+pymysql://usuario:password@host/db
 engine = create_engine(
-   "mysql+pymysql://root:1234@db:3306/restaurante?charset=utf8mb4",
+   f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}?charset=utf8mb4",
     echo=False
 )
 

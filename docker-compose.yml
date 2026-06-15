@@ -1,68 +1,49 @@
 services:
-  # --- DATABASE LAYER ---
   db:
     image: mysql:8.0
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
     container_name: flask_mysql_db
     restart: always
     environment:
-      # Docker pulls these values safely from your root .env file
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - DOCKER_ENV=true
+    env_file:
+      - ./backend/.env
     ports:
-      - "${DB_PORT}:3306"
+      - "3307:3306"
     volumes:
-      # 1. INPUT: Injects your initialization scripts into the container
       - ./backend/db/01_init_db.sql:/docker-entrypoint-initdb.d/01_init_db.sql
       - ./backend/db/02_insert_datos.sql:/docker-entrypoint-initdb.d/02_insert_datos.sql
-
-      # 2. OUTPUT: Keeps any new data you create safe on your host machine
       - db_data:/var/lib/mysql
     healthcheck:
-      # Fix: Using explicit executive array format to prevent shell interpolation crashes
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       timeout: 5s
       retries: 5
-      start_period: 15s # Boosted slightly to give your two .sql seed scripts plenty of time to execute
+      start_period: 15s
       interval: 5s
-  # --- BACKEND LAYER ---
+
   backend:
-    build: ./backend  # Looks for the Dockerfile inside the /backend folder
-    ports:
-      - "${BACKEND_PORT}:5000"
+    build: ./backend
     volumes:
-      - ./backend:/app  # Live-syncs code changes on your laptop into the container
+      - ./backend:/app
     command: sh -c "sleep 4 && python app.py"
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1          # Enables Flask hot-reloading
-      - DB_HOST=db             # Connects to the 'db' service name instead of localhost
-      - DB_USER=${MYSQL_USER}
-      - DB_PASSWORD=${MYSQL_PASSWORD}
-      - DB_NAME=${MYSQL_DATABASE}
-      - CUENTA_MAIL_LOGIN=${CUENTA_MAIL_LOGIN}      # Placed in your .env
-      - CONTRASENA_MAIL=${CONTRASENA_MAIL}
-      - CUENTA_MAIL_FROM=${CUENTA_MAIL_FROM}
+      - DOCKER_ENV=true
+    env_file:
+      - ./backend/.env
     depends_on:
         db:
-          condition: service_healthy              # Ensures MySQL starts up before the backend attempts to run
+          condition: service_healthy
 
-  # --- FRONTEND LAYER ---
   frontend:
-    build: ./frontend # Looks for the Dockerfile inside the /frontend folder
+    build: ./frontend
     ports:
-      - "${FRONTEND_PORT}:5001"
+      - "5001:5001"
     volumes:
-      - ./frontend:/app # Live-syncs frontend code changes
-    environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1          # Enables Frontend hot-reloading
-      - API_BASE_URL=${API_BASE_URL}
+      - ./frontend:/app
+    env_file:
+      - ./frontend/.env
     depends_on:
-      - backend                # Ensures the backend is up before the frontend starts
+      - backend
 
-# --- PERSISTENT STORAGE ---
 volumes:
-  db_data: # Keeps your MySQL data safe when containers are stopped or rebuilt
+  db_data:

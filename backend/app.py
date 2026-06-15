@@ -1,5 +1,12 @@
-#from dotenv import load_dotenv
-#load_dotenv()
+from dotenv import load_dotenv
+import os
+
+# If the hidden Docker file DOES NOT exist, we are running natively in the terminal
+if not os.path.exists('/.dockerenv'):
+    print("Running natively: Loading local .env file...")
+    load_dotenv()
+else:
+    print("Running inside Docker: Using container injected environment...")
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -14,13 +21,14 @@ from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from flask_cors import CORS
+from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@flask_mysql_db:3306/restaurante"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
