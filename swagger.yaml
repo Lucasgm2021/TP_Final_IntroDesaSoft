@@ -42,16 +42,16 @@ components:
       properties:
         code:
           type: integer
-          example: 400
+          description: Código HTTP del error (coincide con el status de la respuesta)
         message:
           type: string
-          example: "Parámetros inválidos"
+          example: "Descripción breve del error"
         level:
           type: string
           example: "error"
         description:
           type: string
-          example: "El campo precio debe ser mayor a 0"
+          example: "Detalle adicional del error"
 
     ErrorResponse:
       type: object
@@ -371,18 +371,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta email o contraseña"
+                    level: "error"
         "401":
           description: Contraseña incorrecta
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "Contraseña incorrecta"
+                    level: "error"
         "404":
           description: El usuario no existe
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "El usuario no existe"
+                    level: "error"
 
   /sesion/register:
     post:
@@ -410,18 +425,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 201
+                    message: "Registrado y sesión iniciada."
+                    level: "error"
         "400":
           description: Falta email o contraseña
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta email o contraseña"
+                    level: "error"
         "409":
           description: El usuario ya existe
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "El usuario ya existe"
+                    level: "error"
 
   /sesion/logout:
     post:
@@ -434,12 +464,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 201
+                    message: "Sesión cerrada."
+                    level: "error"
         "400":
           description: No estás logueado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "No estás logueado"
+                    level: "error"
     get:
       tags: [Sesión]
       summary: Cerrar sesión (también disponible por GET)
@@ -450,12 +490,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 201
+                    message: "Sesión cerrada."
+                    level: "error"
         "400":
           description: No estás logueado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "No estás logueado"
+                    level: "error"
 
   /sesion/perfil:
     get:
@@ -528,12 +578,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante o email inválido"
+                    level: "error"
         "409":
           description: El email ya está registrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "El email ya está registrado"
+                    level: "error"
 
   /usuarios/:
     get:
@@ -574,6 +634,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "No hay usuarios registrados"
+                    level: "error"
 
     post:
       tags: [Usuarios]
@@ -616,12 +681,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante o email inválido"
+                    level: "error"
         "409":
           description: El email ya está registrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "El email ya está registrado"
+                    level: "error"
 
     put:
       tags: [Usuarios]
@@ -662,6 +737,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante"
+                    level: "error"
 
   /usuarios/{email}:
     get:
@@ -698,12 +778,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Email inválido"
+                    level: "error"
         "404":
           description: Usuario no encontrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
 
     delete:
       tags: [Usuarios]
@@ -736,12 +826,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Email inválido"
+                    level: "error"
         "404":
           description: Usuario no encontrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
 
   /usuarios/cliente/mi_perfil:
     get:
@@ -771,12 +871,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No hay sesión activa"
+                    level: "error"
         "404":
           description: Usuario no encontrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
 
     patch:
       tags: [Usuarios]
@@ -817,12 +927,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante o email inválido"
+                    level: "error"
         "409":
           description: Ya hay un usuario registrado con ese email
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "Ya hay un usuario registrado con ese email"
+                    level: "error"
 
     delete:
       tags: [Usuarios]
@@ -844,12 +964,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No hay sesión activa"
+                    level: "error"
         "404":
           description: Usuario no encontrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
 
   # ==========================================================================
   # MESAS
@@ -876,6 +1006,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
 
     post:
       tags: [Mesas]
@@ -904,18 +1039,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante, valor inválido, o número de mesa duplicado"
+                    level: "error"
         "401":
           description: No autenticado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
         "403":
           description: No es administrador
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 403
+                    message: "No es administrador"
+                    level: "error"
 
   /mesas/validacion:
     get:
@@ -980,6 +1130,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Mesa no encontrada"
+                    level: "error"
 
     patch:
       tags: [Mesas]
@@ -1012,12 +1167,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Sin campos a modificar, o valores inválidos"
+                    level: "error"
         "404":
           description: Mesa no encontrada
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Mesa no encontrada"
+                    level: "error"
 
     delete:
       tags: [Mesas]
@@ -1044,12 +1209,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "La mesa tiene reservas pendientes"
+                    level: "error"
         "404":
           description: Mesa no encontrada
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Mesa no encontrada"
+                    level: "error"
 
   # ==========================================================================
   # MENÚ
@@ -1098,6 +1273,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta nombre, precio o precio inválido"
+                    level: "error"
 
   /menu/{id_plato}:
     get:
@@ -1125,6 +1305,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Plato no encontrado"
+                    level: "error"
 
     put:
       tags: [Menú]
@@ -1157,12 +1342,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Precio inválido"
+                    level: "error"
         "404":
           description: Plato no encontrado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Plato no encontrado"
+                    level: "error"
 
     delete:
       tags: [Menú]
@@ -1189,6 +1384,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Plato no encontrado"
+                    level: "error"
 
   # ==========================================================================
   # RESERVAS
@@ -1242,6 +1442,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
 
     post:
       tags: [Reservas]
@@ -1274,18 +1479,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "La capacidad de las mesas seleccionadas no es compatible con la cantidad de comensales"
+                    level: "error"
         "401":
           description: No autenticado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
         "403":
           description: No tiene permisos para reservar en nombre de otro usuario
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 403
+                    message: "No tiene permisos para reservar en nombre de otro usuario"
+                    level: "error"
 
   /reservas/mesas/disponibles:
     get:
@@ -1375,6 +1595,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "QR ya usado, expirado, o reserva no confirmable"
+                    level: "error"
 
   /reservas/cancelar/{uuid_reserva}:
     post:
@@ -1412,6 +1637,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Reserva no encontrada"
+                    level: "error"
 
   /reservas/{id_reserva}:
     get:
@@ -1439,18 +1669,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
         "403":
           description: No es administrador
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 403
+                    message: "No es administrador"
+                    level: "error"
         "404":
           description: Reserva no encontrada
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Reserva no encontrada"
+                    level: "error"
     patch:
       tags: [Reservas]
       summary: Modificar campos de una reserva
@@ -1482,6 +1727,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Reserva no encontrada"
+                    level: "error"
 
   # ==========================================================================
   # RESENAS
@@ -1531,6 +1781,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Calificacion invalida o reserva no resenable"
+                    level: "error"
 
   /rese%C3%B1as/rese%C3%B1ables:
     get:
@@ -1568,6 +1823,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
 
   /rese%C3%B1as/todas:
     get:
@@ -1614,12 +1874,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 200
+                    message: "Resena modificada"
+                    level: "error"
         "400":
           description: Estado faltante, invalido, o no se pudo modificar
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Estado faltante, invalido, o no se pudo modificar"
+                    level: "error"
 
   # ==========================================================================
   # INFO FRONTEND
@@ -1670,12 +1940,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta clave o valor"
+                    level: "error"
         "409":
           description: La clave ya existe
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "La clave ya existe"
+                    level: "error"
 
   /info_frontend/{clave}:
     get:
@@ -1705,6 +1985,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Configuración no encontrada"
+                    level: "error"
 
     patch:
       tags: [Info Frontend]
@@ -1742,12 +2027,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta valor"
+                    level: "error"
         "404":
           description: Configuración no encontrada
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Configuración no encontrada"
+                    level: "error"
 
     delete:
       tags: [Info Frontend]
@@ -1774,3 +2069,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Configuración no encontrada"
+                    level: "error"
