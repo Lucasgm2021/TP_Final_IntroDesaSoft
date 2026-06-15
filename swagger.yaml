@@ -61,30 +61,6 @@ components:
           items:
             $ref: "#/components/schemas/ErrorItem"
 
-    PaginationLinks:
-      type: object
-      properties:
-        _first:
-          type: object
-          properties:
-            href:
-              type: string
-        _prev:
-          type: object
-          properties:
-            href:
-              type: string
-        _next:
-          type: object
-          properties:
-            href:
-              type: string
-        _last:
-          type: object
-          properties:
-            href:
-              type: string
-
     Mesa:
       type: object
       properties:
@@ -768,6 +744,40 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   /usuarios/cliente/mi_perfil:
+    get:
+      tags: [Usuarios]
+      summary: Obtener el perfil propio
+      responses:
+        "200":
+          description: Datos del usuario autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id_usuario:
+                    type: integer
+                  email:
+                    type: string
+                  es_admin:
+                    type: boolean
+                  reservas:
+                    type: integer
+                  canceladas:
+                    type: integer
+        "401":
+          description: No hay sesión activa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
     patch:
       tags: [Usuarios]
       summary: Actualizar email y contraseña propios
@@ -809,6 +819,33 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "409":
           description: Ya hay un usuario registrado con ese email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags: [Usuarios]
+      summary: Eliminar el perfil propio
+      description: Borra el usuario autenticado y cierra su sesión.
+      responses:
+        "200":
+          description: Perfil eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: No hay sesión activa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Usuario no encontrado
           content:
             application/json:
               schema:
@@ -1159,18 +1196,8 @@ paths:
   /reservas/:
     get:
       tags: [Reservas]
-      summary: Listar reservas (paginado)
+      summary: Listar reservas
       parameters:
-        - name: _offset
-          in: query
-          schema:
-            type: integer
-            default: 0
-        - name: _limit
-          in: query
-          schema:
-            type: integer
-            default: 10
         - name: fecha
           in: query
           schema:
@@ -1191,9 +1218,15 @@ paths:
           in: query
           schema:
             type: integer
+        - name: mesas
+          in: query
+          description: Si es `true` (por defecto) incluye las mesas asociadas a cada reserva.
+          schema:
+            type: boolean
+            default: true
       responses:
         "200":
-          description: Lista paginada de reservas
+          description: Lista de reservas
           content:
             application/json:
               schema:
@@ -1203,8 +1236,6 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/Reserva"
-                  _links:
-                    $ref: "#/components/schemas/PaginationLinks"
         "401":
           description: No autenticado
           content:
@@ -1315,46 +1346,6 @@ paths:
                       Msg:
                         type: string
                         example: "No hay mesas disponibles en esa fecha y hora."
-
-  /reservas/mostrar_confirmacion:
-    get:
-      tags: [Reservas]
-      summary: Página de confirmación de llegada (escaneo de QR)
-      description: Renderiza un HTML con un botón para confirmar la reserva. Utilizado por el admin al escanear el QR.
-      parameters:
-        - name: code
-          in: query
-          required: true
-          schema:
-            type: string
-          description: UUID del QR de la reserva
-      responses:
-        "200":
-          description: HTML de confirmación
-          content:
-            text/html:
-              schema:
-                type: string
-
-  /reservas/mostrar_cancelacion:
-    get:
-      tags: [Reservas]
-      summary: Página de cancelación de reserva (enlace del email)
-      description: Renderiza un HTML con un botón para cancelar la reserva. El usuario llega aquí desde el email.
-      parameters:
-        - name: code
-          in: query
-          required: true
-          schema:
-            type: string
-          description: UUID del QR de la reserva
-      responses:
-        "200":
-          description: HTML de cancelación
-          content:
-            text/html:
-              schema:
-                type: string
 
   /reservas/confirmar/{uuid_reserva}:
     post:
