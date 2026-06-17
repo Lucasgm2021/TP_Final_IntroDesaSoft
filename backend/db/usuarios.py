@@ -10,18 +10,18 @@ def crear_cliente( email,contraseña): #usado por cliente
             email,
             password
         )
-        VALUES (:email,:contraseña) 
+        VALUES (:email,:password) 
     """
 
     ejecutar_query_escritura(
         query,
         {
             "email": email,
-            "contraseña": contraseña
+            "password": contraseña
         }
     )
 
-def crear_usuario( email,contrasenia,es_admin): #usado por admin
+def crear_usuario( email,contraseña,es_admin): #usado por admin
     query = """
         INSERT INTO usuarios (
             email,
@@ -35,7 +35,7 @@ def crear_usuario( email,contrasenia,es_admin): #usado por admin
         query,
         {
             "email": email,
-            "password": contrasenia,
+            "password": contraseña,
             "es_admin": es_admin
         }
     )
