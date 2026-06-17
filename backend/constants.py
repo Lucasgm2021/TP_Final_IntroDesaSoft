@@ -4,7 +4,7 @@ import os
 MYSQL_DATABASE=os.getenv("MYSQL_DATABASE","restaurante")
 MYSQL_ROOT_PASSWORD=os.getenv("MYSQL_ROOT_PASSWORD","1234")
 DB_PORT=3306
-DB_HOST=os.getenv("DB_HOST","localhost") #nombre de servicio mysql en yml
+DB_HOST=os.getenv("DB_HOST","localhost")
 
 #url front para mail
 FRONTEND_PORT = os.getenv("FRONTEND_PORT","5001")
