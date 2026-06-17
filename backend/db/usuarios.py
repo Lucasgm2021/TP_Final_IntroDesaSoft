@@ -10,14 +10,14 @@ def crear_cliente( email,contraseña): #usado por cliente
             email,
             password
         )
-        VALUES (:email,:contrasenia) 
+        VALUES (:email,:contraseña) 
     """
 
     ejecutar_query_escritura(
         query,
         {
             "email": email,
-            "contrasenia": contrasenia
+            "contraseña": contraseña
         }
     )
 

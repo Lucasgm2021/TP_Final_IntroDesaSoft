@@ -42,9 +42,6 @@ app.config["SESSION_SQLALCHEMY"] = db
 Session(app)
 CORS(app)
 
-CORS(app)
-
-
 @app.route("/")
 def index():
     return "Backend encendido"

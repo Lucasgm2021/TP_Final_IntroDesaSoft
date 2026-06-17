@@ -29,8 +29,6 @@ def reserva_puede_reseñarse(id_reserva):
         {
             "id_reserva": id_reserva,
             "id_usuario": session["id_usuario"],
-            "id_reserva": id_reserva,
-            "id_usuario": session["id_usuario"],
         }
     )
 
@@ -67,10 +65,6 @@ def crear_reseña(
             "id_reserva": id_reserva,
             "calificacion": calificacion,
             "comentario": comentario
-            "id_usuario": session["id_usuario"],
-            "id_reserva": id_reserva,
-            "calificacion": calificacion,
-            "comentario": comentario
         }
     )
 
@@ -86,9 +80,6 @@ def marcar_reserva_reseñada(
 
     ejecutar_query_escritura(
         query,
-        {
-            "id_reserva": id_reserva
-        }
         {
             "id_reserva": id_reserva
         }
@@ -112,12 +103,9 @@ def obtener_reseñas_aprobadas():
 
         LEFT JOIN usuarios u
             ON re.id_usuario = u.id_usuario
-            ON re.id_usuario = u.id_usuario
 
         WHERE re.estado = 'aprobada'
-        WHERE re.estado = 'aprobada'
 
-        ORDER BY re.fecha DESC
         ORDER BY re.fecha DESC
     """
 
@@ -141,9 +129,7 @@ def obtener_todas_las_reseñas():
 
         LEFT JOIN usuarios u
             ON re.id_usuario = u.id_usuario
-            ON re.id_usuario = u.id_usuario
 
-        ORDER BY re.fecha DESC
         ORDER BY re.fecha DESC
     """
 
@@ -174,14 +160,6 @@ def modificar_estado_reseña(
 
 def obtener_todas_las_reseñables_usuario():
     query = """
-        SELECT
-            r.id_reserva,
-            r.fecha,
-            r.hora_reserva,
-            r.comensales,
-            r.interior
-
-        FROM reserva r
         SELECT
             r.id_reserva,
             r.fecha,

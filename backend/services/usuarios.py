@@ -1,11 +1,10 @@
 from flask import session
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.security import generate_password_hash, check_password_hash
+
 import re
 from db.usuarios import (
     crear_cliente,
     crear_usuario,
-    obtener_usuario_id,
     obtener_usuario_id,
     obtener_usuarios,
     obtener_usuario_email,
@@ -30,8 +29,6 @@ def crear_cliente_service(data):
     if obtener_usuario_email(email):
         return error_msg(409, "El email ya está registrado")
 
-    contraseña_hasheada = generate_password_hash(contraseña)
-    crear_cliente(email,contraseña_hasheada)
     contraseña_hasheada = generate_password_hash(contraseña)
     crear_cliente(email,contraseña_hasheada)
 

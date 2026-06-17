@@ -16,11 +16,7 @@ def obtener_info_restaurante():
 
 def obtener_menu_publico():
     try:
-<<<<<<< HEAD
         respuesta = requests.get(API_BASE_URL + "/menu")
-=======
-        respuesta = requests.get(BACKEND_URL + "/menu")
->>>>>>> develop-fixes
         respuesta.raise_for_status()
         return respuesta.json().get("data", [])
     except requests.RequestException:
@@ -29,11 +25,7 @@ def obtener_menu_publico():
 
 def obtener_reseñas_aprobadas():
     try:
-<<<<<<< HEAD
         respuesta = requests.get(API_BASE_URL + "/reseñas/")
-=======
-        respuesta = requests.get(BACKEND_URL + "/reseñas/")
->>>>>>> develop-fixes
         respuesta.raise_for_status()
         return respuesta.json().get("data", [])
     except requests.RequestException:
