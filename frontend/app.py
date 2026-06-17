@@ -29,13 +29,32 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
 
 
-
-@app.route("/examples")
-def examples():
-    print(app.url_map)
-    return render_template("examples/example.html")
-
 @app.route("/")
+def inicio():
+    user = usuario_es_valido()
+    info = obtener_info_restaurante()
+    admin = usuario_es_admin()
+    menu = obtener_menu_publico()
+    reseñas = obtener_reseñas_aprobadas()
+    servicios = obtener_servicios_extra()
+
+    return render_template(
+        "inicio/inicio.html",
+        usuario_logueado=user,
+        usuario_admin=admin,
+        info=info,
+        menu=menu,
+        reseñas=reseñas,
+        servicios=servicios,
+    )
+
+app.register_blueprint(reseñas_front_bp, url_prefix="/reseñas")
+app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
+app.register_blueprint(auth_front_bp, url_prefix="/auth")
+app.register_blueprint(public_bp)
+app.register_blueprint(usuarios_bp)
+app.register_blueprint(reserva_bp,url_prefix="/reservas")
+
 def inicio():
     user = usuario_es_valido()
     info = obtener_info_restaurante()

@@ -1,9 +1,11 @@
 from flask import session
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from db.usuarios import (
     crear_cliente,
     crear_usuario,
+    obtener_usuario_id,
     obtener_usuario_id,
     obtener_usuarios,
     obtener_usuario_email,
@@ -28,6 +30,8 @@ def crear_cliente_service(data):
     if obtener_usuario_email(email):
         return error_msg(409, "El email ya está registrado")
 
+    contraseña_hasheada = generate_password_hash(contraseña)
+    crear_cliente(email,contraseña_hasheada)
     contraseña_hasheada = generate_password_hash(contraseña)
     crear_cliente(email,contraseña_hasheada)
 
@@ -73,9 +77,9 @@ def obtener_usuarios_service():
     if not usuarios:
         return error_msg(404, "No hay usuarios registrados")
 
-    reseñas = [dict(row) for row in usuarios]
+    usuarios = [dict(row) for row in usuarios]
     return {
-        "data": reseñas
+        "data": usuarios
     }, 200
 
 def obtener_usuario_email_service(email):
@@ -129,6 +133,9 @@ def actualizar_mi_perfil_service(data):
 
     try:
         actualizar_mi_perfil(session["id_usuario"],nuevo_email,contraseña_hasheada)
+        session["email"] = nuevo_email
+        session["contraseña"] = contraseña_hasheada
+
     except:
         return error_msg(500, "Error al actualizar el perfil")
     return {

@@ -4,8 +4,7 @@ from db.config import (
     ejecutar_query_escritura
 )
 
-def crear_cliente( email,contrasenia): #usado por cliente
-    #es_admin por defecto es False, el cliente no puede elegir ser admin y la cantidad de reservas y canceladas por default son 0
+def crear_cliente( email,contraseña): #usado por cliente
     query = """
         INSERT INTO usuarios (
             email,
@@ -64,12 +63,13 @@ def obtener_usuario_email(email):
     )
 
     if resultado:
-        return dict(resultado[0]) #deberia haber solo un resultado, el email es unico
+        return dict(resultado[0]) 
     else:       
         return None
 
 def obtener_usuario_id(id_usuario):
     query = """
+        SELECT id_usuario, email, es_admin, password
         SELECT id_usuario, email, es_admin, password
         FROM usuarios
         WHERE id_usuario = :id_usuario
@@ -81,11 +81,11 @@ def obtener_usuario_id(id_usuario):
     )
 
     if resultado:
-        return dict(resultado[0]) #deberia haber solo un resultado, el id es unico
+        return dict(resultado[0]) 
     else:       
         return None
 
-def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contrasenia):#usado por cliente
+def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contraseña):
     query = """
         UPDATE usuarios
         SET email = :email,
@@ -97,12 +97,12 @@ def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contrasenia):#usado por cl
         query,
         {
             "email": nuevo_email,
-            "password": nueva_contrasenia,
-            "id_usuario": id_usuario #session["id_|usuario"]
+            "password": nueva_contraseña,
+            "id_usuario": id_usuario #session["id_usuario"]
         }
     )
 
-def actualizar_usuario(email,es_admin):#usado por admins
+def actualizar_usuario(email,es_admin):
     query = """
         UPDATE usuarios
         SET es_admin = :es_admin
@@ -118,7 +118,7 @@ def actualizar_usuario(email,es_admin):#usado por admins
     )
 
 
-def borrar_usuario(id_usuario):#usado por admin
+def borrar_usuario(id_usuario):
     query = """
         DELETE FROM usuarios
         WHERE id_usuario = :id_usuario
