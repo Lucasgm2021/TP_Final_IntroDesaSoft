@@ -110,67 +110,32 @@ Con MySQL 8 corriendo en tu maquina (puerto `3306` por default):
 
 ### 4. Entorno virtual, instalacion y ejecucion
 
-**VER** El proyecto incluye scripts de setup que crean el entorno virtual, instalan las dependencias y levantan la API. Ignorar si se usa docker
+El proyecto incluye scripts de setup que crean el entorno virtual, instalan las dependencias y levantan la API. Ignorar si se levanta con docker.
 
-Instalar dependencias en entornos virtuales (uno por back y otro por frontend). Se puede simplificar en un solo entorno virtual, ambas apps usan python con flask con misma version.
-
-**Con virtualenv:**
-
-#### 4.1 2 Entornos virtuales
-
+#### **Bash**
 ```bash
-cd /backend 
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -r requirements.txt
-deactivate
-
-cd ../frontend 
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -r requirements.txt
-deactivate
+chmod +x setup_virtualenvs.sh
+bash setup_virtualenvs.sh
 ```
+#### **bat**
 
-#### 4.2 1 entorno virtual
-```bash
-python3 -m venv .venv
-. .venv/bin/activate
-cd /backend
-pip install -r requirements.txt
-cd ../frontend
-pip install -r requirements.txt
-deactivate
-```
-
+En bat solo hacer doble click al script setup_virtualenvs.bat
 ## Configuracion envío de mails
 
 **PENDIENTE**
 
 ## Ejecucion
 
-### 1. Flask en la terminal (bash)
+### 1. Flask en la terminal (bash o bat)
 
-#### 1.1 Con 2 Entornos virtuales
-
+#### Bash
 ```bash
-cd /backend 
-. .venv/bin/activate
-flask run --debug
-cd ../frontend
-. .venv/bin/activate
-flask run --debug --port 5001
+chmod +x execute.sh
+bash execute.sh
 ```
-#### 1.2 Con 1 Entorno virtual
+#### bat
 
-```bash
-. .venv/bin/activate
-cd /backend
-flask run --debug
-
-cd ../frontend
-flask run --debug --port 5001
-```
+En bat solo hacer doble click al script execute.bat
 
 ### 2. Docker
 
@@ -184,7 +149,7 @@ Verificar que los contenedores esten listos (puede tardar unos segundos):
 
 ```bash
 docker compose logs -f
-# Buscar que la db esté healthy y la inicializacion de las apps de back y front con flask."
+# Buscar que la db tenga el msj healthy y la inicializacion de las apps de back y front con flask."
 ```
 
 Apagar el contenedor manteniendo los datos en el volumen:
