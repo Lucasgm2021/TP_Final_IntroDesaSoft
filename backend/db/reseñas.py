@@ -168,14 +168,6 @@ def obtener_todas_las_reseñables_usuario():
             r.interior
 
         FROM reserva r
-        SELECT
-            r.id_reserva,
-            r.fecha,
-            r.hora_reserva,
-            r.comensales,
-            r.interior
-
-        FROM reserva r
 
         LEFT JOIN resenia re
             ON r.id_reserva = re.id_reserva

@@ -97,21 +97,11 @@ def obtener_mi_perfil_service():
         return error_msg(404, "Usuario no encontrado")
     return usuario, 200
 
-def obtener_mi_perfil_service():
-
-    if "id_usuario" not in session:
-        return error_msg(401, "No hay sesión activa")
-
-    usuario = obtener_usuario_id(session["id_usuario"])
-    if not usuario:
-        return error_msg(404, "Usuario no encontrado")
-    return usuario, 200
-
 def actualizar_mi_perfil_service(data):
 
     if "id_usuario" not in session:
         return error_msg(401, "No hay sesión activa")
-        
+
     for campo in ["nuevo_email", "nueva_contraseña"]:
         if campo not in data:
             return error_msg(400, f"Falta {campo}")
@@ -144,7 +134,6 @@ def actualizar_mi_perfil_service(data):
 
     except:
         return error_msg(500, "Error al actualizar el perfil")
-
     return {
         "message": (
             "Perfil actualizado"
