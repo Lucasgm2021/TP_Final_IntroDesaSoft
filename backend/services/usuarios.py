@@ -199,7 +199,6 @@ def eliminar_mi_perfil_service():
         )
     }, 200
 
-
 def validar_email(email):
     patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\.[a-zA-Z]+$"
     return bool(re.match(patron, email))

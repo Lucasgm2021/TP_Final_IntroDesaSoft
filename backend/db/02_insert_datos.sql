@@ -1,13 +1,11 @@
-DELETE FROM reseña;
+DELETE FROM resenia;
 DELETE FROM reserva_mesa;
 DELETE FROM reserva;
-
 DELETE FROM mesa;
 DELETE FROM servicios_extra;
 DELETE FROM plato;
 DELETE FROM categoria_plato;
 DELETE FROM configuracion;
-
 DELETE FROM usuarios;
 
 ALTER TABLE usuarios AUTO_INCREMENT = 1;
@@ -16,7 +14,13 @@ ALTER TABLE plato AUTO_INCREMENT = 1;
 ALTER TABLE reserva AUTO_INCREMENT = 1;
 ALTER TABLE servicios_extra AUTO_INCREMENT = 1;
 ALTER TABLE mesa AUTO_INCREMENT = 1;
-ALTER TABLE reseña AUTO_INCREMENT = 1;
+ALTER TABLE resenia AUTO_INCREMENT = 1;
+
+INSERT INTO configuracion (clave, valor) VALUES
+('nombre_restaurante', 'PUERTO HERMOSO'),
+('telefono', '+54 11 1234-5678'),
+('horario', 'Lunes a Domingo 12:00 - 00:00'),
+('historia', 'Puerto Hermoso nació en 1974, cuando las calles de Palermo Soho todavía conservaban su ritmo de barrio y talleres. Lo que comenzó como un pequeno sueno familiar de mesas compartidas y sabores honestos, se transformó en un punto de encuentro que ha atravesado décadas. Hoy, tres generaciones después, mantenemos intacta la esencia que nos dio origen: la calidez del trato familiar y el respeto por la cocina bien hecha. Somos la historia viva de un barrio que amamos, evolucionando con el tiempo pero conservando siempre el corazón en nuestros fuegos. Medio siglo de familia, encuentros y pasión por la mesa.');
 
 INSERT INTO categoria_plato (categoria)
 VALUES
@@ -54,7 +58,7 @@ VALUES
 ('u10@test.com', 'hash', FALSE);
 
 
-INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, reseñada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
+INSERT INTO reserva (id_reserva, id_usuario, estado_reserva, reseniada, hora_reserva, fecha, interior, uuid_qr, estado_qr, qr_expiracion, comensales) VALUES
 (1, 1, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000001', 'pendiente', '2026-05-21 14:00:00', 2),
 (2, 2, 'pendiente', FALSE, '12:00:00', '2026-05-21', TRUE, '00000000-0000-0000-0000-000000000002', 'pendiente', '2026-05-21 14:00:00', 4),
 (3, 3, 'pendiente', FALSE, '13:00:00', '2026-05-21', FALSE, '00000000-0000-0000-0000-000000000003', 'pendiente', '2026-05-21 15:00:00', 2),

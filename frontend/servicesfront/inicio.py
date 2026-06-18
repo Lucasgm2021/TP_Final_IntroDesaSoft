@@ -1,11 +1,9 @@
 import requests, json
-
-BACKEND_URL = "http://127.0.0.1:5005"
-
+from constants import API_BASE_URL
 
 def obtener_info_restaurante():
     try:
-        respuesta = requests.get(BACKEND_URL + "/info_frontend")
+        respuesta = requests.get(API_BASE_URL + "/info_frontend")
         respuesta.raise_for_status()
         items = respuesta.json().get("data", [])
         resultado = {}
@@ -18,7 +16,7 @@ def obtener_info_restaurante():
 
 def obtener_menu_publico():
     try:
-        respuesta = requests.get(BACKEND_URL + "/menu")
+        respuesta = requests.get(API_BASE_URL + "/menu")
         respuesta.raise_for_status()
         return respuesta.json().get("data", [])
     except requests.RequestException:
@@ -27,7 +25,7 @@ def obtener_menu_publico():
 
 def obtener_reseñas_aprobadas():
     try:
-        respuesta = requests.get(BACKEND_URL + "/reseñas/")
+        respuesta = requests.get(API_BASE_URL + "/reseñas/")
         respuesta.raise_for_status()
         return respuesta.json().get("data", [])
     except requests.RequestException:

@@ -1,5 +1,13 @@
 from dotenv import load_dotenv
-load_dotenv()
+import os
+
+# Si este archivo de docker no existe (se crea automatico en el contenedor), se cargan las variables de entorno.
+if not os.path.exists('/.dockerenv'):
+    print("Ejecutando con terminal, cargando las variables de entorno...")
+    load_dotenv()
+else:
+    print("Ejecutando con docker, se cargan las variables de entorno en el yml.")
+
 from routes.reservas import reserva_bp
 from routes.dashboard import dashboard_bp
 from routes.auth import auth_front_bp
@@ -14,6 +22,12 @@ from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
 
 from routes.mi_perfil import usuarios_bp
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "mandarina"
+app.config["SESSION_PERMANENT"] = True
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
+
+
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -47,6 +61,5 @@ app.register_blueprint(public_bp)
 app.register_blueprint(usuarios_bp)
 app.register_blueprint(reserva_bp,url_prefix="/reservas")
 
-
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)

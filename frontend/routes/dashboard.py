@@ -143,7 +143,7 @@ def reseñas():
     return render_template("dashboard/reseñas.html", resenias=resenias)
 
 
-@dashboard_bp.route("/configuracion", methods=["GET", "POST"])
+@dashboard_bp.route("/configuracion/", methods=["GET", "POST"])
 def configuracion():
     if not usuario_es_admin():
         return redirect("/")

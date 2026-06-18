@@ -1,8 +1,8 @@
-CREATE DATABASE restaurante;
+CREATE DATABASE IF NOT EXISTS restaurante;
 
 USE restaurante;
 
-CREATE TABLE usuarios (
+CREATE TABLE IF NOT EXISTS usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
 
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -14,13 +14,13 @@ CREATE TABLE usuarios (
     canceladas INT DEFAULT 0
 );
 
-CREATE TABLE categoria_plato (
+CREATE TABLE IF NOT EXISTS categoria_plato (
     id_categoria INT PRIMARY KEY AUTO_INCREMENT,
 
     categoria VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE plato (
+CREATE TABLE IF NOT EXISTS plato (
     id_plato INT PRIMARY KEY AUTO_INCREMENT,
 
     id_categoria INT,
@@ -43,7 +43,7 @@ CREATE TABLE plato (
         ON DELETE SET NULL
 );
 
-CREATE TABLE reserva (
+CREATE TABLE IF NOT EXISTS reserva (
     id_reserva INT PRIMARY KEY AUTO_INCREMENT,
 
     id_usuario INT,
@@ -84,13 +84,13 @@ CREATE TABLE reserva (
 
 );
 
-CREATE TABLE configuracion (
+CREATE TABLE IF NOT EXISTS configuracion (
     clave VARCHAR(100) PRIMARY KEY,
 
     valor TEXT
 );
 
-CREATE TABLE servicios_extra (
+CREATE TABLE IF NOT EXISTS servicios_extra (
     id_servicio INT PRIMARY KEY AUTO_INCREMENT,
 
     nombre VARCHAR(100) NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE servicios_extra (
     disponible BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE mesa (
+CREATE TABLE IF NOT EXISTS mesa (
     id_mesa INT PRIMARY KEY AUTO_INCREMENT,
 
     numero INT UNIQUE NOT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE mesa (
     funcional BOOLEAN DEFAULT TRUE NOT NULL
 );
 
-CREATE TABLE reserva_mesa (
+CREATE TABLE IF NOT EXISTS reserva_mesa (
     id_reserva INT,
     id_mesa INT,
     PRIMARY KEY (id_reserva, id_mesa),
@@ -127,7 +127,7 @@ CREATE TABLE reserva_mesa (
         ON DELETE cascade
 );
 
-CREATE TABLE reseña (
+CREATE TABLE IF NOT EXISTS reseña (
     id_reseña INT PRIMARY KEY AUTO_INCREMENT,
 
     id_usuario INT,
