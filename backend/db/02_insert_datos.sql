@@ -1,20 +1,11 @@
 DELETE FROM resenia;
 DELETE FROM reserva_mesa;
 DELETE FROM reserva;
-
 DELETE FROM mesa;
 DELETE FROM servicios_extra;
 DELETE FROM plato;
 DELETE FROM categoria_plato;
 DELETE FROM configuracion;
-
-DELETE FROM usuarios;
-DELETE FROM mesa;
-DELETE FROM servicios_extra;
-DELETE FROM plato;
-DELETE FROM categoria_plato;
-DELETE FROM configuracion;
-
 DELETE FROM usuarios;
 
 ALTER TABLE usuarios AUTO_INCREMENT = 1;

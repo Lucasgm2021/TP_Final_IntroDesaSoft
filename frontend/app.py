@@ -1,12 +1,12 @@
 from dotenv import load_dotenv
 import os
 
-# If the hidden Docker file DOES NOT exist, we are running natively in the terminal
+# Si este archivo de docker no existe (se crea automatico en el contenedor), se cargan las variables de entorno.
 if not os.path.exists('/.dockerenv'):
-    print("Running natively: Loading local .env file...")
+    print("Ejecutando con terminal, cargando las variables de entorno...")
     load_dotenv()
 else:
-    print("Running inside Docker: Using container injected environment...")
+    print("Ejecutando con docker, se cargan las variables de entorno en el yml.")
 
 from routes.reservas import reserva_bp
 from routes.dashboard import dashboard_bp
