@@ -12,7 +12,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 
-
 from datetime import timedelta
 from routes.usuarios import usuarios_bp
 from routes.menu import menu_bp

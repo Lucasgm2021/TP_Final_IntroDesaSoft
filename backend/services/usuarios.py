@@ -1,10 +1,12 @@
 from flask import session
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from db.usuarios import (
     crear_cliente,
     crear_usuario,
+    obtener_usuario_id,
     obtener_usuario_id,
     obtener_usuarios,
     obtener_usuario_email,
@@ -29,6 +31,8 @@ def crear_cliente_service(data):
     if obtener_usuario_email(email):
         return error_msg(409, "El email ya está registrado")
 
+    contraseña_hasheada = generate_password_hash(contraseña)
+    crear_cliente(email,contraseña_hasheada)
     contraseña_hasheada = generate_password_hash(contraseña)
     crear_cliente(email,contraseña_hasheada)
 
@@ -58,6 +62,8 @@ def crear_usuario_service(data):
 
     contraseña_hasheada = generate_password_hash(contraseña)
     crear_usuario(email,contraseña_hasheada,es_admin)
+    contraseña_hasheada = generate_password_hash(contraseña)
+    crear_usuario(email,contraseña_hasheada,es_admin)
 
     return {
         "message": (
@@ -73,6 +79,11 @@ def obtener_usuarios_service():
     usuarios = obtener_usuarios()
     if not usuarios:
         return error_msg(404, "No hay usuarios registrados")
+
+    usuarios = [dict(row) for row in usuarios]
+    return {
+        "data": usuarios
+    }, 200
 
     usuarios = [dict(row) for row in usuarios]
     return {
@@ -98,7 +109,21 @@ def obtener_mi_perfil_service():
         return error_msg(404, "Usuario no encontrado")
     return usuario, 200
 
+def obtener_mi_perfil_service():
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+    return usuario, 200
+
 def actualizar_mi_perfil_service(data):
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
 
     if "id_usuario" not in session:
         return error_msg(401, "No hay sesión activa")
@@ -110,6 +135,8 @@ def actualizar_mi_perfil_service(data):
     nuevo_email = data["nuevo_email"]
     contraseña = data["nueva_contraseña"]
 
+    contraseña = data["nueva_contraseña"]
+
     #el formulario del front tiene como default el email actual (igual la contraseña), si el email no se cambia, no hace falta validar ni verificar que ya existe
     if nuevo_email != session["email"]: 
         if not validar_email(nuevo_email):
@@ -117,6 +144,24 @@ def actualizar_mi_perfil_service(data):
         if obtener_usuario_email(nuevo_email) :
             return error_msg(409, "Ya hay un usuario registrado con ese email")
 
+    try:
+        contraseña_actual = obtener_usuario_email(session["email"])["password"]
+    except:
+        return error_msg(500, "Error al obtener el usuario actual")
+
+    es_misma_contraseña = check_password_hash(contraseña_actual, contraseña)
+    if not es_misma_contraseña:
+        contraseña_hasheada = generate_password_hash(contraseña)
+    else:
+        contraseña_hasheada = contraseña_actual
+
+    try:
+        actualizar_mi_perfil(session["id_usuario"],nuevo_email,contraseña_hasheada)
+        session["email"] = nuevo_email
+        session["contraseña"] = contraseña_hasheada
+
+    except:
+        return error_msg(500, "Error al actualizar el perfil")
     try:
         contraseña_actual = obtener_usuario_email(session["email"])["password"]
     except:
@@ -182,6 +227,24 @@ def eliminar_usuario_service(email):
             "email": email
         }
     }, 200
+
+def eliminar_mi_perfil_service():
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+
+    borrar_usuario(usuario["id_usuario"])
+    session.clear()
+
+    return {
+        "message": (
+            "Perfil eliminado"
+        )
+    }, 200
+
 
 def eliminar_mi_perfil_service():
     if "id_usuario" not in session:
