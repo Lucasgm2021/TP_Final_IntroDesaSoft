@@ -3,7 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage 
 from email.mime.multipart import MIMEMultipart
 import services.qr as qr
-from constants import SERVIDOR_MAIL,PUERTO_MAIL,CUENTA_MAIL_LOGIN,CONTRASENA_MAIL,CUENTA_MAIL_FROM,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
+from constants import SERVIDOR_MAIL,PUERTO_MAIL,CUENTA_MAIL_LOGIN,CONTRASEÑA_MAIL,CUENTA_MAIL_FROM,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
 
 PROVEEDORES_CONFIG = {
     SERVICIO_MAIL_GMAIL_APP_PASS: {
@@ -11,7 +11,7 @@ PROVEEDORES_CONFIG = {
         "port": PUERTO_MAIL, #465
         "from": CUENTA_MAIL_LOGIN,
         "user": CUENTA_MAIL_LOGIN,
-        "password": CONTRASENA_MAIL,
+        "password": CONTRASEÑA_MAIL,
         "use_ssl": True
     },
     SERVICIO_MAIL_MAILJET: {
@@ -19,7 +19,7 @@ PROVEEDORES_CONFIG = {
         "port": PUERTO_MAIL, #2525
         "from": CUENTA_MAIL_FROM,
         "user": CUENTA_MAIL_LOGIN,#api key       
-        "password": CONTRASENA_MAIL,#secret key  
+        "password": CONTRASEÑA_MAIL,#secret key  
         "use_ssl": False
     }
 }

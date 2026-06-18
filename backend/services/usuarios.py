@@ -111,11 +111,7 @@ def actualizar_mi_perfil_service(data):
 
     if "id_usuario" not in session:
         return error_msg(401, "No hay sesión activa")
-
-
-    if "id_usuario" not in session:
-        return error_msg(401, "No hay sesión activa")
-
+        
     for campo in ["nuevo_email", "nueva_contraseña"]:
         if campo not in data:
             return error_msg(400, f"Falta {campo}")
