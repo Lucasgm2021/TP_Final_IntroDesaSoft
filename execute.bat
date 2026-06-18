@@ -9,7 +9,7 @@ cd backend
 call .venv\Scripts\activate
 start /b flask run --debug
 
-timeout /t 2 /nobreak >nul
+timeout /t 3 /nobreak >nul
 echo.
 echo backend iniciado. Iniciando frontend..
 echo.
