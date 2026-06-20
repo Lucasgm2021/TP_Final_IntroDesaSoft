@@ -10,10 +10,10 @@ services:
       - ./backend/db/02_insert_datos.sql:/docker-entrypoint-initdb.d/02_insert_datos.sql
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD
       timeout: 5s
       retries: 5
-      start_period: 5s
+      start_period: 15s
       interval: 5s
 
   backend:
