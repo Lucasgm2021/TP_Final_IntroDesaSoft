@@ -767,11 +767,12 @@ paths:
                   email:
                     type: string
                   es_admin:
-                    type: boolean
-                  reservas:
                     type: integer
-                  canceladas:
-                    type: integer
+                    description: "1 = administrador, 0 = cliente"
+                    example: 0
+                  password:
+                    type: string
+                    description: "Hash de la contraseña (Werkzeug). La query lo devuelve en la respuesta."
         "400":
           description: Email inválido
           content:
@@ -860,11 +861,12 @@ paths:
                   email:
                     type: string
                   es_admin:
-                    type: boolean
-                  reservas:
                     type: integer
-                  canceladas:
-                    type: integer
+                    description: "1 = administrador, 0 = cliente"
+                    example: 0
+                  password:
+                    type: string
+                    description: "Hash de la contraseña (Werkzeug). La query lo devuelve en la respuesta."
         "401":
           description: No hay sesión activa
           content:
