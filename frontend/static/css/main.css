@@ -871,19 +871,45 @@ body {
 }
 
 .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 28px;
+    width: 100%;
 }
 
 .menu-card {
     display: flex;
     flex-direction: column;
+    /* Ancho = una fracción exacta del contenedor según --cols (definido en el
+       HTML). Así entran justo --cols por fila; la última fila, al tener menos,
+       queda centrada por el justify-content del contenedor. */
+    flex: 0 1 calc((100% - (var(--cols) - 1) * 28px) / var(--cols));
     background: #6f5143;
     border-radius: 18px;
     padding: 14px;
     box-sizing: border-box;
     cursor: pointer;
+    min-width: 0;
+    text-decoration: none;
+}
+
+.menu-card-nombre,
+.menu-modal-nombre {
+    overflow-wrap: anywhere;
+}
+
+/* En pantallas chicas ignoramos --cols y forzamos menos columnas. */
+@media (max-width: 760px) {
+    .menu-card {
+        flex-basis: calc(50% - 14px);
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-card {
+        flex-basis: 100%;
+    }
 }
 
 .menu-card:hover {
@@ -961,16 +987,28 @@ body {
     justify-content: center;
 }
 
-.menu-modal-overlay--visible {
+/* Se muestra solo cuando la URL apunta a este modal (clic en una tarjeta). */
+.menu-modal-overlay:target {
     display: flex;
+}
+
+/* Capa transparente que ocupa toda la pantalla, por detrás del modal.
+   Hacer clic afuera del recuadro = clic en este enlace = cerrar. */
+.menu-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
 }
 
 .menu-modal {
     position: relative;
+    z-index: 2;
     width: 620px;
+    max-width: 92vw;
+    max-height: 90vh;
+    overflow-y: auto;
     background: #1d2732;
     border-radius: 24px;
-    overflow: hidden;
 }
 
 .menu-modal-close {
@@ -988,6 +1026,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
     z-index: 10;
 }
 

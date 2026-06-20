@@ -4,6 +4,7 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>
         Menú · Puerto Hermoso
@@ -31,21 +32,22 @@
 
     {% if platos %}
 
-    <main class="menu-grid">
+    {# Columnas calculadas para que las filas queden parejas:
+       filas = techo(n / 4), columnas = techo(n / filas).
+       Ej.: 6 platos -> 2 filas -> 3 columnas (3 + 3). #}
+    {% set _n = platos | length %}
+    {% set _rows = (_n / 4) | round(0, 'ceil') | int %}
+    {% set _cols = (_n / _rows) | round(0, 'ceil') | int %}
+
+    <main class="menu-grid" style="--cols: {{ _cols }}">
 
         {% for plato in platos %}
 
-        <article
+        {# Cada tarjeta es un enlace a su modal (#plato-N). El modal se muestra
+           solo cuando la URL apunta a él, vía la pseudo-clase CSS :target. #}
+        <a
             class="menu-card dropshadow"
-            onclick="abrirModal(this)"
-            data-nombre="{{ plato.nombre }}"
-            data-precio="{{ plato.precio }}"
-            data-imagen="{{ plato.link_imagen }}"
-            data-hay-stock="{{ '1' if plato.hay_stock else '0' }}"
-            data-gluten="{{ '1' if plato.gluten else '0' }}"
-            data-lactosa="{{ '1' if plato.lactosa else '0' }}"
-            data-carnes="{{ '1' if plato.carnes else '0' }}"
-            data-animal="{{ '1' if plato.producto_animal else '0' }}"
+            href="#plato-{{ loop.index }}"
         >
 
             <div
@@ -73,7 +75,82 @@
 
             </div>
 
-        </article>
+        </a>
+
+        {# Modal de este plato. Está fuera del flujo (position: fixed), así que
+           no ocupa una celda de la grilla. #}
+        <div id="plato-{{ loop.index }}" class="menu-modal-overlay">
+
+            {# El fondo oscuro es un enlace que "cierra" (apunta a un ancla
+               inexistente, por lo que ningún modal queda como :target). #}
+            <a href="#cerrar" class="menu-modal-backdrop"></a>
+
+            <div class="menu-modal dropshadow">
+
+                <a href="#cerrar" class="menu-modal-close">✕</a>
+
+                <div
+                    class="menu-modal-img"
+                    style="background-image: url('{{ plato.link_imagen }}');"
+                ></div>
+
+                <div class="menu-modal-body">
+
+                    <div class="menu-modal-header">
+
+                        <span class="menu-modal-nombre">
+                            {{ plato.nombre }}
+                        </span>
+
+                        <span class="menu-modal-precio">
+                            {{ plato.precio }}$
+                        </span>
+
+                    </div>
+
+                    {# Los badges se calculan acá, en el servidor (Jinja),
+                       en vez de en JavaScript. #}
+                    <div class="menu-modal-badges">
+
+                        {% if not plato.hay_stock %}
+                        <span class="menu-modal-badge menu-modal-badge--alerta">Sin stock</span>
+                        {% endif %}
+
+                        {% if not plato.gluten %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Sin gluten</span>
+                        {% endif %}
+
+                        {% if not plato.lactosa %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Sin lactosa</span>
+                        {% endif %}
+
+                        {% if not plato.carnes %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Vegetariano</span>
+                        {% endif %}
+
+                        {% if not plato.producto_animal %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Vegano</span>
+                        {% endif %}
+
+                        {% if plato.gluten %}
+                        <span class="menu-modal-badge menu-modal-badge--info">Contiene gluten</span>
+                        {% endif %}
+
+                        {% if plato.lactosa %}
+                        <span class="menu-modal-badge menu-modal-badge--info">Contiene lactosa</span>
+                        {% endif %}
+
+                        {% if plato.carnes %}
+                        <span class="menu-modal-badge menu-modal-badge--info">Contiene carnes</span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
         {% endfor %}
 
@@ -94,67 +171,6 @@
     <h1 class="puerto-hermoso menu-brand">
         PUERTO HERMOSO
     </h1>
-
-    <div id="menu-modal-overlay" class="menu-modal-overlay" onclick="cerrarModal(event)">
-
-        <div class="menu-modal dropshadow" onclick="event.stopPropagation()">
-
-            <button class="menu-modal-close" onclick="cerrarModal()">✕</button>
-
-            <div id="menu-modal-img" class="menu-modal-img"></div>
-
-            <div class="menu-modal-body">
-
-                <div class="menu-modal-header">
-
-                    <span id="menu-modal-nombre" class="menu-modal-nombre"></span>
-
-                    <span id="menu-modal-precio" class="menu-modal-precio"></span>
-
-                </div>
-
-                <div id="menu-modal-badges" class="menu-modal-badges"></div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <script>
-        function abrirModal(card) {
-            var d = card.dataset;
-            document.getElementById('menu-modal-nombre').textContent = d.nombre;
-            document.getElementById('menu-modal-precio').textContent = d.precio + '$';
-            document.getElementById('menu-modal-img').style.backgroundImage = "url('" + d.imagen + "')";
-
-            var badges = [];
-            if (d.hayStock === '0') badges.push({ texto: 'Sin stock',        tipo: 'alerta' });
-            if (d.gluten  === '0') badges.push({ texto: 'Sin gluten',        tipo: 'ok'     });
-            if (d.lactosa === '0') badges.push({ texto: 'Sin lactosa',       tipo: 'ok'     });
-            if (d.carnes  === '0') badges.push({ texto: 'Vegetariano',       tipo: 'ok'     });
-            if (d.animal  === '0') badges.push({ texto: 'Vegano',            tipo: 'ok'     });
-            if (d.gluten  === '1') badges.push({ texto: 'Contiene gluten',   tipo: 'info'   });
-            if (d.lactosa === '1') badges.push({ texto: 'Contiene lactosa',  tipo: 'info'   });
-            if (d.carnes  === '1') badges.push({ texto: 'Contiene carnes',   tipo: 'info'   });
-
-            document.getElementById('menu-modal-badges').innerHTML = badges.map(function(b) {
-                return '<span class="menu-modal-badge menu-modal-badge--' + b.tipo + '">' + b.texto + '</span>';
-            }).join('');
-
-            document.getElementById('menu-modal-overlay').classList.add('menu-modal-overlay--visible');
-        }
-
-        function cerrarModal(e) {
-            if (!e || e.target === document.getElementById('menu-modal-overlay')) {
-                document.getElementById('menu-modal-overlay').classList.remove('menu-modal-overlay--visible');
-            }
-        }
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') cerrarModal();
-        });
-    </script>
 
 </body>
 
