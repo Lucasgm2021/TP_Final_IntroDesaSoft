@@ -133,11 +133,9 @@ def crear_reserva(data):
             "qr_data": f"{URL_PAGINA_WEB}/reservas/mostrar_confirmacion?code={uuid_qr}",
             "url_cancelar": f"{URL_PAGINA_WEB}/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
-    
-        if SERVICIO_MAIL == SERVICIO_MAIL_GMAIL_APP_PASS:
-            mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
-        elif SERVICIO_MAIL == SERVICIO_MAIL_MAILJET:
-            mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
+
+        mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
+
         servicios_mail.enviar_mail_con_qr(
             proveedor=SERVICIO_MAIL,mail_destino=mail_usuario,
             asunto=asunto,mail_data=datos_mail,ruta_template=mail_template

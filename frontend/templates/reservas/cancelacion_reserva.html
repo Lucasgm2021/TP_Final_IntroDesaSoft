@@ -1,8 +1,19 @@
+{% extends "base_usuario.html" %}
+
+
+{% block content %}
+
+{% from "componentes/button1_comp.html" import button1_comp %}
+<div class="form">
 <h1>CANCELACION DE RESERVA</h1>
 <p>Haga click en el siguiente botón para cancelar la reserva.</p>
-
 <form action="{{url_for('reservas.cancelar_reserva_route',uuid_reserva=id_qr)}}" method="POST">
-    <button type="submit" style="padding: 10px 20px; background: green; color: white;">
-        Cancelar reserva
-    </button>
+    {{ button1_comp(
+        text="Cancelar reserva",
+        height=55,
+        type="submit",
+        color="#CF4444"
+    ) }}
 </form>
+</div>
+{% endblock content %}
