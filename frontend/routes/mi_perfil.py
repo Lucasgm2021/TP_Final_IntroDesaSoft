@@ -4,8 +4,7 @@ from servicesfront.verificaciones import usuario_es_valido
 
 usuarios_bp = Blueprint(
     "usuarios",
-    __name__,
-    url_prefix="/usuarios"
+    __name__
 )
 
 @usuarios_bp.route("/cliente/mi_perfil", methods=["GET", "POST"])
@@ -33,7 +32,6 @@ def mi_perfil():
 @usuarios_bp.route("/cliente/mi_perfil/eliminar", methods=["POST"])
 def eliminar_perfil():
     status = eliminar_mi_perfil()
-    print("STATUS ELIMINAR:", status)
 
     if status == 200:
         session.clear()

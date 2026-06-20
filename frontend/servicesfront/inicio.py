@@ -13,16 +13,6 @@ def obtener_info_restaurante():
     except requests.RequestException:
         return {}
 
-
-def obtener_menu_publico():
-    try:
-        respuesta = requests.get(API_BASE_URL + "/menu")
-        respuesta.raise_for_status()
-        return respuesta.json().get("data", [])
-    except requests.RequestException:
-        return []
-
-
 def obtener_reseñas_aprobadas():
     try:
         respuesta = requests.get(API_BASE_URL + "/reseñas/")
