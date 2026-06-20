@@ -11,13 +11,8 @@ from services.mesas import obtener_mesas
 import db.usuarios as queries_usuarios
 from constants import URL_PAGINA_WEB,SERVICIO_MAIL,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
 
-
-ESTADOS_RESERVA = {"pendiente","confirmada","finalizada"}
-ESTADOS_QR = {"pendiente","usado","expirado"}
 MAS_UNO = 1
-CAMPOS_RESERVA_EDITABLES_ADMIN = {"id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales"}
-CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
-      
+
 def obtener_reservas(fecha,hora,estado,id_usuario,mesas):        
     data={}
     if not "id_usuario" in data:

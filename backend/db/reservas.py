@@ -148,7 +148,7 @@ def obtener_reservas(data):
     if data:
         string_para_query = " and ".join(lista_de_condiciones)
         query += f" WHERE {string_para_query}"
-    print(query)
+
     return config.ejecutar_query_lectura(
         query,
         params
