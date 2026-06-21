@@ -13,7 +13,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 from flask_cors import CORS
 
-
 from datetime import timedelta
 from routes.usuarios import usuarios_bp
 from routes.menu import menu_bp
@@ -22,9 +21,9 @@ from routes.reseñas import reseñas_bp
 from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
-
 from services.imagenes import subir_imagenes, listar_imagenes
 from services.verificaciones import check_usuario_es_admin
+
 from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
 
 app = Flask(__name__)
