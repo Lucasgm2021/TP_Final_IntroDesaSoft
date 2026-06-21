@@ -84,22 +84,17 @@ def obtener_usuario_id(id_usuario):
     else:       
         return None
 
-def actualizar_mi_perfil(id_usuario,nuevo_email,nueva_contraseña):
-    query = """
+def actualizar_mi_perfil(id_usuario,data_a_modificar):
+    setters = ", ".join([f"{campo}=:{campo}" for campo in data_a_modificar])
+    query = f"""
         UPDATE usuarios
-        SET email = :email,
-            password = :password
+        SET {setters}
         WHERE id_usuario = :id_usuario
     """
 
-    ejecutar_query_escritura(
-        query,
-        {
-            "email": nuevo_email,
-            "password": nueva_contraseña,
-            "id_usuario": id_usuario #session["id_usuario"]
-        }
-    )
+    data_a_modificar["id_usuario"] = id_usuario
+
+    ejecutar_query_escritura(query,data_a_modificar)
 
 def actualizar_usuario(email,es_admin):
     query = """

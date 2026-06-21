@@ -10,25 +10,25 @@ usuarios_bp = Blueprint(
 
 @usuarios_bp.route("/cliente/mi_perfil", methods=["GET", "POST"])
 def mi_perfil():
-
     if not usuario_es_valido():
         return redirect(url_for("auth_front.login"))
+
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if request.method == "POST":
 
         email = request.form.get("email")
         password = request.form.get("password")
 
-        status, response = actualizar_mi_perfil(email, password, cookies)
+        respuesta = actualizar_mi_perfil(email, password, cookies)
 
-        if status == 200:
-            flash("Perfil actualizado correctamente", "success")
+        if respuesta.get("message",""):
+            flash(respuesta.get("message"), "success")
             return redirect(url_for("usuarios.mi_perfil"))
         else:
-            flash(response.get("error", "Error al actualizar"), "error")
+            flash(respuesta.get("error", "Error al actualizar"), "error")
             return redirect(url_for("usuarios.mi_perfil"))
+    
     usuario = obtener_mi_perfil(cookies)
-
     return render_template("mi_perfil.html",usuario=usuario)
 
 @usuarios_bp.route("/cliente/mi_perfil/eliminar", methods=["POST"])
@@ -36,9 +36,9 @@ def eliminar_perfil():
     if not usuario_es_valido():
         return redirect(url_for("auth_front.login"))
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
-    status = eliminar_mi_perfil(cookies)
+    respuesta = eliminar_mi_perfil(cookies)
 
-    if status == 200:
+    if respuesta.get("message",""):
         session.clear()
         return redirect(url_for("auth_front.login"), 303)
     else:

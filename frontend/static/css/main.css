@@ -137,8 +137,9 @@ body {
     color: #d4cdc6;
 }
 
-.button-nueva-reserva {
+.button-nueva-reserva,.button-mi-perfil {
     background: #C8906D;
+    width: 150px;
 }
 
 .button-generic {
@@ -846,6 +847,7 @@ body {
 
 .menu-topbar {
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
     margin-bottom: 40px;
 }

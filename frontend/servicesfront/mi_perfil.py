@@ -20,14 +20,16 @@ def actualizar_mi_perfil(email, password,cookies):
         }
         respuesta = requests.patch(f"{API_BASE_URL}/usuarios/cliente/mi_perfil", json=payload,
                                    cookies=cookies)
-        return respuesta.status_code, respuesta.json()
+        return respuesta.json()
     except requests.RequestException:
-        return 500, {"error": "Error de conexión con el servidor"}
+        return {"errores": "Error de conexión con el servidor"}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al actualizar el perfil. Inténtalo de nuevo más tarde.']}
 
 
 def eliminar_mi_perfil(cookies):
     try:
         respuesta = requests.delete(f"{API_BASE_URL}/usuarios/cliente/mi_perfil", cookies=cookies)
-        return respuesta.status_code
+        return {"message":"ok"}
     except requests.RequestException:
-        return 500
+        return {"errores": "Error de conexión con el servidor"}
