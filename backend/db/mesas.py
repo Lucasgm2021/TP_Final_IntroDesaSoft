@@ -85,10 +85,10 @@ def obtener_total_mesas():
 
 def obtener_total_mesas_en_uso():
     query = """
-    SELECT COUNT(*) as total
-    FROM reserva_mesa
-    JOIN reserva
-        ON reserva_mesa.id_reserva = reserva.id_reserva
+    SELECT COUNT(mesa.id_mesa) as total
+    FROM mesa
+    JOIN reserva_mesa ON reserva_mesa.id_mesa = mesa.id_mesa
+    JOIN reserva ON reserva_mesa.id_reserva = reserva.id_reserva
     WHERE reserva.fecha = CURRENT_DATE()
     AND reserva.hora_reserva = CONCAT(HOUR(NOW()), ':00:00')
     AND reserva.estado_reserva IN ('pendiente')

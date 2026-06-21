@@ -1,11 +1,14 @@
 services:
   db:
     image: mysql:8.0
+    command: --default-time-zone='SYSTEM'
     env_file:
       - ./backend/.env
     ports:
       - "3307:3306"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - ./backend/db/01_init_db.sql:/docker-entrypoint-initdb.d/01_init_db.sql
       - ./backend/db/02_insert_datos.sql:/docker-entrypoint-initdb.d/02_insert_datos.sql
       - db_data:/var/lib/mysql
