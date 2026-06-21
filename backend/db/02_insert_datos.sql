@@ -2,7 +2,6 @@ DELETE FROM resenia;
 DELETE FROM reserva_mesa;
 DELETE FROM reserva;
 DELETE FROM mesa;
-DELETE FROM servicios_extra;
 DELETE FROM plato;
 DELETE FROM categoria_plato;
 DELETE FROM configuracion;
@@ -12,7 +11,6 @@ ALTER TABLE usuarios AUTO_INCREMENT = 1;
 ALTER TABLE categoria_plato AUTO_INCREMENT = 1;
 ALTER TABLE plato AUTO_INCREMENT = 1;
 ALTER TABLE reserva AUTO_INCREMENT = 1;
-ALTER TABLE servicios_extra AUTO_INCREMENT = 1;
 ALTER TABLE mesa AUTO_INCREMENT = 1;
 ALTER TABLE resenia AUTO_INCREMENT = 1;
 

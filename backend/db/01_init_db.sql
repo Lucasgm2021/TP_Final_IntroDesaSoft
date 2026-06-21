@@ -90,16 +90,6 @@ CREATE TABLE IF NOT EXISTS configuracion (
     valor TEXT
 );
 
-CREATE TABLE IF NOT EXISTS servicios_extra (
-    id_servicio INT PRIMARY KEY AUTO_INCREMENT,
-
-    nombre VARCHAR(100) NOT NULL,
-
-    descripcion VARCHAR(500),
-
-    disponible BOOLEAN DEFAULT TRUE
-);
-
 CREATE TABLE IF NOT EXISTS mesa (
     id_mesa INT PRIMARY KEY AUTO_INCREMENT,
 
