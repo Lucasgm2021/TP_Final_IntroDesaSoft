@@ -41,7 +41,7 @@ def obtener_mis_reservas(cookies):
 
 def cancelar_reserva(uuid_reserva,cookies):
     try:
-        response = requests.post(f"{API_BASE_URL}/reservas/cancelar/{uuid_reserva}", timeout=10, cookies=cookies)
+        response = requests.patch(f"{API_BASE_URL}/reservas/cancelar/{uuid_reserva}", timeout=10, cookies=cookies)
         return leer_respuesta_request(response,201)
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor.']}
@@ -50,7 +50,7 @@ def cancelar_reserva(uuid_reserva,cookies):
 
 def confirmar_reserva(uuid_reserva,cookies):
     try:
-        response = requests.post(f"{API_BASE_URL}/reservas/confirmar/{uuid_reserva}", timeout=10, cookies=cookies)
+        response = requests.patch(f"{API_BASE_URL}/reservas/confirmar/{uuid_reserva}", timeout=10, cookies=cookies)
         return leer_respuesta_request(response,201)
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor.']}

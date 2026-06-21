@@ -11,7 +11,7 @@ from constants import SUPABASE_URL, SUPABASE_API_KEY, BUCKET_NAME
 
 
 def subir_imagenes(img_file, img_name):
-    if not img_file or not img.filename:
+    if not img_file or not img_file.filename:
         return error_msg(500,"No se recibio archivo.","error")
 
     try:

@@ -204,12 +204,16 @@ def build_body_mesa(form):
 
 
 def subir_imagen(imagen,nombre, auth):
-    requests.post(
+    try:
+        response = requests.post(
         f"{API_BASE_URL}/imagenes/upload-img/{nombre}",
         files={"imagen": (imagen.filename,imagen.read(),imagen.content_type)},
         cookies={BACKEND_SESSION_COOKIE_NAME: auth
-        }
-    )
+        })
+    except requests.exceptions.ConnectionError:
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al obtener imagenes. Inténtalo de nuevo más tarde.']}
 
 def listar_imagenes(auth):
     try:

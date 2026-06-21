@@ -72,7 +72,7 @@ def crear_reserva():
     res,status = servicios_reservas.crear_reserva(data)
     return jsonify(res),status
 
-@reservas_bp.route("/confirmar/<uuid_reserva>",methods=["POST"])
+@reservas_bp.route("/confirmar/<uuid_reserva>",methods=["PATCH"])
 def confirmar_reserva(uuid_reserva):
     es_admin, error = check_usuario_es_admin()
     if not es_admin:
@@ -82,7 +82,7 @@ def confirmar_reserva(uuid_reserva):
     res, status = servicios_reservas.confirmar_reserva_por_qr(uuid_reserva)
     return jsonify(res),status
 
-@reservas_bp.route("/cancelar/<uuid_reserva>",methods=["POST"])
+@reservas_bp.route("/cancelar/<uuid_reserva>",methods=["PATCH"])
 def cancelar_reserva(uuid_reserva): 
     is_user, error = check_usuario()
     if not is_user:

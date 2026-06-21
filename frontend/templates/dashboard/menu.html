@@ -5,37 +5,20 @@
 
 {% block content %}
 
-<div >
-    <form action="/dashboard/upload-img" method="POST" enctype="multipart/form-data"
-    style="display: flex; flex-direction: row; justify-content: start;">
-
-        {{ input_comp(name="file-name", label="Nombre de Archivo",
-            value="", placeholder="Nombre de la img...",
-               width="100%", height="35px", required=true) }}
-
-
-        <label for="imagen">Selecciona tu imagen:</label><br>
-        <input type="file" id="imagen" name="imagen" accept="image/*" required><br><br>
-
-        {{ button1_comp(text="Guardar", height=50, type="submit") }}
-    </form>
-</div>
 <div>
     <div style="display: flex; flex-direction: row; justify-content: flex-end;">
         <h1 style="width: 70%">MENU</h1>
+        
         <div class="table-add-btn" style="margin-bottom: 30px; right: 0; margin-left: auto; padding: display:flex;justify-content: flex-end;gap: 5px;">
-            {% from "componentes/circle_comp.html" import circle_comp %}
-            {{ circle_comp(
-                text="+",
-                size=50,
-                type=3,
-                func="window.location.href='/dashboard/menu?nueva_imagen=1'"
+            {{ button1_comp(
+                text="Nuevo Plato",
+                height=45,
+                func="window.location.href='/dashboard/menu?nueva=1''; return false;"
             ) }}
-            {{ circle_comp(
-                text="+",
-                size=50,
-                type=1,
-                func="window.location.href='/dashboard/menu?nueva=1'"
+            {{ button1_comp(
+                text="Nueva imagen",
+                height=45,
+                func="window.location.href='/dashboard/menu?nueva_imagen=1'; return false;"
             ) }}
         </div>
     </div>
@@ -170,22 +153,26 @@
     {% endif %}
     {% if nueva_imagen %}
     <div class="modal-overlay">
-        <form action="/dashboard/upload-img" method="POST" class="dropshadow modal-card" enctype="multipart/form-data"
-        style="display: flex; flex-direction: column; align-items: center;">
-            <h2 style="font-size: 40px;">Sube una imagen</h2>
-            {{ input_comp(name="file-name", label="Nombre de Archivo",
-               value="", placeholder="Nombre de la img...",
-               width="250px", height="35px", required=true) }}
+        <form action = "{{ url_for('dashboard.subir_imagen') }}" class="dropshadow modal-card" method="POST" enctype="multipart/form-data">
+            <h2 class="modal-title">Sube una imagen</h2>
 
+            {{ input_comp(name="file-name", label="Nombre",
+                placeholder="Nombre de la imagen",
+                width="100%", height="45px", required=true) }}
 
-            <label for="imagen">Selecciona tu imagen:</label><br>
-            <input type="file" id="imagen" name="imagen" accept="image/*" required><br><br>
+            <div class="input-group">
+                <span class="field-label">Selecciona tu imagen:</span>
+                
+                <label for="file-upload" class="custom-file-upload">
+                    <span class="upload-text" id="file-name-text">Hacer click para seleccionar archivo</span>
+                </label>
+                <input type="file" id="imagen" name="imagen" accept="image/*" required><br><br>
+            </div>
 
-            
             <div class="modal-actions">
-                {{ button1_comp(text="Cancelar", height=50,color="#CF4444",
+                {{ button1_comp(text="Cancelar", height=50,
                     func="window.location.href='/dashboard/menu'; return false;") }}
-                {{ button1_comp(text="Guardar", height=50, type="submit") }}
+                {{ button1_comp(text="Subir", height=50, type="submit") }}
             </div>
         </form>
     </div>
