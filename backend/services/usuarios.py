@@ -73,9 +73,9 @@ def obtener_usuarios_service():
     if not usuarios:
         return error_msg(404, "No hay usuarios registrados")
 
-    reseñas = [dict(row) for row in usuarios]
+    usuarios = [dict(row) for row in usuarios]
     return {
-        "data": reseñas
+        "data": usuarios
     }, 200
 
 def obtener_usuario_email_service(email):
@@ -129,6 +129,9 @@ def actualizar_mi_perfil_service(data):
 
     try:
         actualizar_mi_perfil(session["id_usuario"],nuevo_email,contraseña_hasheada)
+        session["email"] = nuevo_email
+        session["contraseña"] = contraseña_hasheada
+
     except:
         return error_msg(500, "Error al actualizar el perfil")
     return {
@@ -195,7 +198,6 @@ def eliminar_mi_perfil_service():
             "Perfil eliminado"
         )
     }, 200
-
 
 def validar_email(email):
     patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\.[a-zA-Z]+$"

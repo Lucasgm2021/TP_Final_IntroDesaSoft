@@ -6,24 +6,22 @@ from db.config import (
 )
 
 
-def reserva_puede_reseñarse(
-    id_reserva
-):
+def reserva_puede_reseñarse(id_reserva):
     query = """
         SELECT
             r.id_reserva
         FROM reserva r
 
-        LEFT JOIN reseña re
+        LEFT JOIN resenia re
             ON r.id_reserva = re.id_reserva
 
         WHERE
             r.id_reserva = :id_reserva
             AND r.id_usuario = :id_usuario
             AND r.estado_reserva = 'finalizada'
-            AND r.reseñada = FALSE
+            AND r.reseniada = FALSE
             AND r.fecha <= CURRENT_DATE
-            AND re.id_reseña IS NULL
+            AND re.id_resenia IS NULL
     """
 
     resultado = ejecutar_query_lectura(
@@ -44,7 +42,7 @@ def crear_reseña(
     comentario
 ):
     query = """
-        INSERT INTO reseña (
+        INSERT INTO resenia (
             id_usuario,
             id_reserva,
             calificacion,
@@ -76,7 +74,7 @@ def marcar_reserva_reseñada(
 ):
     query = """
         UPDATE reserva
-        SET reseñada = TRUE
+        SET reseniada = TRUE
         WHERE id_reserva = :id_reserva
     """
 
@@ -91,7 +89,7 @@ def marcar_reserva_reseñada(
 def obtener_reseñas_aprobadas():
     query = """
         SELECT
-            re.id_reseña,
+            re.id_resenia,
             re.id_reserva,
             re.fecha,
             re.calificacion,
@@ -101,7 +99,7 @@ def obtener_reseñas_aprobadas():
             u.id_usuario,
             u.email
 
-        FROM reseña re
+        FROM resenia re
 
         LEFT JOIN usuarios u
             ON re.id_usuario = u.id_usuario
@@ -117,7 +115,7 @@ def obtener_reseñas_aprobadas():
 def obtener_todas_las_reseñas():
     query = """
         SELECT
-            re.id_reseña,
+            re.id_resenia,
             re.id_reserva,
             re.fecha,
             re.calificacion,
@@ -127,7 +125,7 @@ def obtener_todas_las_reseñas():
             u.id_usuario,
             u.email
 
-        FROM reseña re
+        FROM resenia re
 
         LEFT JOIN usuarios u
             ON re.id_usuario = u.id_usuario
@@ -139,24 +137,25 @@ def obtener_todas_las_reseñas():
 
 
 def modificar_estado_reseña(
-    id_reseña,
+    id_resenia,
     estado
 ):
     query = """
-        UPDATE reseña
+        UPDATE resenia
         SET estado = :estado
-        WHERE id_reseña = :id_reseña
+        WHERE id_resenia = :id_resenia
     """
 
     ejecutar_query_escritura(
         query,
         {
             "estado": estado,
-            "id_reseña": id_reseña
+            "id_resenia": id_resenia
         }
     )
 
     return True
+
 
 
 def obtener_todas_las_reseñables_usuario():
@@ -170,15 +169,15 @@ def obtener_todas_las_reseñables_usuario():
 
         FROM reserva r
 
-        LEFT JOIN reseña re
+        LEFT JOIN resenia re
             ON r.id_reserva = re.id_reserva
 
         WHERE
             r.id_usuario = :id_usuario
             AND r.estado_reserva = 'finalizada'
-            AND r.reseñada = FALSE
+            AND r.reseniada = FALSE
             AND r.fecha <= CURRENT_DATE
-            AND re.id_reseña IS NULL
+            AND re.id_resenia IS NULL
 
         ORDER BY r.fecha DESC
     """
@@ -193,7 +192,7 @@ def obtener_todas_las_reseñables_usuario():
 def obtener_mis_reseñas_query(id_usuario):
     query = """
         SELECT
-            re.id_reseña,
+            re.id_resenia,
             re.id_reserva,
             re.fecha,
             re.calificacion,
@@ -203,7 +202,7 @@ def obtener_mis_reseñas_query(id_usuario):
             u.id_usuario,
             u.email
 
-        FROM reseña re
+        FROM resenia re
 
         LEFT JOIN usuarios u
             ON re.id_usuario = u.id_usuario

@@ -1,5 +1,12 @@
 from dotenv import load_dotenv
-load_dotenv()
+import os
+
+# Si este archivo de docker no existe (se crea automatico en el contenedor), se cargan las variables de entorno.
+if not os.path.exists('/.dockerenv'):
+    print("Ejecutando con terminal, cargando las variables de entorno...")
+    load_dotenv()
+else:
+    print("Ejecutando con docker, se cargan las variables de entorno en el yml.")
 
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -18,13 +25,14 @@ from routes.mesas import mesas_bp
 
 from services.imagenes import subir_imagenes, listar_imagenes
 from services.verificaciones import check_usuario_es_admin
+from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1234@127.0.0.1:3306/restaurante"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}"
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
@@ -36,7 +44,6 @@ app.config["SESSION_SQLALCHEMY"] = db
 
 Session(app)
 CORS(app)
-
 
 @app.route("/")
 def index():
@@ -69,4 +76,4 @@ app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
 app.register_blueprint(reservas_bp, url_prefix="/reservas")
 
 if __name__ == "__main__":
-    app.run(debug=True,port=5005)
+    app.run(debug=True, host="0.0.0.0", port=5000)

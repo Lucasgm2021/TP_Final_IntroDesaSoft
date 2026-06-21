@@ -128,10 +128,10 @@ def reseñas():
 
     resenias = [
         {
-            "id":      reseña["id_reseña"],
+            "id":      reseña["id_resenia"],
             "checked": reseña["estado"] == "aprobada",
             "cells": [
-                reseña["id_reseña"],
+                reseña["id_resenia"],
                 reseña["id_reserva"],
                 reseña["comentario"],
                 reseña["calificacion"],
@@ -145,7 +145,7 @@ def reseñas():
     return render_template("dashboard/reseñas.html", resenias=resenias)
 
 
-@dashboard_bp.route("/configuracion", methods=["GET", "POST"])
+@dashboard_bp.route("/configuracion/", methods=["GET", "POST"])
 def configuracion():
     if not usuario_es_admin():
         return redirect("/")

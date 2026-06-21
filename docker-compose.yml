@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.0
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./backend/db/01_init_db.sql:/docker-entrypoint-initdb.d/01_init_db.sql
+      - ./backend/db/02_insert_datos.sql:/docker-entrypoint-initdb.d/02_insert_datos.sql
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+      interval: 5s
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+        db:
+          condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT}:5001"
+    volumes:
+      - ./frontend:/app
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

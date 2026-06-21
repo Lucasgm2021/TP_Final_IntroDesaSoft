@@ -66,12 +66,11 @@ def register_service(data):
     )
 
 def logout_service():
-    try:
-        session.pop("id_usuario")
-    except:
+    if "id_usuario" not in session:
         return error_msg(
             400,
-            "No estas logueado",description="No se encontró una sesión activa para cerrar."
+            "No estas logueado",
+            description="No se encontró una sesión activa para cerrar."
         )
 
     session.clear()

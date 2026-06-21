@@ -109,7 +109,7 @@ def modificar_reseña_service(
             "No se pudo modificar la reseña"
         )
 
-    return error_msg(200, "Reseña modificada","comment")
+    return {}, 200
 
 def reservas_reseñables_service():
     reseñas = obtener_todas_las_reseñables_usuario()
