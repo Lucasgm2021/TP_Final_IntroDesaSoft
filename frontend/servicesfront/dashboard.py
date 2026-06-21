@@ -1,6 +1,6 @@
 import requests
 from constants import API_BASE_URL, BACKEND_SESSION_COOKIE_NAME
-
+from servicesfront.utiles import leer_respuesta_request
 
 # Reservas
 
@@ -211,9 +211,11 @@ def subir_imagen(imagen,nombre, auth):
         }
     )
 
-def listar_imagenes():
-    response = requests.get(
-        f"{API_BASE_URL}/imagenes"
-        )
-    lista_imagenes = response.json() or []
-    return lista_imagenes
+def listar_imagenes(auth):
+    try:
+        response = requests.get(f"{API_BASE_URL}/imagenes",cookies={BACKEND_SESSION_COOKIE_NAME: auth})
+        return leer_respuesta_request(response,200,json=True)
+    except requests.exceptions.ConnectionError:
+        return {'errores': ['No se pudo conectar con el servidor.']}
+    except:
+        return {'errores': ['Ocurrió un error inesperado al obtener imagenes. Inténtalo de nuevo más tarde.']}

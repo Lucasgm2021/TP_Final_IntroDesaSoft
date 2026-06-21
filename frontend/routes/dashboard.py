@@ -102,7 +102,7 @@ def menu():
         menu=menu_rows,
         plato_editar=plato_editar,
         nuevo="nueva" in request.args,
-        lista_img= svs.listar_imagenes()
+        lista_img= svs.listar_imagenes(auth)
     )
 
 

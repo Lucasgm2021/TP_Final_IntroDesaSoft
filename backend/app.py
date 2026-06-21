@@ -21,8 +21,7 @@ from routes.reseñas import reseñas_bp
 from routes.info_frontend import info_frontend_bp
 from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
-from services.imagenes import subir_imagenes, listar_imagenes
-from services.verificaciones import check_usuario_es_admin
+from routes.imagenes import imagenes_bp
 
 from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
 
@@ -44,28 +43,6 @@ app.config["SESSION_SQLALCHEMY"] = db
 Session(app)
 CORS(app)
 
-@app.route("/")
-def index():
-    return "Backend encendido"
-
-@app.route("/upload-img/<string:img_name>", methods=["POST"])
-def upload_img(img_name):
-    img = request.files["imagen"]
-
-    es_admin, error = check_usuario_es_admin()
-
-    if not es_admin:
-        respuesta, status = error
-        return jsonify(respuesta), status
-
-    return subir_imagenes(img,img_name)
-
-@app.route("/imagenes", methods=["GET"])
-def listar_img():
-    return listar_imagenes()
-
-
-
 app.register_blueprint(mesas_bp, url_prefix="/mesas")
 app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
 app.register_blueprint(menu_bp, url_prefix="/menu")
@@ -73,6 +50,7 @@ app.register_blueprint(reseñas_bp, url_prefix="/reseñas")
 app.register_blueprint(info_frontend_bp, url_prefix="/info_frontend")
 app.register_blueprint(sesion_usuario_bp, url_prefix="/sesion")
 app.register_blueprint(reservas_bp, url_prefix="/reservas")
+app.register_blueprint(imagenes_bp, url_prefix="/imagenes")
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
