@@ -55,34 +55,6 @@ def obtener_reserva_con_id(id_reserva):
     reserva = {**result, "fecha": result["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(result["hora_reserva"]), "qr_expiracion": str(result["qr_expiracion"])}
     return {"data": reserva},200
 
-def obtener_mesas_disponibles():
-    #total de mesas - mesas usadas en un determinado momento = mesas disponibles en ese momento
-    total_mesas = queries_reservas.obtener_total_mesas()
-    mesas_en_uso = queries_reservas.obtener_total_mesas_en_uso()
-
-    mesas_disponibles = total_mesas - mesas_en_uso
-
-    if mesas_disponibles < 0:
-        mesas_disponibles = 0
-
-    return {"mesas_disponibles":mesas_disponibles},200
-
-def obtener_cantidades_comensales_posibles(fecha, hora,interior):
-    try: 
-        capacidades = queries_reservas.obtener_capacidades_mesas_disponibles(
-            fecha,
-            hora,
-            interior
-        )
-    except:
-        return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
-
-    if not capacidades:
-        return {"Msg":"No hay mesas disponibles en esa fecha y hora."},200
-
-    capacidad_maxima = max(capacidades)
-    return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
-
 def crear_reserva(data):
     interior = data.get("interior")
     fecha = data.get("fecha")

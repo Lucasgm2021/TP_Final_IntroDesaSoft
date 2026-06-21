@@ -32,32 +32,6 @@ def obtener_reserva_id(id_reserva):
     res,status = servicios_reservas.obtener_reserva_con_id(id_reserva)
     return jsonify(res),status
 
-#GET /mesas/disponibles. Sin parametros. Devuelve la cantidad de mesas disponibles en ese momento.
-@reservas_bp.route("/mesas/disponibles", methods=["GET"])
-def obtener_mesas_disponibles():
-    res, status =  servicios_reservas.obtener_mesas_disponibles()
-    return jsonify(res),status
-
-#GET /mesas/validacion. Parametros: fecha, hora e interior. Devuelve listado desde 1 a una cantidad maxima de comensales que pueden reservar 1 mesa segun la disponibilidad de las mismas segun los parametros.
-@reservas_bp.route("/mesas/validacion", methods=["GET"])
-def obtener_cantidades_comensales_posibles():
-    #is_user, error = check_usuario()
-
-    #if not is_user:
-    #    respuesta, status = error
-    #    return jsonify(respuesta), status
-
-    fecha = request.args.get("fecha")
-    hora = request.args.get("hora")
-    interior = request.args.get("interior")
-    res,status = servicios_reservas.obtener_cantidades_comensales_posibles(
-        fecha,
-        hora,
-        interior
-    )
-
-    return jsonify(res),status
-
 #POST /reservas. Recibe json: id_usuario, interior, fecha, hora, nro comensales. Crea una reserva.
 @reservas_bp.route("/", methods=["POST"])
 def crear_reserva():

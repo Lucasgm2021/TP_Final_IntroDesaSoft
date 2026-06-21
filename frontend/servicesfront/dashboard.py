@@ -202,6 +202,12 @@ def build_body_mesa(form):
         "funcional":  1 if "funcional" in form else 0,
     }
 
+def obtener_mesas_disponibles(auth):
+    r = requests.get(
+        f"{API_BASE_URL}/mesas/disponibles",
+        cookies={BACKEND_SESSION_COOKIE_NAME: auth}
+    ) 
+    return r.json().get("mesas_disponibles",0)   
 
 def subir_imagen(imagen,nombre, auth):
     try:

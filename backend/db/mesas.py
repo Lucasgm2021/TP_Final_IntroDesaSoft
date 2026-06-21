@@ -74,6 +74,28 @@ def existe_numero_mesa(numero, excluir_id=None):
     return len(resultado) > 0
 
 
+def obtener_total_mesas():
+    query = " SELECT COUNT(*) as total FROM mesa"
+
+    resultado = ejecutar_query_lectura(
+        query
+    )
+
+    return resultado[0]["total"]
+
+def obtener_total_mesas_en_uso():
+    query = """
+    SELECT COUNT(*) as total
+    FROM reserva_mesa
+    JOIN reserva
+        ON reserva_mesa.id_reserva = reserva.id_reserva
+    WHERE reserva.fecha = CURRENT_DATE()
+    AND reserva.hora_reserva = CONCAT(HOUR(NOW()), ':00:00')
+    AND reserva.estado_reserva IN ('pendiente')
+    """
+    resultado = ejecutar_query_lectura(query)
+    return resultado[0]["total"]
+
 def crear_mesa(numero, capacidad, interior, funcional):
     query = """
         INSERT INTO mesa (numero, capacidad, interior, funcional)

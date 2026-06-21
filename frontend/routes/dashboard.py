@@ -45,7 +45,7 @@ def home():
 
     platos    = svs.obtener_menu()
     sin_stock = sum(1 for p in platos if not p["hay_stock"])
-
+    mesas_disponibles = svs.obtener_mesas_disponibles(auth)
     return render_template(
         "dashboard/home.html",
         reservas_hoy=reservas_rows,
@@ -53,6 +53,7 @@ def home():
         pendientes=pendientes,
         aprobadas=aprobadas,
         sin_stock=sin_stock,
+        mesas_disponibles=mesas_disponibles
     )
 
 

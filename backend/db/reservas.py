@@ -25,65 +25,6 @@ WHERE reserva.uuid_qr = :uuid_qr
 
 QUERY_COUNT_RESERVAS = "SELECT COUNT(*) as total FROM reserva"
 
-QUERY_COUNT_MESAS = " SELECT COUNT(*) as total FROM mesa"
-
-QUERY_COUNT_MESAS_EN_USO = """
-SELECT COUNT(*) as total
-FROM reserva_mesa
-JOIN reserva
-    ON reserva_mesa.id_reserva = reserva.id_reserva
-WHERE reserva.fecha = CURRENT_DATE()
-AND reserva.hora_reserva = CONCAT(HOUR(NOW()), ':00:00')
-AND reserva.estado_reserva IN ('pendiente')
-"""
-
-QUERY_MESAS_DISPONIBLES = """
-SELECT capacidad
-FROM mesa
-WHERE id_mesa NOT IN (
-
-    SELECT reserva_mesa.id_mesa
-    FROM reserva_mesa
-
-    JOIN reserva
-        ON reserva_mesa.id_reserva = reserva.id_reserva
-
-    WHERE reserva.fecha = :fecha
-    AND reserva.hora_reserva = :hora_reserva
-    AND reserva.estado_reserva IN ('pendiente')
-
-)
-
-AND funcional = TRUE
-AND interior = :interior
-"""
-
-QUERY_MESA_DISPONIBLE = """
-SELECT id_mesa, capacidad
-FROM mesa
-
-WHERE capacidad >= :capacidad
-AND funcional = TRUE
-AND interior = :interior
-
-AND id_mesa NOT IN (
-
-    SELECT reserva_mesa.id_mesa
-    FROM reserva_mesa
-
-    JOIN reserva
-        ON reserva_mesa.id_reserva = reserva.id_reserva
-
-    WHERE reserva.fecha = :fecha
-    AND reserva.hora_reserva = :hora_reserva
-    AND reserva.estado_reserva IN ('pendiente')
-
-)
-
-ORDER BY capacidad, id_mesa ASC
-LIMIT 1
-"""
-
 QUERY_INSERT_RESERVA = """
 INSERT INTO reserva (
     id_usuario,
@@ -177,35 +118,6 @@ def obtener_total_reservas():
         QUERY_COUNT_RESERVAS
     )
 
-    return resultado[0]["total"]
-
-def obtener_total_mesas():
-
-    resultado = config.ejecutar_query_lectura(
-        QUERY_COUNT_MESAS
-    )
-
-    return resultado[0]["total"]
-
-def obtener_capacidades_mesas_disponibles(fecha, hora, interior):
-    resultado = config.ejecutar_query_lectura(
-        QUERY_MESAS_DISPONIBLES,
-        params={"fecha":fecha,"hora_reserva":hora,"interior":interior}
-    )
-    resultado = [mesa["capacidad"] for mesa in resultado]
-    return resultado
-
-def obtener_mesa_disponible(fecha,hora,comensales,interior):
-
-    resultado = config.ejecutar_query_lectura(
-        QUERY_MESA_DISPONIBLE,
-        params={"capacidad":comensales,"interior":interior,"fecha":fecha,"hora_reserva":hora}
-    )
-
-    return resultado[0] if resultado else None
-
-def obtener_total_mesas_en_uso():
-    resultado = config.ejecutar_query_lectura(QUERY_COUNT_MESAS_EN_USO)
     return resultado[0]["total"]
 
 def obtener_reserva_por_id(id_reserva):
