@@ -6,6 +6,15 @@
 {% endblock %}
 
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash flash--{{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
 
 {% from "componentes/input_comp.html" import input_comp %}
 {% from "componentes/button1_comp.html" import button1_comp %}
@@ -28,7 +37,7 @@
     {{ input_comp(
         name="password",
         type="password",
-        value=usuario.password,
+        value="",
         label="CONTRASEÑA",
         placeholder="Ingrese la contraseña",
         height="35px",
