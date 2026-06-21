@@ -15,19 +15,21 @@ reseñas_bp = Blueprint(
 )
 
 
-@reseñas_bp.route("/", methods=["POST"])
+@reseñas_bp.route("", methods=["POST"])
 def crear_reseña():
     data = request.json
     is_user, error = check_usuario()
 
     if not is_user:
         respuesta, status = error
+        print(respuesta, status)
+
         return jsonify(respuesta), status
 
     respuesta, status = (
         crear_reseña_service(data)
     )
-
+    print(respuesta,status)
     return jsonify(respuesta), status
 
 @reseñas_bp.route("/reseñables", methods=["GET"])

@@ -20,3 +20,7 @@ SERVIDOR_MAIL=os.getenv("SERVIDOR_MAIL","smtp.gmail.com")
 SERVICIO_MAIL=os.getenv("SERVICIO_MAIL","gmail_app_pass")
 SERVICIO_MAIL_GMAIL_APP_PASS="gmail_app_pass"
 SERVICIO_MAIL_MAILJET="mailjet_key"
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
+BUCKET_NAME = os.getenv("BUCKET_NAME") or 'menu-imagenes'
