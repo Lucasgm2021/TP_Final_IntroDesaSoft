@@ -38,9 +38,6 @@
 
     {% if platos %}
 
-    {# Columnas calculadas para que las filas queden parejas:
-       filas = techo(n / 4), columnas = techo(n / filas).
-       Ej.: 6 platos -> 2 filas -> 3 columnas (3 + 3). #}
     {% set _n = platos | length %}
     {% set _rows = (_n / 4) | round(0, 'ceil') | int %}
     {% set _cols = (_n / _rows) | round(0, 'ceil') | int %}
@@ -49,8 +46,6 @@
 
         {% for plato in platos %}
 
-        {# Cada tarjeta es un enlace a su modal (#plato-N). El modal se muestra
-           solo cuando la URL apunta a él, vía la pseudo-clase CSS :target. #}
         <a
             class="menu-card dropshadow"
             href="#plato-{{ loop.index }}"
@@ -83,12 +78,8 @@
 
         </a>
 
-        {# Modal de este plato. Está fuera del flujo (position: fixed), así que
-           no ocupa una celda de la grilla. #}
         <div id="plato-{{ loop.index }}" class="menu-modal-overlay">
 
-            {# El fondo oscuro es un enlace que "cierra" (apunta a un ancla
-               inexistente, por lo que ningún modal queda como :target). #}
             <a href="#cerrar" class="menu-modal-backdrop"></a>
 
             <div class="menu-modal dropshadow">
@@ -114,8 +105,6 @@
 
                     </div>
 
-                    {# Los badges se calculan acá, en el servidor (Jinja),
-                       en vez de en JavaScript. #}
                     <div class="menu-modal-badges">
 
                         {% if not plato.hay_stock %}
