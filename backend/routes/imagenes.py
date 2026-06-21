@@ -17,14 +17,16 @@ def upload_img(img_name):
     if not es_admin:
         respuesta, status = error
         return jsonify(respuesta), status
+    respuesta, status = subir_imagenes(img,img_name)
 
-    return subir_imagenes(img,img_name)
+    return jsonify(respuesta),status
 
-@imagenes_bp.route("/imagenes", methods=["GET"])
+@imagenes_bp.route("/", methods=["GET"])
 def listar_img():
     es_admin, error = check_usuario_es_admin()
 
     if not es_admin:
         respuesta, status = error
         return jsonify(respuesta), status
-    return listar_imagenes()
+    respuesta, status = listar_imagenes()
+    return respuesta, status

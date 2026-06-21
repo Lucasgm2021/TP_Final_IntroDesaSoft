@@ -9,12 +9,12 @@ def listar_imagenes(): #lista todas las imagenes
 
     return [dict(r) for r in resultado]
 
-def guardar_imagen(archivo,name): #admin: sube una nueva imagen
+def guardar_imagen(img_name,url): #admin: sube una nueva imagen
     query = """
         INSERT INTO imagenes (unique_name,img_url)
         VALUES (:name,:url)
     """
     ejecutar_query_escritura(query, {
-        "name": name,
-        "url": client.storage.from_(BUCKET_NAME).get_public_url(nombre_archivo)
+        "name": img_name,
+        "url": url
     })

@@ -205,7 +205,7 @@ def build_body_mesa(form):
 
 def subir_imagen(imagen,nombre, auth):
     requests.post(
-        f"{API_BASE_URL}/upload-img/{nombre}",
+        f"{API_BASE_URL}/imagenes/upload-img/{nombre}",
         files={"imagen": (imagen.filename,imagen.read(),imagen.content_type)},
         cookies={BACKEND_SESSION_COOKIE_NAME: auth
         }
