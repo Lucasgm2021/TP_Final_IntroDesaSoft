@@ -1,0 +1,2122 @@
+openapi: 3.0.3
+info:
+  title: Puerto Hermoso API
+  description: |
+    API REST para el sistema de gestión del restaurante **Puerto Hermoso**.
+
+    ## Autenticación
+    La API usa sesiones basadas en cookies (`session`). Para los endpoints protegidos
+    hay que iniciar sesión primero mediante `POST /sesion/login`.
+    Los endpoints marcados con [Auth] requieren sesión activa de usuario.
+    Los marcados con [Admin] requieren que el usuario sea administrador.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: Servidor local de desarrollo
+
+tags:
+  - name: Sesión
+    description: Login, registro y logout
+  - name: Usuarios
+    description: ABM de usuarios (clientes y admins)
+  - name: Mesas
+    description: ABM de mesas del restaurante
+  - name: Menú
+    description: ABM de platos del menú
+  - name: Reservas
+    description: Ciclo de vida completo de reservas y flujo QR
+  - name: Resenas
+    description: Creacion y moderacion de resenas
+  - name: Info Frontend
+    description: Configuración general del restaurante (nombre, teléfono, etc.)
+  - name: imagenes
+    description: Subida de imagenes y listar de la bbdd
+
+# ---------------------------------------------------------------------------
+# Componentes reutilizables
+# ---------------------------------------------------------------------------
+components:
+  schemas:
+
+    ErrorItem:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Código HTTP del error (coincide con el status de la respuesta)
+        message:
+          type: string
+          example: "Descripción breve del error"
+        level:
+          type: string
+          example: "error"
+        description:
+          type: string
+          example: "Detalle adicional del error"
+
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorItem"
+
+    Mesa:
+      type: object
+      properties:
+        id_mesa:
+          type: integer
+          example: 1
+        numero:
+          type: integer
+          example: 5
+        capacidad:
+          type: integer
+          example: 4
+        interior:
+          type: boolean
+          example: true
+        funcional:
+          type: boolean
+          example: true
+
+    MesaInput:
+      type: object
+      required:
+        - numero
+        - capacidad
+        - interior
+      properties:
+        numero:
+          type: integer
+          example: 5
+        capacidad:
+          type: integer
+          example: 4
+        interior:
+          type: boolean
+          example: true
+        funcional:
+          type: boolean
+          default: true
+
+    MesaPatchInput:
+      type: object
+      properties:
+        numero:
+          type: integer
+          example: 5
+        capacidad:
+          type: integer
+          example: 4
+        interior:
+          type: boolean
+        funcional:
+          type: boolean
+
+    Plato:
+      type: object
+      properties:
+        id_plato:
+          type: integer
+          example: 1
+        id_categoria:
+          type: integer
+          example: 2
+        nombre:
+          type: string
+          example: "Milanesa napolitana"
+        link_imagen:
+          type: string
+          example: "https://example.com/img/milanesa.jpg"
+        precio:
+          type: number
+          format: float
+          example: 3500.00
+        hay_stock:
+          type: boolean
+          example: true
+        gluten:
+          type: boolean
+          example: true
+        producto_animal:
+          type: boolean
+          example: true
+        carnes:
+          type: boolean
+          example: true
+        lactosa:
+          type: boolean
+          example: false
+
+    PlatoInput:
+      type: object
+      required:
+        - nombre
+        - precio
+      properties:
+        nombre:
+          type: string
+          example: "Milanesa napolitana"
+        id_categoria:
+          type: integer
+          example: 2
+        link_imagen:
+          type: string
+          example: "https://example.com/img/milanesa.jpg"
+        precio:
+          type: number
+          format: float
+          example: 3500.00
+        hay_stock:
+          type: boolean
+          default: true
+        gluten:
+          type: boolean
+          default: false
+        producto_animal:
+          type: boolean
+          default: false
+        carnes:
+          type: boolean
+          default: false
+        lactosa:
+          type: boolean
+          default: false
+
+    Reserva:
+      type: object
+      properties:
+        id_reserva:
+          type: integer
+          example: 1
+        id_usuario:
+          type: integer
+          example: 3
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-05-26T15:00:00Z"
+        estado_reserva:
+          type: string
+          enum: [pendiente, cancelada, finalizada]
+          example: "pendiente"
+        reseniada:
+          type: boolean
+          example: false
+        hora_reserva:
+          type: string
+          example: "20:00:00"
+        fecha:
+          type: string
+          format: date
+          example: "2026-05-26"
+        interior:
+          type: boolean
+          example: true
+        uuid_qr:
+          type: string
+          example: "a1b2c3d4e5f6..."
+        estado_qr:
+          type: string
+          enum: [pendiente, usado, expirado]
+          example: "pendiente"
+        qr_expiracion:
+          type: string
+          format: date-time
+          example: "2026-05-26T20:30:00Z"
+        comensales:
+          type: integer
+          example: 2
+        id_mesa:
+          type: integer
+          example: 4
+
+    ReservaInput:
+      type: object
+      required:
+        - interior
+        - fecha
+        - hora
+        - nro_comensales
+        - ids_mesas
+      properties:
+        interior:
+          type: boolean
+          example: true
+        fecha:
+          type: string
+          format: date
+          example: "2026-05-26"
+        hora:
+          type: string
+          example: "20:00:00"
+          description: "Debe ser una hora en punto (e.g. 20:00:00)"
+        nro_comensales:
+          type: integer
+          example: 2
+        ids_mesas:
+          type: array
+          items:
+            type: string
+          description: "IDs de las mesas elegidas por el cliente (como strings). El backend valida que la capacidad total cubra a los comensales."
+          example: ["3", "4"]
+        id_usuario:
+          type: integer
+          description: "Si no se envía se usa el id del usuario en sesión. Solo admins pueden reservar en nombre de otro usuario."
+
+    Resena:
+      type: object
+      properties:
+        id_resenia:
+          type: integer
+          example: 1
+        id_usuario:
+          type: integer
+          example: 3
+        id_reserva:
+          type: integer
+          example: 7
+        fecha:
+          type: string
+          format: date-time
+        calificacion:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 4
+        comentario:
+          type: string
+          example: "Excelente comida y atencion"
+        estado:
+          type: string
+          enum: [no_revisada, no_aprobada, aprobada]
+          example: "no_revisada"
+        email:
+          type: string
+          format: email
+          example: "cliente@gmail.com"
+
+    ResenaInput:
+      type: object
+      required:
+        - id_reserva
+        - calificacion
+      properties:
+        id_reserva:
+          type: integer
+          example: 7
+        calificacion:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 4
+        comentario:
+          type: string
+          example: "Excelente comida y atención"
+
+    ConfigEntry:
+      type: object
+      properties:
+        clave:
+          type: string
+          example: "nombre_restaurante"
+        valor:
+          type: string
+          example: "PUERTO HERMOSO"
+    Imagen:
+          type: object
+          properties:
+            id_imagen:
+              type: integer
+              example: 1
+            unique_name:
+              type: string
+              example: "Limonada"
+            img_url:
+              type: string
+              example: "https://bxsiebhagayfpbldmsud.supabase.co/storage/v1/object/public/menu-imagenes/1f79aef4-2564-4810-8077-182d05deb9dc.png"
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+paths:
+
+  # ==========================================================================
+  # SESIÓN
+  # ==========================================================================
+  /sesion/login:
+    post:
+      tags: [Sesión]
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "admin@puertohermoso.com"
+                password:
+                  type: string
+                  example: "1234"
+      responses:
+        "200":
+          description: Sesión iniciada. La cookie de sesión se devuelve automáticamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 200
+                    message: "Logueado con exito"
+                    level: "confirmacion"
+                    description: ""
+        "400":
+          description: Falta email o contraseña
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta email o contraseña"
+                    level: "error"
+        "401":
+          description: Contraseña incorrecta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "Contraseña incorrecta"
+                    level: "error"
+        "404":
+          description: El usuario no existe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "El usuario no existe"
+                    level: "error"
+
+  /sesion/register:
+    post:
+      tags: [Sesión]
+      summary: Registrarse como usuario cliente (inicia sesión automáticamente)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "pedro@fi.uba.ar"
+                password:
+                  type: string
+                  example: "caracol"
+      responses:
+        "201":
+          description: Registrado y sesión iniciada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 201
+                    message: "Registrado y sesión iniciada."
+                    level: "error"
+        "400":
+          description: Falta email o contraseña
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta email o contraseña"
+                    level: "error"
+        "409":
+          description: El usuario ya existe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "El usuario ya existe"
+                    level: "error"
+
+  /sesion/logout:
+    post:
+      tags: [Sesión]
+      summary: Cerrar sesión
+      responses:
+        "201":
+          description: Sesión cerrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 201
+                    message: "Sesión cerrada."
+                    level: "error"
+        "400":
+          description: No estás logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "No estás logueado"
+                    level: "error"
+    get:
+      tags: [Sesión]
+      summary: Cerrar sesión (también disponible por GET)
+      responses:
+        "201":
+          description: Sesión cerrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 201
+                    message: "Sesión cerrada."
+                    level: "error"
+        "400":
+          description: No estás logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "No estás logueado"
+                    level: "error"
+
+  /sesion/perfil:
+    get:
+      tags: [Sesión]
+      summary: Ver perfil del usuario en sesión (endpoint temporal)
+      responses:
+        "200":
+          description: Datos del usuario en sesión
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id_usuario:
+                    type: integer
+                  email:
+                    type: string
+                  es_admin:
+                    type: boolean
+        "401":
+          description: No iniciaste sesión
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  # ==========================================================================
+  # USUARIOS
+  # ==========================================================================
+  /usuarios/registro:
+    post:
+      tags: [Usuarios]
+      summary: Registrar un nuevo cliente (público)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, contraseña]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "cliente@gmail.com"
+                contraseña:
+                  type: string
+                  example: "secreto123"
+      responses:
+        "201":
+          description: Cliente creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+        "400":
+          description: Campo faltante o email inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante o email inválido"
+                    level: "error"
+        "409":
+          description: El email ya está registrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "El email ya está registrado"
+                    level: "error"
+
+  /usuarios/:
+    get:
+      tags: [Usuarios]
+      summary: Obtener todos los usuarios
+      responses:
+        "200":
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_usuario:
+                          type: integer
+                        email:
+                          type: string
+                        es_admin:
+                          type: integer
+                          description: "1 = administrador, 0 = cliente"
+                          example: 0
+              example:
+                data:
+                  - id_usuario: 1
+                    email: "admin@puertohermoso.com"
+                    es_admin: 1
+                  - id_usuario: 2
+                    email: "juan.perez@email.com"
+                    es_admin: 0
+        "404":
+          description: No hay usuarios registrados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "No hay usuarios registrados"
+                    level: "error"
+
+    post:
+      tags: [Usuarios]
+      summary: Crear un usuario con rol explícito (admin o cliente)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, contraseña, es_admin]
+              properties:
+                email:
+                  type: string
+                  format: email
+                contraseña:
+                  type: string
+                es_admin:
+                  type: boolean
+      responses:
+        "201":
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      es_admin:
+                        type: boolean
+        "400":
+          description: Campo faltante o email inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante o email inválido"
+                    level: "error"
+        "409":
+          description: El email ya está registrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "El email ya está registrado"
+                    level: "error"
+
+    put:
+      tags: [Usuarios]
+      summary: Actualizar rol (es_admin) de un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, es_admin]
+              properties:
+                email:
+                  type: string
+                  format: email
+                es_admin:
+                  type: boolean
+      responses:
+        "200":
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      es_admin:
+                        type: boolean
+        "400":
+          description: Campo faltante
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante"
+                    level: "error"
+
+  /usuarios/{email}:
+    get:
+      tags: [Usuarios]
+      summary: Obtener un usuario por email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "admin@puertohermoso.com"
+      responses:
+        "200":
+          description: Datos del usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id_usuario:
+                    type: integer
+                  email:
+                    type: string
+                  es_admin:
+                    type: integer
+                    description: "1 = administrador, 0 = cliente"
+                    example: 0
+                  password:
+                    type: string
+                    description: "Hash de la contraseña (Werkzeug). La query lo devuelve en la respuesta."
+        "400":
+          description: Email inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Email inválido"
+                    level: "error"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
+
+    delete:
+      tags: [Usuarios]
+      summary: Eliminar un usuario por email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "cliente@gmail.com"
+      responses:
+        "200":
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+        "400":
+          description: Email inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Email inválido"
+                    level: "error"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
+
+  /usuarios/cliente/mi_perfil:
+    get:
+      tags: [Usuarios]
+      summary: Obtener el perfil propio
+      responses:
+        "200":
+          description: Datos del usuario autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id_usuario:
+                    type: integer
+                  email:
+                    type: string
+                  es_admin:
+                    type: integer
+                    description: "1 = administrador, 0 = cliente"
+                    example: 0
+                  password:
+                    type: string
+                    description: "Hash de la contraseña (Werkzeug). La query lo devuelve en la respuesta."
+        "401":
+          description: No hay sesión activa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No hay sesión activa"
+                    level: "error"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
+
+    patch:
+      tags: [Usuarios]
+      summary: Actualizar email y contraseña propios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nuevo_email, nueva_contraseña]
+              properties:
+                nuevo_email:
+                  type: string
+                  format: email
+                  example: "nuevo@gmail.com"
+                nueva_contraseña:
+                  type: string
+                  example: "nuevapass"
+      responses:
+        "200":
+          description: Perfil actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      nuevo_email:
+                        type: string
+        "400":
+          description: Campo faltante o email inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante o email inválido"
+                    level: "error"
+        "409":
+          description: Ya hay un usuario registrado con ese email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "Ya hay un usuario registrado con ese email"
+                    level: "error"
+
+    delete:
+      tags: [Usuarios]
+      summary: Eliminar el perfil propio
+      description: Borra el usuario autenticado y cierra su sesión.
+      responses:
+        "200":
+          description: Perfil eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: No hay sesión activa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No hay sesión activa"
+                    level: "error"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Usuario no encontrado"
+                    level: "error"
+
+  # ==========================================================================
+  # MESAS
+  # ==========================================================================
+  /mesas/:
+    get:
+      tags: [Mesas]
+      summary: Obtener todas las mesas
+      responses:
+        "200":
+          description: Lista de mesas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Mesa"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
+
+    post:
+      tags: [Mesas]
+      summary: Crear una mesa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MesaInput"
+      responses:
+        "201":
+          description: Mesa creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  id_mesa:
+                    type: integer
+        "400":
+          description: Campo faltante, valor inválido, o número de mesa duplicado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Campo faltante, valor inválido, o número de mesa duplicado"
+                    level: "error"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
+        "403":
+          description: No es administrador
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 403
+                    message: "No es administrador"
+                    level: "error"
+
+  /mesas/validacion:
+    get:
+      tags: [Mesas]
+      summary: Mesas disponibles para una fecha/hora/ubicación
+      description: Devuelve las mesas funcionales no ocupadas en la fecha/hora indicada según la ubicación (interior/exterior).
+      parameters:
+        - name: fecha
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          example: "2026-05-26"
+        - name: hora
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "20:00:00"
+        - name: interior
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Lista de mesas disponibles según los parámetros
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Mesa"
+
+  /mesas/{id_mesa}:
+    get:
+      tags: [Mesas]
+      summary: Obtener una mesa por ID
+      parameters:
+        - name: id_mesa
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Datos de la mesa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Mesa"
+        "404":
+          description: Mesa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Mesa no encontrada"
+                    level: "error"
+
+    patch:
+      tags: [Mesas]
+      summary: Modificar una mesa
+      parameters:
+        - name: id_mesa
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MesaPatchInput"
+      responses:
+        "200":
+          description: Mesa modificada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Sin campos a modificar, o valores inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Sin campos a modificar, o valores inválidos"
+                    level: "error"
+        "404":
+          description: Mesa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Mesa no encontrada"
+                    level: "error"
+
+    delete:
+      tags: [Mesas]
+      summary: Eliminar una mesa
+      parameters:
+        - name: id_mesa
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Mesa eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: La mesa tiene reservas pendientes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "La mesa tiene reservas pendientes"
+                    level: "error"
+        "404":
+          description: Mesa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Mesa no encontrada"
+                    level: "error"
+
+  /mesas/disponibles:
+    get:
+      tags: [Mesas]
+      summary: Cantidad de mesas disponibles en este momento
+      responses:
+        "200":
+          description: Mesas disponibles en el turno actual
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mesas_disponibles:
+                    type: integer
+                    example: 3
+  # ==========================================================================
+  # MENÚ
+  # ==========================================================================
+  /menu/:
+    get:
+      tags: [Menú]
+      summary: Obtener todos los platos (público)
+      responses:
+        "200":
+          description: Lista de platos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Plato"
+
+    post:
+      tags: [Menú]
+      summary: Agregar un plato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlatoInput"
+      responses:
+        "201":
+          description: Plato creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  id_plato:
+                    type: integer
+        "400":
+          description: Falta nombre, precio o precio inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta nombre, precio o precio inválido"
+                    level: "error"
+
+  /menu/{id_plato}:
+    get:
+      tags: [Menú]
+      summary: Obtener un plato por ID (público)
+      parameters:
+        - name: id_plato
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Datos del plato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Plato"
+        "404":
+          description: Plato no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Plato no encontrado"
+                    level: "error"
+
+    put:
+      tags: [Menú]
+      summary: Editar un plato
+      parameters:
+        - name: id_plato
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlatoInput"
+      responses:
+        "200":
+          description: Plato modificado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Precio inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Precio inválido"
+                    level: "error"
+        "404":
+          description: Plato no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Plato no encontrado"
+                    level: "error"
+
+    delete:
+      tags: [Menú]
+      summary: Borrar un plato
+      parameters:
+        - name: id_plato
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Plato eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Plato no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Plato no encontrado"
+                    level: "error"
+
+  # ==========================================================================
+  # RESERVAS
+  # ==========================================================================
+  /reservas/:
+    get:
+      tags: [Reservas]
+      summary: Listar reservas
+      parameters:
+        - name: fecha
+          in: query
+          schema:
+            type: string
+            format: date
+          example: "2026-05-26"
+        - name: hora
+          in: query
+          schema:
+            type: string
+          example: "20:00:00"
+        - name: estado
+          in: query
+          schema:
+            type: string
+            enum: [pendiente, cancelada, finalizada]
+        - name: id_usuario
+          in: query
+          schema:
+            type: integer
+        - name: mesas
+          in: query
+          description: Si es `true` (por defecto) incluye las mesas asociadas a cada reserva.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Lista de reservas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reservas:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Reserva"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
+
+    post:
+      tags: [Reservas]
+      summary: Crear una reserva
+      description: |
+        El cliente envía en `ids_mesas` las mesas elegidas; el backend valida que su capacidad total cubra la cantidad de comensales.
+        Al crearse, envía un email al usuario con un QR para confirmar la llegada y un enlace de cancelación.
+        El QR vence a los 30 minutos de la hora de reserva.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReservaInput"
+      responses:
+        "201":
+          description: Reserva creada. Email enviado con QR.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                  id:
+                    type: integer
+        "400":
+          description: La capacidad de las mesas seleccionadas no es compatible con la cantidad de comensales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "La capacidad de las mesas seleccionadas no es compatible con la cantidad de comensales"
+                    level: "error"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
+        "403":
+          description: No tiene permisos para reservar en nombre de otro usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 403
+                    message: "No tiene permisos para reservar en nombre de otro usuario"
+                    level: "error"
+
+  /reservas/confirmar/{uuid_reserva}:
+    patch:
+      tags: [Reservas]
+      summary: Confirmar llegada escaneando QR
+      description: Valida que el QR esté pendiente y no expirado, y marca la reserva como `finalizada`.
+      parameters:
+        - name: uuid_reserva
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6..."
+      responses:
+        "201":
+          description: Reserva confirmada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        "400":
+          description: QR ya usado, expirado, o reserva no confirmable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "QR ya usado, expirado, o reserva no confirmable"
+                    level: "error"
+
+  /reservas/cancelar/{uuid_reserva}:
+    patch:
+      tags: [Reservas]
+      summary: Cancelar una reserva desde el enlace del email
+      parameters:
+        - name: uuid_reserva
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6..."
+      responses:
+        "201":
+          description: Reserva cancelada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        "400":
+          description: La reserva no estaba pendiente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Error:
+                    type: string
+        "404":
+          description: Reserva no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Reserva no encontrada"
+                    level: "error"
+
+  /reservas/{id_reserva}:
+    get:
+      tags: [Reservas]
+      summary: "[Admin] Obtener una reserva por ID"
+      parameters:
+        - name: id_reserva
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Datos de la reserva
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Reserva"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
+        "403":
+          description: No es administrador
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 403
+                    message: "No es administrador"
+                    level: "error"
+        "404":
+          description: Reserva no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Reserva no encontrada"
+                    level: "error"
+    patch:
+      tags: [Reservas]
+      summary: Modificar campos de una reserva
+      description: Los admins pueden editar todos los campos. Los usuarios comunes solo pueden cambiar `estado_reserva` (para cancelar).
+      parameters:
+        - name: id_reserva
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "Admin: {id_mesa, estado_reserva, hora_reserva, fecha, interior, estado_qr, qr_expiracion, comensales}. Usuario: {estado_reserva}"
+              additionalProperties: true
+      responses:
+        "201":
+          description: Reserva modificada
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Reserva no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Reserva no encontrada"
+                    level: "error"
+
+  # ==========================================================================
+  # RESENAS
+  # ==========================================================================
+  /resenas/:
+    get:
+      tags: [Resenas]
+      summary: Obtener resenas aprobadas (publico)
+      responses:
+        "200":
+          description: Lista de resenas con estado aprobada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Resena"
+
+    post:
+      tags: [Resenas]
+      summary: "[Auth] Crear una resena"
+      description: Solo se puede resenar una reserva finalizada y aun no resenada. El id_usuario se toma de la sesion.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResenaInput"
+      responses:
+        "201":
+          description: Resena creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  id_resena:
+                    type: integer
+        "400":
+          description: Calificacion invalida o reserva no resenable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Calificacion invalida o reserva no resenable"
+                    level: "error"
+
+  /resenas/resenables:
+    get:
+      tags: [Resenas]
+      summary: "[Auth] Reservas que el usuario puede resenar"
+      responses:
+        "200":
+          description: Lista de reservas finalizadas y no resenadas del usuario en sesion
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reserva"
+
+  /resenas/usuario:
+    get:
+      tags: [Resenas]
+      summary: "[Auth] Obtener las resenas del usuario en sesion"
+      responses:
+        "200":
+          description: Resenas propias, indexadas por id_reserva
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    additionalProperties:
+                      $ref: "#/components/schemas/Resena"
+        "401":
+          description: No autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 401
+                    message: "No autenticado"
+                    level: "error"
+
+  /resenas/todas:
+    get:
+      tags: [Resenas]
+      summary: "[Admin] Obtener todas las resenas (incluyendo no revisadas)"
+      responses:
+        "200":
+          description: Lista completa de resenas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Resena"
+
+  /resenas/{id}:
+    patch:
+      tags: [Resenas]
+      summary: "[Admin] Moderar una resena (aprobar o rechazar)"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  type: string
+                  enum: [aprobada, no_aprobada]
+      responses:
+        "200":
+          description: Resena modificada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 200
+                    message: "Resena modificada"
+                    level: "error"
+        "400":
+          description: Estado faltante, invalido, o no se pudo modificar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Estado faltante, invalido, o no se pudo modificar"
+                    level: "error"
+
+  # ==========================================================================
+  # INFO FRONTEND
+  # ==========================================================================
+  /info_frontend/:
+    get:
+      tags: [Info Frontend]
+      summary: Obtener toda la configuración del restaurante (público)
+      description: Devuelve un objeto plano con todas las claves de configuración (nombre, teléfono, horario, historia, etc.).
+      responses:
+        "200":
+          description: Configuración completa
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+              example:
+                nombre_restaurante: "PUERTO HERMOSO"
+                telefono: "+54 11 1234-5678"
+                horario: "Lunes a Domingo 12:00 - 00:00"
+
+    post:
+      tags: [Info Frontend]
+      summary: Crear una entrada de configuración
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigEntry"
+      responses:
+        "201":
+          description: Configuración creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+        "400":
+          description: Falta clave o valor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta clave o valor"
+                    level: "error"
+        "409":
+          description: La clave ya existe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 409
+                    message: "La clave ya existe"
+                    level: "error"
+
+  /info_frontend/{clave}:
+    get:
+      tags: [Info Frontend]
+      summary: Obtener un valor de configuración por clave (público)
+      parameters:
+        - name: clave
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "nombre_restaurante"
+      responses:
+        "200":
+          description: Valor de la clave
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+              example:
+                nombre_restaurante: "PUERTO HERMOSO"
+        "404":
+          description: Configuración no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Configuración no encontrada"
+                    level: "error"
+
+    patch:
+      tags: [Info Frontend]
+      summary: Actualizar el valor de una clave
+      parameters:
+        - name: clave
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [valor]
+              properties:
+                valor:
+                  type: string
+                  example: "PUERTO HERMOSO RENOVADO"
+      responses:
+        "200":
+          description: Configuración actualizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Falta valor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 400
+                    message: "Falta valor"
+                    level: "error"
+        "404":
+          description: Configuración no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Configuración no encontrada"
+                    level: "error"
+
+    delete:
+      tags: [Info Frontend]
+      summary: Eliminar una clave de configuración
+      parameters:
+        - name: clave
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Configuración eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Configuración no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 404
+                    message: "Configuración no encontrada"
+                    level: "error"
+  # ==========================================================================
+  # IMAGENES
+  # ==========================================================================
+  /imagenes/:
+    get:
+      tags: [imagenes]
+      summary: Obtener toda la configuración del restaurante (público)
+      description: Devuelve un objeto plano con todas las claves de configuración (nombre, teléfono, horario, historia, etc.).
+      responses:
+        "200":
+          description: Configuración completa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Imagen"
+        "500":
+          description: Ha ocurrido un error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 500
+                    message: "Error obteniendo imagenes"
+                    level: "error"
+  /imagenes/upload-img/{img_name}:  
+    post:
+      tags: [imagenes]
+      summary: Crear una entrada de configuración
+      parameters:
+      - name: img_name
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: El archivo de la imagen que se va a subir (png, jpg, jpeg).
+      responses:
+        "201":
+          description: Configuración creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+        "500":
+          description: Falta clave o valor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 500
+                    message: "Error al subir la imagen"
+                    level: "error"
