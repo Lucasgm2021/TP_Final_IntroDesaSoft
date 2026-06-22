@@ -1,0 +1,90 @@
+{% extends "base_usuario.html" %}
+
+{% block content %}
+    {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/circle_comp.html" import circle_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button3_comp.html" import button3_comp %}
+    {% from "componentes/select_comp.html" import select_comp %}
+    <div class="form">
+    <form action="{{ url_for('reservas.crear_reserva_form')}}" method="get">
+        <div id="form-crear-reserva-title"> 
+            {{ circle_comp(
+                text="<",
+                size=40,
+                type=3,
+                func="window.location.href=window.location.pathname + 'mis_reservas'"
+            ) }}
+            <h1>Puerto Hermoso</h1>
+        </div>
+        {{
+            select_comp(
+                opciones=horarios,
+                id="horarios-select",
+                name="hora",
+                label="Horario",
+                width="250px",
+                height="40px",
+                default_option="Elija un horario",
+                selected_value=request.args.get('hora', ''),
+                classes="dropshadow input-default select-form"
+            )
+        }}
+        {{ input_comp(
+            name="fecha",
+            type="date",
+            label="Fecha de reserva",
+            placeholder="",
+            height="40px",
+            width="250px",
+            id="fechaReservaCreacion",
+            value=request.args.get('fecha', ''),
+            required=True
+        ) }}
+        {{ input_comp(
+            name="comensales",
+            type="number",
+            label="Cantidad de comensales",
+            placeholder="1",
+            height="40px",
+            width="250px",
+            value=request.args.get('comensales', ''),
+            required=True
+        ) }}
+        <div class="radio-select">
+            <p>Ubicación:</p>
+            <input type="radio" name="ubicacion" id="interior" value="interior" {% if request.args.get('ubicacion', 'interior') == 'interior' %} checked {% endif %}>
+            <label for="interior">Interior</label>
+            <input type="radio" name="ubicacion" id="exterior" value="exterior" {% if request.args.get('ubicacion', 'interior') == 'exterior' %} checked {% endif %}>
+            <label for="exterior">Exterior</label>
+        </div>
+        <div>
+            {{ button1_comp(
+                text="VALIDAR DISPONIBILIDAD",
+                height=55,
+                type="submit"
+            ) }}
+        </div>
+    </form>
+    {% if mesas %}
+    <form action="{{url_for('reservas.crear_reserva_form')}}" method="post">
+            <input type="hidden" name="fecha" value="{{ request.args.get('fecha') }}">
+            <input type="hidden" name="hora" value="{{ request.args.get('hora') }}">
+            <input type="hidden" name="ubicacion" value="{{ request.args.get('ubicacion') }}">
+            <input type="hidden" name="comensales" value="{{ request.args.get('comensales') }}">
+            {{ select_comp(
+            opciones=mesas,
+            id="mesas-principal",
+            width="250px",
+            name="id_mesas[]",
+            size=6,
+            classes="dropshadow input-default select-form",
+            multiple=True
+            ) }}
+            <div>
+                <input type="submit" value="CONFIRMAR" class="button1 dropshadow" style="width: 250px; height: 55px; font-size: 18px; border-radius: 12px; margin-top: 20px;">
+            </div>
+    </form>
+    {% endif %}
+    </div>
+{% endblock %}

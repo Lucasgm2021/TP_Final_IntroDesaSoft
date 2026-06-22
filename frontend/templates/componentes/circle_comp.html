@@ -1,0 +1,45 @@
+{% macro circle_comp(
+    text="<",
+    size=60,
+    type=1,
+    func=""
+) %}
+
+    {% if type == 1 %}
+        {% set color = "#7CC96C" %}
+    {% elif type == 2 %}
+        {% set color = "#CF4444" %}
+    {% else %}
+        {% set color = "#C8906D" %}
+    {% endif %}
+
+<button
+    onclick="{{ func }}"
+    class="button circle button-circle"
+    style="
+        width: {{ size }}px;
+        height: {{ size }}px;
+        background: {{ color }};
+        transition: 0.2s;
+    "
+>
+
+    <span
+        style="
+            color: white;
+
+            font-size: calc({{ size }}px * 0.6);
+
+            font-weight: bold;
+
+            line-height: 1;
+
+            transform: translateX(calc({{ size }}px * -0.03)) translateY(calc({{ size }}px * -0.1));
+        "
+    >
+        {{ text }}
+    </span>
+
+</button>
+
+{% endmacro %}

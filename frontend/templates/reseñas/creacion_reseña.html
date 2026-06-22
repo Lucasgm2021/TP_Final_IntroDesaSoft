@@ -1,0 +1,54 @@
+{% extends "base_usuario.html" %}
+
+{% block content %}
+    {% from "componentes/input_comp.html" import input_comp %}
+    {% from "componentes/circle_comp.html" import circle_comp %}
+    {% from "componentes/button1_comp.html" import button1_comp %}
+    {% from "componentes/button3_comp.html" import button3_comp %}
+    {% from "componentes/select_comp.html" import select_comp %}
+    <div id="form-crear-reseña">
+        <form action="{{url_for('reseñas.formulario_reseña')}}" method="post">
+            <input type="hidden" name="id_reserva" value="{{ request.args.get('id_reserva') }}" required>
+            <div id="form-crear-reserva-title"> 
+                {{ circle_comp(
+                    text="<",
+                    size=40,
+                    type=3,
+                    func="window.location.href= '/reservas/mis_reservas'"
+                ) }}
+                <h1>Puerto Hermoso</h1>
+                <h2>Contanos como te fue:</h2>
+            </div>
+            {{
+                select_comp(
+                    opciones=valores_clasificacion,
+                    id="clasificacion-select",
+                    name="calificacion",
+                    label="Valoración general",
+                    width="250px",
+                    height="40px",
+                    default_option="Elija una valoracion",
+                    classes="dropshadow input-default select-form"
+                )
+            }}
+            {{ input_comp(
+                name="comentario",
+                type="text",
+                label="Comentarios: ",
+                placeholder="Comentarios...",
+                height="40px",
+                width="250px",
+                required=True
+            ) }}
+            <div>
+                {{ button1_comp(
+                    text="Dejar reseña",
+                    height=55,
+                    type="submit"
+                ) }}
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

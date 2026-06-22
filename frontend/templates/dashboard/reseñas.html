@@ -1,0 +1,21 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<h1>
+    RESEÑAS
+</h1>
+
+    {% from "componentes/tabla_comp.html" import tabla_comp %}
+    
+    {{ tabla_comp(
+        id="table-empty",
+        columns=["ID", "Id_Reserva","Comentario","Calificacion","Id_Usuario","Email Cliente"],
+        rows=resenias,
+        row_height=50,
+        show_check=true,
+        func_check="toggleResenia"
+    ) }}
+
+
+{% endblock %}

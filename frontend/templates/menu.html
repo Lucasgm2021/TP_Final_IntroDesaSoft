@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        Menú · Puerto Hermoso
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}"
+    >
+
+</head>
+
+<body class="menu-page">
+
+    <header class="menu-topbar">
+
+        <a
+            class="menu-reservas-btn dropshadow"
+            href="/reservas/mis_reservas"
+        >
+            RESERVAS
+        </a>
+        <a
+            class="menu-reservas-btn dropshadow"
+            href="/"
+        >
+            VOLVER
+        </a>
+
+    </header>
+
+    {% if platos %}
+
+    {% set _n = platos | length %}
+    {% set _rows = (_n / 4) | round(0, 'ceil') | int %}
+    {% set _cols = (_n / _rows) | round(0, 'ceil') | int %}
+
+    <main class="menu-grid" style="--cols: {{ _cols }}">
+
+        {% for plato in platos %}
+
+        <a
+            class="menu-card dropshadow"
+            href="#plato-{{ loop.index }}"
+        >
+
+            <div
+                class="menu-card-img"
+                style="background-image: url('{{ plato.link_imagen }}');"
+            >
+
+                {% if not plato.hay_stock %}
+                <span class="menu-card-sinstock">
+                    Sin stock
+                </span>
+                {% endif %}
+
+            </div>
+
+            <div class="menu-card-info">
+
+                <span class="menu-card-nombre">
+                    {{ plato.nombre }}
+                </span>
+
+                <span class="menu-card-price">
+                    {{ plato.precio }}$
+                </span>
+
+            </div>
+
+        </a>
+
+        <div id="plato-{{ loop.index }}" class="menu-modal-overlay">
+
+            <a href="#cerrar" class="menu-modal-backdrop"></a>
+
+            <div class="menu-modal dropshadow">
+
+                <a href="#cerrar" class="menu-modal-close">✕</a>
+
+                <div
+                    class="menu-modal-img"
+                    style="background-image: url('{{ plato.link_imagen }}');"
+                ></div>
+
+                <div class="menu-modal-body">
+
+                    <div class="menu-modal-header">
+
+                        <span class="menu-modal-nombre">
+                            {{ plato.nombre }}
+                        </span>
+
+                        <span class="menu-modal-precio">
+                            {{ plato.precio }}$
+                        </span>
+
+                    </div>
+
+                    <div class="menu-modal-badges">
+
+                        {% if not plato.hay_stock %}
+                        <span class="menu-modal-badge menu-modal-badge--alerta">Sin stock</span>
+                        {% endif %}
+
+                        {% if not plato.gluten %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Sin gluten</span>
+                        {% endif %}
+
+                        {% if not plato.lactosa %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Sin lactosa</span>
+                        {% endif %}
+
+                        {% if not plato.carnes %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Vegetariano</span>
+                        {% endif %}
+
+                        {% if not plato.producto_animal %}
+                        <span class="menu-modal-badge menu-modal-badge--ok">Vegano</span>
+                        {% endif %}
+
+                        {% if plato.gluten %}
+                        <span class="menu-modal-badge menu-modal-badge--info">Contiene gluten</span>
+                        {% endif %}
+
+                        {% if plato.lactosa %}
+                        <span class="menu-modal-badge menu-modal-badge--info">Contiene lactosa</span>
+                        {% endif %}
+
+                        {% if plato.carnes %}
+                        <span class="menu-modal-badge menu-modal-badge--info">Contiene carnes</span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </main>
+
+    {% else %}
+
+    <main class="menu-empty">
+
+        <p>
+            No hay platos disponibles en este momento.
+        </p>
+
+    </main>
+
+    {% endif %}
+
+    <h1 class="puerto-hermoso menu-brand">
+        PUERTO HERMOSO
+    </h1>
+
+</body>
+
+</html>
