@@ -12,7 +12,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost:5005
+  - url: http://localhost:5000
     description: Servidor local de desarrollo
 
 tags:
@@ -30,6 +30,8 @@ tags:
     description: Creacion y moderacion de resenas
   - name: Info Frontend
     description: Configuración general del restaurante (nombre, teléfono, etc.)
+  - name: imagenes
+    description: Subida de imagenes y listar de la bbdd
 
 # ---------------------------------------------------------------------------
 # Componentes reutilizables
@@ -201,7 +203,7 @@ components:
           type: string
           enum: [pendiente, cancelada, finalizada]
           example: "pendiente"
-        reseñada:
+        reseniada:
           type: boolean
           example: false
         hora_reserva:
@@ -268,7 +270,7 @@ components:
     Resena:
       type: object
       properties:
-        id_reseña:
+        id_resenia:
           type: integer
           example: 1
         id_usuario:
@@ -324,7 +326,18 @@ components:
         valor:
           type: string
           example: "PUERTO HERMOSO"
-
+    Imagen:
+          type: object
+          properties:
+            id_imagen:
+              type: integer
+              example: 1
+            unique_name:
+              type: string
+              example: "Limonada"
+            img_url:
+              type: string
+              example: "https://bxsiebhagayfpbldmsud.supabase.co/storage/v1/object/public/menu-imagenes/1f79aef4-2564-4810-8077-182d05deb9dc.png"
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -1228,6 +1241,21 @@ paths:
                     message: "Mesa no encontrada"
                     level: "error"
 
+  /mesas/disponibles:
+    get:
+      tags: [Mesas]
+      summary: Cantidad de mesas disponibles en este momento
+      responses:
+        "200":
+          description: Mesas disponibles en el turno actual
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mesas_disponibles:
+                    type: integer
+                    example: 3
   # ==========================================================================
   # MENÚ
   # ==========================================================================
@@ -1509,68 +1537,8 @@ paths:
                     message: "No tiene permisos para reservar en nombre de otro usuario"
                     level: "error"
 
-  /reservas/mesas/disponibles:
-    get:
-      tags: [Reservas]
-      summary: Cantidad de mesas disponibles en este momento
-      responses:
-        "200":
-          description: Mesas disponibles en el turno actual
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  mesas_disponibles:
-                    type: integer
-                    example: 3
-
-  /reservas/mesas/validacion:
-    get:
-      tags: [Reservas]
-      summary: Capacidades posibles para una fecha/hora/ubicación
-      description: Devuelve un rango [1..N] donde N es la mayor mesa disponible, para validar el formulario de reserva en el frontend.
-      parameters:
-        - name: fecha
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date
-          example: "2026-05-26"
-        - name: hora
-          in: query
-          required: true
-          schema:
-            type: string
-          example: "20:00:00"
-        - name: interior
-          in: query
-          required: true
-          schema:
-            type: boolean
-      responses:
-        "200":
-          description: Listado de capacidades o mensaje de sin disponibilidad
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      Listado de capacidades disponibles:
-                        type: array
-                        items:
-                          type: integer
-                        example: [1, 2, 3, 4]
-                  - type: object
-                    properties:
-                      Msg:
-                        type: string
-                        example: "No hay mesas disponibles en esa fecha y hora."
-
   /reservas/confirmar/{uuid_reserva}:
-    post:
+    patch:
       tags: [Reservas]
       summary: Confirmar llegada escaneando QR
       description: Valida que el QR esté pendiente y no expirado, y marca la reserva como `finalizada`.
@@ -1604,7 +1572,7 @@ paths:
                     level: "error"
 
   /reservas/cancelar/{uuid_reserva}:
-    post:
+    patch:
       tags: [Reservas]
       summary: Cancelar una reserva desde el enlace del email
       parameters:
@@ -1738,7 +1706,7 @@ paths:
   # ==========================================================================
   # RESENAS
   # ==========================================================================
-  /rese%C3%B1as/:
+  /resenas/:
     get:
       tags: [Resenas]
       summary: Obtener resenas aprobadas (publico)
@@ -1789,7 +1757,7 @@ paths:
                     message: "Calificacion invalida o reserva no resenable"
                     level: "error"
 
-  /rese%C3%B1as/rese%C3%B1ables:
+  /resenas/resenables:
     get:
       tags: [Resenas]
       summary: "[Auth] Reservas que el usuario puede resenar"
@@ -1803,7 +1771,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Reserva"
 
-  /rese%C3%B1as/usuario:
+  /resenas/usuario:
     get:
       tags: [Resenas]
       summary: "[Auth] Obtener las resenas del usuario en sesion"
@@ -1831,7 +1799,7 @@ paths:
                     message: "No autenticado"
                     level: "error"
 
-  /rese%C3%B1as/todas:
+  /resenas/todas:
     get:
       tags: [Resenas]
       summary: "[Admin] Obtener todas las resenas (incluyendo no revisadas)"
@@ -1848,7 +1816,7 @@ paths:
                     items:
                       $ref: "#/components/schemas/Resena"
 
-  /rese%C3%B1as/{id}:
+  /resenas/{id}:
     patch:
       tags: [Resenas]
       summary: "[Admin] Moderar una resena (aprobar o rechazar)"
@@ -2075,4 +2043,80 @@ paths:
                 errors:
                   - code: 404
                     message: "Configuración no encontrada"
+                    level: "error"
+  # ==========================================================================
+  # IMAGENES
+  # ==========================================================================
+  /imagenes/:
+    get:
+      tags: [imagenes]
+      summary: Obtener toda la configuración del restaurante (público)
+      description: Devuelve un objeto plano con todas las claves de configuración (nombre, teléfono, horario, historia, etc.).
+      responses:
+        "200":
+          description: Configuración completa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Imagen"
+        "500":
+          description: Ha ocurrido un error en el servidor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 500
+                    message: "Error obteniendo imagenes"
+                    level: "error"
+  /imagenes/upload-img/{img_name}:  
+    post:
+      tags: [imagenes]
+      summary: Crear una entrada de configuración
+      parameters:
+      - name: img_name
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: El archivo de la imagen que se va a subir (png, jpg, jpeg).
+      responses:
+        "201":
+          description: Configuración creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+        "500":
+          description: Falta clave o valor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                errors:
+                  - code: 500
+                    message: "Error al subir la imagen"
                     level: "error"
