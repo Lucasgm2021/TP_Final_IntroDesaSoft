@@ -283,6 +283,12 @@ def mesas():
     if edit_id:
         mesa_editar = svs.obtener_mesa(edit_id, auth)
 
+    eliminar_id = request.args.get("eliminar")
+    
+    if eliminar_id:
+        svs.eliminar_mesa(eliminar_id, auth)
+        return redirect("/dashboard/mesas")
+
     return render_template(
         "dashboard/mesas.html",
         mesas=mesas_lista,

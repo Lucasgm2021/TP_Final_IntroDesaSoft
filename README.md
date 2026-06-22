@@ -11,7 +11,7 @@ frontend: Flask requests Flask-Session python-dotenv
 
 #### 1.1. Backend
 
-Copiar `.env.example` a `.env`. Los defaults en constants.py ya funcionan para desarrollo local sin docker (ejecutando con terminal), excepto la contraseña para el envío de mails que se debe colocar en el .env. La configuracion default de envío de mails es gmail con app password.
+Copiar `.env.example` a `.env`. Los defaults en constants.py ya funcionan para desarrollo local sin docker (ejecutando con terminal), excepto la contraseña para el envío de mails y la de supabase que se deben colocar en el .env. La configuracion default de envío de mails es gmail con app password.
 
 ```bash
 cp .env.example .env
@@ -28,6 +28,9 @@ CONTRASEÑA_MAIL=
 PUERTO_MAIL=465
 SERVIDOR_MAIL=smtp.gmail.com
 SERVICIO_MAIL=gmail_app_pass
+SUPABASE_URL=https://bxsiebhagayfpbldmsud.supabase.co
+SUPABASE_API_KEY=
+BUCKET_NAME=menu-imagenes
 ```
 
 #### 1.2. Frontend
@@ -122,7 +125,30 @@ bash setup_virtualenvs.sh
 En bat solo hacer doble click al script setup_virtualenvs.bat
 ## Configuracion envío de mails
 
-**PENDIENTE**
+El .env.example incluye como configuracion por defecto los parametros para gmail con app password.
+La contraseña es el app password que se debe actualizar.
+
+```
+CUENTA_MAIL_LOGIN=tpintrodesasoftware@gmail.com
+CUENTA_MAIL_FROM=tpintrodesasoftware@gmail.com
+CONTRASEÑA_MAIL=
+PUERTO_MAIL=465
+SERVIDOR_MAIL=smtp.gmail.com
+SERVICIO_MAIL=gmail_app_pass
+```
+
+Para mailjet se modifica a:
+
+```
+CUENTA_MAIL_LOGIN=9fe9a5af859e4fc89f336f8429ab4fab
+CUENTA_MAIL_FROM=puerto.hermoso.info@gmail.com
+CONTRASEÑA_MAIL=
+PUERTO_MAIL=2525
+SERVIDOR_MAIL=smtp.mailjet.com
+SERVICIO_MAIL=mailjet_key
+```
+La cuenta mail login pasa a ser la API KEY y la contraseña es la secret key generada desde el usuario logeado puerto.hermoso.info@gmail.com en https://www.mailjet.com/
+El mail enviado se ve logeado desde el usuario en la pagina y por supuesto, del usuario que lo recibe.
 
 ## Ejecucion
 

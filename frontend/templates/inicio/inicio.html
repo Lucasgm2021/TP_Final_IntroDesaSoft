@@ -172,23 +172,16 @@
 
                 {% for i in range(3) %}
 
-                <div class="card-reseña">
+                    <div class="card-reseña">
 
-                    <div class="reseña-calificacion">
-                        <span>4.2/5</span>
-                        <span>★★★★☆</span>
+                        <div class="reseña-calificacion">
+                            <span>0/5</span>
+                            <span>☆☆☆☆☆</span>
+                        </div>
+                        <p>'Sin comentario'
                     </div>
-
-                    <p>Rica la comida, mas rico el chef</p>
-
-                </div>
-
                 {% endfor %}
-
-                <a href="{{url_for('reseñas.mostrar_reseñas')}}">Más reseñas...</a>
-
             {% endif %}
-
         </div>
 
     </div>
