@@ -1,47 +1,51 @@
+import os
+from datetime import timedelta
+
 from dotenv import load_dotenv
-load_dotenv()
+from flask import Flask, render_template
+
+# Si este archivo de docker no existe (se crea automatico en el contenedor), se cargan las variables de entorno.
+if not os.path.exists('/.dockerenv'):
+    print("Ejecutando con terminal, cargando las variables de entorno...")
+    load_dotenv()
+else:
+    print("Ejecutando con docker, se cargan las variables de entorno en el yml.")
+
 from routes.reservas import reserva_bp
 from routes.dashboard import dashboard_bp
 from routes.auth import auth_front_bp
 from routes.reseñas import reseñas_front_bp
-
-from servicesfront.verificaciones import usuario_es_valido
 from routes.public import public_bp
-from datetime import timedelta
-from flask import Flask, render_template
-from servicesfront.inicio import obtener_info_restaurante, obtener_servicios_extra, obtener_reseñas_aprobadas, obtener_menu_publico
+from routes.mi_perfil import usuarios_bp
+
+from servicesfront.inicio import obtener_info_restaurante, obtener_servicios_extra, obtener_reseñas_aprobadas
 from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
 
-from routes.mi_perfil import usuarios_bp
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
-
-
-
-@app.route("/examples")
-def examples():
-    print(app.url_map)
-    return render_template("examples/example.html")
-
 @app.route("/")
 def inicio():
     user = usuario_es_valido()
     info = obtener_info_restaurante()
     admin = usuario_es_admin()
-    menu = obtener_menu_publico()
     reseñas = obtener_reseñas_aprobadas()
     servicios = obtener_servicios_extra()
+    try:
+        #mysql con docker no guarda bien la info con tildes y ñ. Lo corrijo para mostrar en html.
+        info["historia"] = info["historia"].encode('latin-1').decode('utf-8')
+    except:
+        #si la info estaba ok, no da error al intentar la corrección, ignoro este caso.
+        pass
 
     return render_template(
         "inicio/inicio.html",
         usuario_logueado=user,
         usuario_admin=admin,
         info=info,
-        menu=menu,
         reseñas=reseñas,
         servicios=servicios,
     )
@@ -49,10 +53,9 @@ def inicio():
 app.register_blueprint(reseñas_front_bp, url_prefix="/reseñas")
 app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
 app.register_blueprint(auth_front_bp, url_prefix="/auth")
-app.register_blueprint(public_bp)
-app.register_blueprint(usuarios_bp)
+app.register_blueprint(public_bp, url_prefix="/menu")
+app.register_blueprint(usuarios_bp,url_prefix="/usuarios")
 app.register_blueprint(reserva_bp,url_prefix="/reservas")
 
-
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)

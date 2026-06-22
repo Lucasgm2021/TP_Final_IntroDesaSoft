@@ -24,6 +24,18 @@ def obtener_mesa(id_mesa):
     res, status = servicios_mesas.obtener_mesa_service(id_mesa)
     return jsonify(res), status
 
+#GET /mesas/disponibles. Sin parametros. Devuelve la cantidad de mesas disponibles en ese momento.
+@mesas_bp.route("/disponibles", methods=["GET"])
+def obtener_mesas_disponibles():
+    es_admin, error = check_usuario_es_admin()
+
+    if not es_admin:
+        respuesta, status = error
+        return jsonify(respuesta), status
+
+    res, status =  servicios_mesas.obtener_mesas_disponibles()
+    return jsonify(res),status
+
 @mesas_bp.route("/", methods=["POST"])
 def crear_mesa():
     es_admin, error = check_usuario_es_admin()

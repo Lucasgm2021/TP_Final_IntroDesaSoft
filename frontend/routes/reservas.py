@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template,url_for, flash, redirect, session
 from servicesfront.reservas import crear_reserva, obtener_mesas, obtener_mis_reservas,cancelar_reserva,confirmar_reserva,obtener_mis_reseñas
 from servicesfront.verificaciones import usuario_es_valido,usuario_es_admin
+from servicesfront.mi_perfil import obtener_mi_perfil
 from datetime import datetime
 from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
@@ -66,9 +67,11 @@ def crear_reserva_form():
 def mis_reservas():
     if not usuario_es_valido():
         return redirect(url_for("auth_front.login"))
-
+   
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
-    reservas = obtener_mis_reservas(cookies)
+    id_usuario = obtener_mi_perfil(cookies).get("id_usuario",0)
+
+    reservas = obtener_mis_reservas(id_usuario,cookies)
     reseñas = obtener_mis_reseñas(cookies)
 
     if reservas.get("reservas") is None:

@@ -3,6 +3,8 @@ from db.mesas import (
     obtener_mesas_validas,
     obtener_mesa_por_id,
     existe_numero_mesa,
+    obtener_total_mesas,
+    obtener_total_mesas_en_uso,
     crear_mesa,
     modificar_mesa,
     mesa_tiene_reservas_activas,
@@ -31,6 +33,17 @@ def obtener_mesa_service(id_mesa):
 
     return {"data": dict(mesa)}, 200
 
+def obtener_mesas_disponibles():
+    #total de mesas - mesas usadas en un determinado momento = mesas disponibles en ese momento
+    total_mesas = obtener_total_mesas()
+    mesas_en_uso = obtener_total_mesas_en_uso()
+
+    mesas_disponibles = total_mesas - mesas_en_uso
+
+    if mesas_disponibles < 0:
+        mesas_disponibles = 0
+
+    return {"mesas_disponibles":mesas_disponibles},200
 
 def crear_mesa_service(data):
     numero = data.get("numero")
