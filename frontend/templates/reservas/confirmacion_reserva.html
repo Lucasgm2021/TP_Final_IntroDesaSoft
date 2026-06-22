@@ -1,0 +1,21 @@
+{% extends "base_usuario.html" %}
+
+
+{% block content %}
+
+{% from "componentes/button1_comp.html" import button1_comp %}
+<div class="form">
+<h1>CONFIRMACION DE RESERVA</h1>
+<p>Haga click en el siguiente botón para confirmar la reserva.</p>
+
+<form action="{{url_for('reservas.confirmar_reserva_route',uuid_reserva=id_qr)}}" method="POST">
+    {{ button1_comp(
+        text="Confirmar reserva",
+        height=55,
+        type="submit",
+        color="#7CC96C"
+    ) }}
+</form>
+</div>
+
+{% endblock%}

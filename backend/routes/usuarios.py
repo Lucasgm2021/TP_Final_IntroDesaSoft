@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from services.usuarios import (
     crear_cliente_service,
     crear_usuario_service,
+    eliminar_mi_perfil_service,
+    obtener_mi_perfil_service,
     obtener_usuarios_service,
     obtener_usuario_email_service,
     actualizar_mi_perfil_service,
@@ -58,6 +60,11 @@ def obtener_usuario_email(email):
     respuesta, status = obtener_usuario_email_service(email)
     return jsonify(respuesta), status
 
+@usuarios_bp.route("/cliente/mi_perfil", methods=["GET"])
+def obtener_mi_perfil():
+    respuesta, status = obtener_mi_perfil_service()
+    return jsonify(respuesta), status
+
 @usuarios_bp.route("/cliente/mi_perfil", methods=["PATCH"]) 
 def actualizar_mi_perfil():
     data= request.get_json()
@@ -65,6 +72,11 @@ def actualizar_mi_perfil():
         return jsonify(error_msg(400, "Body requerido")), 400
 
     respuesta, status = actualizar_mi_perfil_service(data)
+    return jsonify(respuesta), status
+
+@usuarios_bp.route("/cliente/mi_perfil", methods=["DELETE"])
+def eliminar_mi_perfil():
+    respuesta, status = eliminar_mi_perfil_service()
     return jsonify(respuesta), status
 
 @usuarios_bp.route("/", methods=["PUT"])

@@ -5,7 +5,6 @@
 <head>
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <script src="{{ url_for('static',filename='js/scripts.js') }}"></script>
 </head>
 
 <body class="body-dashboard">
@@ -93,7 +92,12 @@
 
         </div>
 
-        <div class="sidebar-btn-wrapper">
+        <div class="sidebar-btn-wrapper flex-column" style="gap:5px;">
+
+            {{ navbtn_comp(
+                text="Volver a inicio",
+                func="window.location.href='../'"
+            ) }}
 
             {{ navbtn_comp(
                 text="Cerrar Sesion",
@@ -115,6 +119,6 @@
     </main>
 
 </div>
-
+<script src="{{ url_for('static',filename='js/scripts.js') }}"></script>
 </body>
 </html>

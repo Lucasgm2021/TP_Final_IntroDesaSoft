@@ -47,40 +47,18 @@ function toggleResenia(id, aprobada) {
     }
 }
 
-
-function editarReserva(id){
-
-    window.location.href =
-        `/dashboard/reservas?edit=${id}`
-}
-
-function editarUsuario(id) {
-    window.location.href = `/dashboard/usuarios?edit=${id}`;
-}
-
-function eliminarUsuario(id) {
-    window.location.href = `/dashboard/usuarios?eliminar=${id}`;
-}
-
-function editarInfo(clave) {
-    window.location.href = `/dashboard/configuracion/?edit=${clave}`;
-}
-
-function eliminarInfo(clave) {
-    window.location.href = `/dashboard/configuracion/?eliminar=${clave}`;
-}
-
-function toggleResenia(id, aprobada) {
-    if (aprobada) {
-        window.location.href = `/dashboard/reseñas?desaprobar=${id}`;
-    } else {
-        window.location.href = `/dashboard/reseñas?aprobar=${id}`;
-    }
-}
-
 function togglePopup(id_reserva) {
     const popup = document.getElementById('my-popup-overlay');
-
-    // Invert the boolean state of the hidden attribute
+    if (id_reserva) {
+        const hidden_reseña = document.getElementById(`hidden-reseña-${id_reserva}`)
+        const fecha = hidden_reseña.getElementsByClassName("fecha")[0].textContent
+        const comentario = hidden_reseña.getElementsByClassName("comentario")[0].textContent
+        const calificacion = hidden_reseña.getElementsByClassName("calificacion")[0].textContent
+        popup.getElementsByTagName("strong")[0].textContent = `${calificacion}/5`
+        popup.getElementsByClassName("reseña-fecha")[0].textContent = `Fecha: ${fecha}`
+        popup.getElementsByClassName("reseña-comentario")[0].textContent = comentario
+        const porcentaje = calificacion * 20
+        popup.getElementsByClassName("estrellas-progreso")[0].style.width = `${porcentaje}%` 
+    }
     popup.hidden = !popup.hidden;
 }

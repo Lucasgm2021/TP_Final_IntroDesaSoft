@@ -6,22 +6,14 @@ from datetime import datetime,timedelta
 import db.reservas as queries_reservas
 import db.menu as queries_mesas
 import services.mail as servicios_mail
-from services.messages import error_msg, error_msg_lista,paginacion_msg
+from services.messages import error_msg, error_msg_lista
 from services.mesas import obtener_mesas
 import db.usuarios as queries_usuarios
+from constants import URL_PAGINA_WEB,SERVICIO_MAIL,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
 
-import db.usuarios as queries_usuarios
-
-
-ESTADOS_RESERVA = {"pendiente","confirmada","finalizada"}
-ESTADOS_QR = {"pendiente","usado","expirado"}
 MAS_UNO = 1
-CAMPOS_RESERVA_EDITABLES_ADMIN = {"id_mesa","estado_reserva","pendiente_reseña","hora_reserva","fecha","interior","estado_qr","qr_expiracion","comensales"}
-CAMPOS_RESERVA_EDITABLES_USUARIO = {"estado_reserva"}
-      
-def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):        
-    offset = int(offset)
-    limit = int(limit)
+
+def obtener_reservas(fecha,hora,estado,id_usuario,mesas):        
     data={}
     if not "id_usuario" in data:
         if not session["es_admin"]:
@@ -43,28 +35,15 @@ def obtener_reservas(offset,limit,fecha,hora,estado,id_usuario):
         
     if estado:
         data["estado_reserva"]=estado
-    
+    data["mesas"] = mesas
     try:
-        total_reservas = len(queries_reservas.obtener_reservas(data=data))
-        reservas = queries_reservas.obtener_reservas(data=data,limit=limit,offset=offset)
+        reservas = queries_reservas.obtener_reservas(data=data)
         #fecha es datetime.date, hora es datetime.timedelta y qr_expiracion es datetime.datetime
         reservas = [{**reserva, "fecha": reserva["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(reserva["hora_reserva"]), "qr_expiracion": str(reserva["qr_expiracion"])}  for reserva in reservas]
     except:
         return error_msg(500,"Error obteniendo reservas",description=f"Ha ocurrido un error en el servidor.")
 
-    return paginacion_msg(
-        reservas,
-        limit,
-        offset,
-        total_reservas,
-        "http://127.0.0.1:5000/reservas",
-        "reservas",
-        200,
-        data
-    )
-    
-
-    return reservas, total_reservas
+    return {"reservas": reservas},200
 
 def obtener_reserva_con_id(id_reserva):
     try:
@@ -75,34 +54,6 @@ def obtener_reserva_con_id(id_reserva):
         return error_msg(500,"Error obteniendo reserva",description="Ha ocurrido un error en el servidor.")
     reserva = {**result, "fecha": result["fecha"].strftime('%Y-%m-%d'),"hora_reserva": str(result["hora_reserva"]), "qr_expiracion": str(result["qr_expiracion"])}
     return {"data": reserva},200
-
-def obtener_mesas_disponibles():
-    #total de mesas - mesas usadas en un determinado momento = mesas disponibles en ese momento
-    total_mesas = queries_reservas.obtener_total_mesas()
-    mesas_en_uso = queries_reservas.obtener_total_mesas_en_uso()
-
-    mesas_disponibles = total_mesas - mesas_en_uso
-
-    if mesas_disponibles < 0:
-        mesas_disponibles = 0
-
-    return {"mesas_disponibles":mesas_disponibles},200
-
-def obtener_cantidades_comensales_posibles(fecha, hora,interior):
-    try: 
-        capacidades = queries_reservas.obtener_capacidades_mesas_disponibles(
-            fecha,
-            hora,
-            interior
-        )
-    except:
-        return error_msg(500,"Error obteniendo reservas",description="Ha ocurrido un error en el servidor.")
-
-    if not capacidades:
-        return {"Msg":"No hay mesas disponibles en esa fecha y hora."},200
-
-    capacidad_maxima = max(capacidades)
-    return {"Listado de capacidades disponibles": list(range(1, capacidad_maxima + 1))},200
 
 def crear_reserva(data):
     interior = data.get("interior")
@@ -143,14 +94,19 @@ def crear_reserva(data):
             )
         #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
-        mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva.html"
         asunto = "RESERVA REGISTRADA"
+        
         datos_mail = {
-            "qr_data": f"http://127.0.0.1:5000/reservas/mostrar_confirmacion?code={uuid_qr}",
-            "url_cancelar": f"http://127.0.0.1:5000/reservas/mostrar_cancelacion?code={uuid_qr}"
+            "qr_data": f"{URL_PAGINA_WEB}/reservas/mostrar_confirmacion?code={uuid_qr}",
+            "url_cancelar": f"{URL_PAGINA_WEB}/reservas/mostrar_cancelacion?code={uuid_qr}"
         }
 
-        servicios_mail.enviar_mail_con_qr_gmail(mail_usuario,asunto,datos_mail,mail_template)
+        mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
+
+        servicios_mail.enviar_mail_con_qr(
+            proveedor=SERVICIO_MAIL,mail_destino=mail_usuario,
+            asunto=asunto,mail_data=datos_mail,ruta_template=mail_template
+        )  
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except Exception as e:
         return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")

@@ -4,6 +4,7 @@ import re
 from db.usuarios import (
     crear_cliente,
     crear_usuario,
+    obtener_usuario_id,
     obtener_usuarios,
     obtener_usuario_email,
     actualizar_mi_perfil,
@@ -72,9 +73,9 @@ def obtener_usuarios_service():
     if not usuarios:
         return error_msg(404, "No hay usuarios registrados")
 
-    reseñas = [dict(row) for row in usuarios]
+    usuarios = [dict(row) for row in usuarios]
     return {
-        "data": reseñas
+        "data": usuarios
     }, 200
 
 def obtener_usuario_email_service(email):
@@ -86,44 +87,60 @@ def obtener_usuario_email_service(email):
         return error_msg(404, "Usuario no encontrado")
     return usuario, 200
 
+def obtener_mi_perfil_service():
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+    return usuario, 200
+
 def actualizar_mi_perfil_service(data):
-    for campo in ["nuevo_email", "nueva_contraseña"]:
-        if campo not in data:
-            return error_msg(400, f"Falta {campo}")
+
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
 
     nuevo_email = data["nuevo_email"]
+    data_a_modificar = {}
     contraseña = data["nueva_contraseña"]
 
-    #el formulario del front tiene como default el email actual (igual la contraseña), si el email no se cambia, no hace falta validar ni verificar que ya existe
-    if nuevo_email != session["email"]: 
+    if contraseña:
+        try:
+            contraseña_actual = obtener_usuario_email(session["email"])["password"]
+        except:
+            return error_msg(500, "Error al obtener el usuario actual")
+
+        es_misma_contraseña = check_password_hash(contraseña_actual, contraseña)
+        if not es_misma_contraseña:
+            data_a_modificar["password"] = generate_password_hash(contraseña)
+
+    if nuevo_email != session["email"]:
         if not validar_email(nuevo_email):
             return error_msg(400, "Email no válido")
         if obtener_usuario_email(nuevo_email) :
             return error_msg(409, "Ya hay un usuario registrado con ese email")
+        data_a_modificar["email"] = nuevo_email
 
-    try:
-        contraseña_actual = obtener_usuario_email(session["email"])["password"]
-    except:
-        return error_msg(500, "Error al obtener el usuario actual")
-    
-    es_misma_contraseña = check_password_hash(contraseña_actual, contraseña)
-    if not es_misma_contraseña:
-        contraseña_hasheada = generate_password_hash(contraseña)
-    else:   
-        contraseña_hasheada = contraseña_actual
-
-    try:
-        actualizar_mi_perfil(session["id_usuario"],nuevo_email,contraseña_hasheada)
-    except:
-        return error_msg(500, "Error al actualizar el perfil")
-    return {
-        "message": (
-            "Perfil actualizado"
-        ),
-        "data": {
-            "nuevo_email": nuevo_email
-        }
-    }, 200
+    if data_a_modificar:
+        try:
+            actualizar_mi_perfil(session["id_usuario"],data_a_modificar)
+            session["email"] = nuevo_email
+        except:
+            return error_msg(500, "Error al actualizar el perfil")
+        return {
+            "message": (
+                "Perfil actualizado"
+            ),
+            "data": {
+                "nuevo_email": nuevo_email
+            }
+        }, 200
+    else:
+        return {
+            "message": ("No hay datos por actualizar.")
+        },200
 
 def actualizar_usuario_service(data): #no puede cambiar su email ni contraseña
     for campo in ["email", "es_admin"]:
@@ -162,6 +179,23 @@ def eliminar_usuario_service(email):
         "data": {
             "email": email
         }
+    }, 200
+
+def eliminar_mi_perfil_service():
+    if "id_usuario" not in session:
+        return error_msg(401, "No hay sesión activa")
+
+    usuario = obtener_usuario_id(session["id_usuario"])
+    if not usuario:
+        return error_msg(404, "Usuario no encontrado")
+
+    borrar_usuario(usuario["id_usuario"])
+    session.clear()
+
+    return {
+        "message": (
+            "Perfil eliminado"
+        )
     }, 200
 
 def validar_email(email):

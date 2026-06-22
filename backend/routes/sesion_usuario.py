@@ -27,7 +27,7 @@ def register():
     respuesta, status = register_service(data)
     return jsonify(respuesta), status
 
-@sesion_usuario_bp.route("/logout",methods=["GET","POST"])
+@sesion_usuario_bp.route("/logout",methods=["POST"])
 def logout():
     respuesta, status = logout_service()
     return jsonify(respuesta), status

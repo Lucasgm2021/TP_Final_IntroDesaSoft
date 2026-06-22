@@ -6,7 +6,7 @@
     {% from "componentes/button1_comp.html" import button1_comp %}
     {% from "componentes/button3_comp.html" import button3_comp %}
     {% from "componentes/select_comp.html" import select_comp %}
-    <div id="form-crear-reserva">
+    <div class="form">
     <form action="{{ url_for('reservas.crear_reserva_form')}}" method="get">
         <div id="form-crear-reserva-title"> 
             {{ circle_comp(
@@ -78,7 +78,8 @@
             width="250px",
             name="id_mesas[]",
             size=6,
-            classes="dropshadow input-default select-form"
+            classes="dropshadow input-default select-form",
+            multiple=True
             ) }}
             <div>
                 <input type="submit" value="CONFIRMAR" class="button1 dropshadow" style="width: 250px; height: 55px; font-size: 18px; border-radius: 12px; margin-top: 20px;">

@@ -12,7 +12,7 @@
     max="",
     step="",
 
-    required=False,
+    required=True,
     disabled=False
 ) %}
     {% set min_width = height|replace("px", "")|int * ((placeholder|length * 0.25) + 2) %}
@@ -71,7 +71,6 @@
                 font-size: calc({{ height }} * 0.5);
 
             "
-            required
     >
 
 </div>

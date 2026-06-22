@@ -1,22 +1,28 @@
 {% extends "dashboard/base.html" %}
 
-{% block content %}
-<div style="display: flex; flex-direction: row; justify-content: space-between;">
-    <h1 style="width: 70%">MENU</h1>
-    {% from "componentes/circle_comp.html" import circle_comp %}
-    <div class="table-add-btn" style="margin-bottom: 30px; right: 0;">
-        {{ circle_comp(
-            text="+",
-            size=50,
-            type=1,
-            func="window.location.href='/dashboard/menu?nueva=1'"
-        ) }}
-    </div>
-</div>
-    {% from "componentes/tabla_comp.html" import tabla_comp %}
-    {% from "componentes/input_comp.html" import input_comp %}
-    {% from "componentes/button1_comp.html" import button1_comp %}
+{% from "componentes/input_comp.html" import input_comp %}
+{% from "componentes/button1_comp.html" import button1_comp %}
 
+{% block content %}
+
+<div>
+    <div style="display: flex; flex-direction: row; justify-content: flex-end;">
+        <h1 style="width: 70%">MENU</h1>
+        
+        <div class="table-add-btn" style="margin-bottom: 30px; right: 0; margin-left: auto; padding: display:flex;justify-content: flex-end;gap: 5px;">
+            {{ button1_comp(
+                text="Nuevo Plato",
+                height=45,
+                func="window.location.href='/dashboard/menu?nueva=1''; return false;"
+            ) }}
+            {{ button1_comp(
+                text="Nueva imagen",
+                height=45,
+                func="window.location.href='/dashboard/menu?nueva_imagen=1'; return false;"
+            ) }}
+        </div>
+    </div>
+    {% from "componentes/tabla_comp.html" import tabla_comp %}
 
     {{ tabla_comp(
         id="tabla-delete-edit",
@@ -57,9 +63,14 @@
                     value=plato_editar.id_categoria, placeholder="1",
                     width="100%", height="45px", required=true) }}
 
-                {{ input_comp(name="link_imagen", type="text", label="Imagen",
-                    value=plato_editar.link_imagen, placeholder="https://...",
-                    width="100%", height="45px") }}
+                <label for="crear-url">Imagen a utilizar: </label>
+                    <select name="link_imagen" id="crear-url">
+                        {% for img in lista_img %}
+                            <option value="{{ img.img_url }}">
+                                {{ img.unique_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
 
             </div>
 
@@ -111,9 +122,15 @@
                     placeholder="1",
                     width="100%", height="45px", required=true) }}
 
-                {{ input_comp(name="link_imagen", type="text", label="Imagen",
-                    placeholder="https://...",
-                    width="100%", height="45px") }}
+                <label for="crear-url">Imagen a utilizar: </label>
+
+                    <select name="link_imagen" id="crear-url">
+                        {% for img in lista_img %}
+                            <option value="{{ img.img_url }}">
+                                {{ img.unique_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
 
             </div>
 
@@ -134,5 +151,31 @@
         </form>
     </div>
     {% endif %}
+    {% if nueva_imagen %}
+    <div class="modal-overlay">
+        <form action = "{{ url_for('dashboard.subir_imagen') }}" class="dropshadow modal-card" method="POST" enctype="multipart/form-data">
+            <h2 class="modal-title">Sube una imagen</h2>
 
+            {{ input_comp(name="file-name", label="Nombre",
+                placeholder="Nombre de la imagen",
+                width="100%", height="45px", required=true) }}
+
+            <div class="input-group">
+                <span class="field-label">Selecciona tu imagen:</span>
+                
+                <label for="file-upload" class="custom-file-upload">
+                    <span class="upload-text" id="file-name-text">Hacer click para seleccionar archivo</span>
+                </label>
+                <input type="file" id="imagen" name="imagen" accept="image/*" required><br><br>
+            </div>
+
+            <div class="modal-actions">
+                {{ button1_comp(text="Cancelar", height=50,
+                    func="window.location.href='/dashboard/menu'; return false;") }}
+                {{ button1_comp(text="Subir", height=50, type="submit") }}
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
