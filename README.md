@@ -1,9 +1,30 @@
 # TP FINAL: RESTAURANTE PUERTO HERMOSO
 
-## Dependencias
+Sistema web para restaurante como trabajo practico integrador de la materia Introduccion al desarrollo de software.
 
-backend: Flask flask-cors Flask-SQLAlchemy PyMySQL Flask-Session python-dotenv qrcode pillow  
-frontend: Flask requests Flask-Session python-dotenv
+## Funcionalidades
+
+### Vistas publicas (usuario sin autenticar)
+
+- Pagina de inicio publica con informacion del restaurante y accesos a vistas publica de menu y reseñas existentes.
+- Autenticacion y registro de usuarios basado en sesiones. Se almacenan las contraseñas encriptadas en la base de datos.
+
+### Usuario cliente autenticado
+
+- Creacion de reservas validando disponibilidad de las mesas segun fecha, hora y cantidad de comensales.
+- Envío de notificacion via mail una vez creada la reserva con QR para escanear el dia de la reserva y confirmar la asistencia. El mail tambien permite cancelar la reserva.
+- Posibilidad de escribir reseñas una vez finalizada la reserva.
+
+### Usuario administrador
+
+Acceso adicional a un panel de administrador con:
+
+- ABM de mesas disponibles para reservar.
+- ABM de platos del menu.
+- Subida de imagenes a servicio externo para asocia a los platos.
+- Visualizacion de todas las reseñas y posibilidad de aprobarlas o desaprobarlas. Solo las aprobadas seran visibles en la vista de inicio.
+- ABM de la informacion del restaurante y servicios extra en la vista de inicio.
+- Vistas de solo lectura: dashboard de reservas del dia y estadisticas del restaurante, listado de usuarios registrados y de todas las reservas realizadas. 
 
 ## Configuracion general
 
@@ -11,7 +32,7 @@ frontend: Flask requests Flask-Session python-dotenv
 
 #### 1.1. Backend
 
-Copiar `.env.example` a `.env`. Los defaults en constants.py ya funcionan para desarrollo local sin docker (ejecutando con terminal), excepto la contraseña para el envío de mails y la de supabase que se deben colocar en el .env. La configuracion default de envío de mails es gmail con app password.
+Copiar `.env.example` a `.env`. Los defaults en constants.py funcionan para desarrollo local sin docker (ejecutando con terminal), excepto la contraseña para el envío de mails y la de supabase que se deben colocar en el .env. La configuracion default de envío de mails es gmail con app password.
 
 ```bash
 cp .env.example .env
@@ -85,44 +106,64 @@ API_BASE_URL=http://backend:5000
 
 ### 3. Base de datos MySQL
 
-Con MySQL 8 corriendo en tu maquina (puerto `3306` por default):
+Con MySQL 8 corriendo en la maquina donde se ejecutará el sistema (normalmente en el puerto `3306` por default):
 
 1. Crear la base de datos y cargar el esquema:
 
    ```bash
    # Linux / macOS / WSL
    mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS restaurante;"
-   mysql -u root -p restaurante < db/01_init_db.sql
-   mysql -u root -p restaurante < db/02_insert_datos.sql
+   mysql -u root -p1234 < db/01_init_db.sql
+   mysql -u root -p1234 < db/02_insert_datos.sql
    ```
 
    ```powershell
    # Windows PowerShell
    mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS restaurante;"
-   Get-Content db\01_init_db.sql | mysql -u root -p restaurante
-   Get-Content db\02_insert_datos.sql | mysql -u root -p restaurante
+   Get-Content db\01_init_db.sql | mysql -u root -p1234
+   Get-Content db\02_insert_datos.sql | mysql -u root -p1234
    ```
 
-2. Verificar que las tablas se hayan creado:
+2. Verificar que las tablas se hayan creado correctamente:
 
    ```bash
    mysql -u root -p -e "USE restaurante; SHOW TABLES;"
    ```
 
-3. Si el usuario, password, puerto o nombre de base no coinciden con los defaults, actualizar el `.env` antes de levantar la API.
-
 ### 4. Entorno virtual, instalacion y ejecucion
 
 El proyecto incluye scripts de setup que crean el entorno virtual, instalan las dependencias y levantan la API. Ignorar si se levanta con docker.
 
-#### **Bash**
+**Bash**
 ```bash
 chmod +x setup_virtualenvs.sh
 bash setup_virtualenvs.sh
 ```
-#### **bat**
+**bat**
 
 En bat solo hacer doble click al script setup_virtualenvs.bat
+
+<span style="font-size:20px; font-weight: bold;"> Dependencias</span>
+
+Se listan a modo informativo las dependencias usadas en el proyecto:
+
+**backend**
+- Flask 
+- flask-cors 
+- Flask-SQLAlchemy 
+- PyMySQL 
+- Flask-Session 
+- python-dotenv 
+- qrcode 
+- pillow
+- supabase  
+
+**frontend**
+
+- Flask 
+- requests 
+- python-dotenv
+
 ## Configuracion envío de mails
 
 El .env.example incluye como configuracion por defecto los parametros para gmail con app password.
