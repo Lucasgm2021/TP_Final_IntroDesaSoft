@@ -6,6 +6,20 @@ from constants import DB_EXTERNAL_URI
 # This works perfectly both on Render and inside your local Docker container!
 cert_path = os.path.join(os.getcwd(), "ca.pem")
 
+if not os.path.exists(cert_path):
+    cert_path = os.path.join(os.getcwd(), "..", "ca.pem")
+
+print(f"Connecting to DB using SSL cert at: {os.path.abspath(cert_path)}")
+
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={
+        "ssl": {
+            "ca": cert_path
+        }
+    }
+)
+
 engine = create_engine(
    DB_EXTERNAL_URI,
     connect_args={
