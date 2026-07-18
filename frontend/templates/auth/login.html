@@ -26,6 +26,6 @@
     <h3>
         ¿Todavia no tenes cuenta?
     </h3>
-        {{ button3_comp(text="Registrate",height=50,func="window.location.href='/auth/register'")}}
+        {{ button3_comp(text="Registrate",height=50,func="window.location.href='" + url_for('auth.register') + "'")}}
     </div>
 {% endblock %}

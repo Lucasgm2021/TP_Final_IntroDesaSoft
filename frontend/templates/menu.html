@@ -23,13 +23,13 @@
 
         <a
             class="menu-reservas-btn dropshadow"
-            href="/reservas/mis_reservas"
+            href="{{ url_for('reservas.mis_reservas') }} "
         >
             RESERVAS
         </a>
         <a
             class="menu-reservas-btn dropshadow"
-            href="/"
+            href="{{ url_for('home.inicio') }} "
         >
             VOLVER
         </a>

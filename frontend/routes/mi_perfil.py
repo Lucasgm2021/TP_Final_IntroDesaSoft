@@ -11,7 +11,7 @@ usuarios_bp = Blueprint(
 @usuarios_bp.route("/cliente/mi_perfil", methods=["GET", "POST"])
 def mi_perfil():
     if not usuario_es_valido():
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
 
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if request.method == "POST":
@@ -34,13 +34,13 @@ def mi_perfil():
 @usuarios_bp.route("/cliente/mi_perfil/eliminar", methods=["POST"])
 def eliminar_perfil():
     if not usuario_es_valido():
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     respuesta = eliminar_mi_perfil(cookies)
 
     if respuesta.get("message",""):
         session.clear()
-        return redirect(url_for("auth_front.login"), 303)
+        return redirect(url_for("auth.login"), 303)
     else:
         flash("Error al eliminar el perfil", "error")
         return redirect(url_for("usuarios.mi_perfil"))

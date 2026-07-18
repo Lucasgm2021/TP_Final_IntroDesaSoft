@@ -10,7 +10,7 @@ reserva_bp = Blueprint("reservas",__name__)
 @reserva_bp.route("/",methods=["GET","POST"])
 def crear_reserva_form():
     if not usuario_es_valido():
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
 
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if request.method == "GET":
@@ -66,7 +66,7 @@ def crear_reserva_form():
 @reserva_bp.route("/mis_reservas", methods=["GET"])
 def mis_reservas():
     if not usuario_es_valido():
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
    
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     id_usuario = obtener_mi_perfil(cookies).get("id_usuario",0)
@@ -93,7 +93,7 @@ def mis_reservas():
 @reserva_bp.route("/mostrar_confirmacion", methods=["GET"])
 def mostrar_confirmacion_reserva():
     if not usuario_es_admin:
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
 
     id_qr = request.args.get("code")
     return render_template("reservas/confirmacion_reserva.html",id_qr=id_qr),200
@@ -101,7 +101,7 @@ def mostrar_confirmacion_reserva():
 @reserva_bp.route("/mostrar_cancelacion", methods=["GET"])
 def mostrar_cancelacion_reserva():
     if not usuario_es_admin:
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
 
     id_qr = request.args.get("code")
     return render_template("reservas/cancelacion_reserva.html",id_qr=id_qr),200
@@ -109,7 +109,7 @@ def mostrar_cancelacion_reserva():
 @reserva_bp.route("/cancelar_reserva/<uuid_reserva>", methods=["POST"])
 def cancelar_reserva_route(uuid_reserva):
     if not usuario_es_valido():
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     resultado = cancelar_reserva(uuid_reserva, cookies)
     if resultado.get('ok'):
@@ -122,7 +122,7 @@ def cancelar_reserva_route(uuid_reserva):
 @reserva_bp.route("/confirmar_reserva/<uuid_reserva>", methods=["POST"])
 def confirmar_reserva_route(uuid_reserva):
     if not usuario_es_admin():
-        return redirect(url_for("auth_front.login"))
+        return redirect(url_for("auth.login"))
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     resultado = confirmar_reserva(uuid_reserva, cookies)
     if resultado.get('ok'):

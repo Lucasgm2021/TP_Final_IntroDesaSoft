@@ -13,12 +13,12 @@
             {{ button1_comp(
                 text="Nuevo Plato",
                 height=45,
-                func="window.location.href='/dashboard/menu?nueva=1''; return false;"
+                func="window.location.href='" + url_for('dashboard.menu', nueva=1) + "'; return false;"
             ) }}
             {{ button1_comp(
                 text="Nueva imagen",
                 height=45,
-                func="window.location.href='/dashboard/menu?nueva_imagen=1'; return false;"
+                func="window.location.href='" + url_for('dashboard.menu', nueva_imagen=1) + "'; return false;"
             ) }}
         </div>
     </div>
@@ -89,7 +89,7 @@
 
             <div class="modal-actions">
                 {{ button1_comp(text="Cancelar", height=50,
-                    func="window.location.href='/dashboard/menu'; return false;") }}
+                    func="window.location.href='" + url_for('dashboard.menu') + "'; return false;") }}
                 {{ button1_comp(text="Guardar", height=50, type="submit") }}
             </div>
 
@@ -100,7 +100,7 @@
     {% if nuevo %}
     <div class="modal-overlay">
 
-        <form method="POST" action="/dashboard/menu" class="dropshadow modal-card">
+        <form method="POST" action="{{ url_for('dashboard.menu') }}" class="dropshadow modal-card">
 
             <input type="hidden" name="accion" value="crear">
 
@@ -171,7 +171,7 @@
 
             <div class="modal-actions">
                 {{ button1_comp(text="Cancelar", height=50,
-                    func="window.location.href='/dashboard/menu'; return false;") }}
+                    func="window.location.href='" + url_for('dashboard.menu') + "'; return false;") }}
                 {{ button1_comp(text="Subir", height=50, type="submit") }}
             </div>
         </form>

@@ -24,6 +24,6 @@
     <h3>
         ¿Ya tenes una cuenta?
     </h3>
-        {{ button3_comp(text="Iniciar sesion",height=50,func="window.location.href='/auth/login'")}}
+        {{ button3_comp(text="Iniciar sesion",height=50,func="window.location.href='" + url_for('auth.login') + "'")}}
     </div>
 {% endblock %}

@@ -1,80 +1,40 @@
-import requests
-from constants import API_BASE_URL
-from servicesfront.utiles import leer_respuesta_request
+from constants import API_BASE_URL,HTTP_CODE_OK,HTTP_CODE_CREATED,HTTP_GET,HTTP_POST,HTTP_PATCH
+from servicesfront.utiles import leer_respuesta_request, request_backend
 
 def crear_reserva(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,cookies):
-    try:
-        response = requests.post(f"{API_BASE_URL}/reservas",json={
-            "hora": hora_reserva,
-            "fecha": dia_reserva,
-            "nro_comensales": nro_comensales,
-            "interior": interior,
-            "ids_mesas": ids_mesas
-        }, timeout=30,cookies=cookies)
-        return leer_respuesta_request(response,201)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except Exception as e:
-        print(f"Error inesperado al crear la reserva: {e}",flush=True)
-        return {'errores': [f"Ocurrió un error inesperado al crear la reserva. Inténtalo de nuevo más tarde.{e}"]}
+    return request_backend(HTTP_POST, f"{API_BASE_URL}/reservas", json_data={
+        "hora": hora_reserva,
+        "fecha": dia_reserva,
+        "nro_comensales": nro_comensales,
+        "interior": interior,
+        "ids_mesas": ids_mesas
+    }, cookies=cookies, expected_status=HTTP_CODE_CREATED)
+
 
 def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
-    try:
-        response = requests.get(f"{API_BASE_URL}/mesas/validacion", params={
+    return request_backend(HTTP_GET,f"{API_BASE_URL}/mesas/validacion",params={
             "fecha": fecha,
             "hora": hora,
             "interior": ubicacion_bool
-        }, timeout=10,cookies=cookies)
-        return leer_respuesta_request(response,200,json=True)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except:
-        return {'errores': ['Ocurrió un error inesperado al obtener las mesas. Inténtalo de nuevo más tarde.']}
+        }, cookies=cookies, expected_status=HTTP_CODE_OK,return_json=True)
 
 def obtener_mis_reservas(id_usuario,cookies):
-    try:
-        response = requests.get(f"{API_BASE_URL}/reservas", params={"id_usuario":id_usuario,"mesas":"false"},timeout=10, cookies=cookies)
-        return leer_respuesta_request(response,200,json=True)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except:
-        return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}
+    return request_backend(HTTP_GET,f"{API_BASE_URL}/reservas",params={
+        "id_usuario": id_usuario,
+        "mesas": "false"
+    }, cookies=cookies, expected_status=HTTP_CODE_OK,return_json=True)
 
 def cancelar_reserva(uuid_reserva,cookies):
-    try:
-        response = requests.patch(f"{API_BASE_URL}/reservas/cancelar/{uuid_reserva}", timeout=10, cookies=cookies)
-        return leer_respuesta_request(response,201)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except:
-        return {'errores': ['Ocurrió un error inesperado al cancelar la reserva. Inténtalo de nuevo más tarde.']}
+    return request_backend(HTTP_PATCH,f"{API_BASE_URL}/reservas/cancelar/{uuid_reserva}", cookies=cookies, expected_status=HTTP_CODE_CREATED)
 
 def confirmar_reserva(uuid_reserva,cookies):
-    try:
-        response = requests.patch(f"{API_BASE_URL}/reservas/confirmar/{uuid_reserva}", timeout=10, cookies=cookies)
-        return leer_respuesta_request(response,201)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except:
-        return {'errores': ['Ocurrió un error inesperado al cancelar la reserva. Inténtalo de nuevo más tarde.']}
+    return request_backend(HTTP_PATCH,f"{API_BASE_URL}/reservas/confirmar/{uuid_reserva}", cookies=cookies, expected_status=HTTP_CODE_CREATED)
 
 def obtener_reservas_admin(limit,cookies,estado_reserva=None):
-    try:
-        params = {'_limit': limit}
-        if estado_reserva:
-            params['estado'] = estado_reserva
-        response = requests.get(f"{API_BASE_URL}/reservas", params=params, timeout=10, cookies=cookies)
-        return leer_respuesta_request(response,200,json=True)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except:
-        return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}
+    params = {'_limit': limit}
+    if estado_reserva:
+        params['estado'] = estado_reserva
+    return request_backend(HTTP_GET,f"{API_BASE_URL}/reservas", params=params, cookies=cookies, expected_status=HTTP_CODE_OK, return_json=True)
 
 def obtener_mis_reseñas(cookies):
-    try:
-        response = requests.get(f"{API_BASE_URL}/reseñas/usuario", timeout=10, cookies=cookies)
-        return leer_respuesta_request(response,200,json=True)
-    except requests.exceptions.ConnectionError:
-        return {'errores': ['No se pudo conectar con el servidor.']}
-    except:
-        return {'errores': ['Ocurrió un error inesperado al obtener las reservas. Inténtalo de nuevo más tarde.']}
+    return request_backend(HTTP_GET,f"{API_BASE_URL}/reseñas/usuario", cookies=cookies, expected_status=HTTP_CODE_OK, return_json=True)
