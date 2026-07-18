@@ -1,5 +1,5 @@
 import requests
-from flask import Blueprint, render_template, redirect, session, request
+from flask import Blueprint, render_template, redirect, session, request, url_for
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
@@ -11,14 +11,13 @@ from constants import BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 dashboard_bp = Blueprint(
     "dashboard",
     __name__,
-    url_prefix="/dashboard",
     template_folder="templates/dashboard",
 )
 
 @dashboard_bp.route("/")
 def home():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
     
@@ -64,7 +63,7 @@ def home():
 @dashboard_bp.route("/menu", methods=["GET", "POST"])
 def menu():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
 
@@ -74,12 +73,12 @@ def menu():
             svs.editar_plato(request.form.get("id_plato"), svs.build_body_plato(request.form), auth)
         elif accion == "crear":
             svs.crear_plato(svs.build_body_plato(request.form), auth)
-        return redirect("/dashboard/menu")
+        return redirect(url_for("dashboard.menu"))
 
     eliminar_id = request.args.get("eliminar")
     if eliminar_id:
         svs.eliminar_plato(eliminar_id, auth)
-        return redirect("/dashboard/menu")
+        return redirect(url_for("dashboard.menu"))
 
     data = svs.obtener_menu()
 
@@ -115,7 +114,7 @@ def menu():
 @dashboard_bp.route("/reseñas")
 def reseñas():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
 
@@ -124,11 +123,11 @@ def reseñas():
 
     if aprobar_id:
         svs.aprobar_reseña(aprobar_id, auth)
-        return redirect("/dashboard/reseñas")
+        return redirect(url_for("dashboard.reseñas"))
 
     if desaprobar_id:
         svs.desaprobar_reseña(desaprobar_id, auth)
-        return redirect("/dashboard/reseñas")
+        return redirect(url_for("dashboard.reseñas"))
 
     reseñas_data = svs.obtener_todas_las_reseñas(auth)
 
@@ -154,7 +153,7 @@ def reseñas():
 @dashboard_bp.route("/configuracion/", methods=["GET", "POST"])
 def configuracion():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
 
@@ -165,12 +164,12 @@ def configuracion():
             svs.editar_info_frontend(request.form.get("clave_original"), body, auth)
         elif accion == "crear":
             svs.crear_info_frontend(body, auth)
-        return redirect("/dashboard/configuracion")
+        return redirect(url_for("dashboard.configuracion"))
 
     eliminar_clave = request.args.get("eliminar")
     if eliminar_clave:
         svs.eliminar_info_frontend(eliminar_clave, auth)
-        return redirect("/dashboard/configuracion")
+        return redirect(url_for("dashboard.configuracion"))
 
     informacion = svs.obtener_info_frontend(auth)
 
@@ -198,7 +197,7 @@ def configuracion():
 @dashboard_bp.route("/reservas", methods=["GET", "POST"])
 def reservas():
     if not usuario_es_admin():
-        return redirect("auth.login")
+        return redirect(url_for("auth.login"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
 
@@ -230,7 +229,7 @@ def reservas():
 @dashboard_bp.route("/usuarios", methods=["GET", "POST"])
 def usuarios():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth  = session.get(FRONTEND_COOKIE_CLAVE) or ""
     users = svs.obtener_usuarios(auth)
@@ -253,7 +252,7 @@ def usuarios():
 @dashboard_bp.route("/mesas", methods=["GET", "POST"])
 def mesas():
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
 
@@ -264,7 +263,7 @@ def mesas():
             svs.editar_mesa(id_mesa, body, auth)
         else:
             svs.crear_mesa(body, auth)
-        return redirect("/dashboard/mesas")
+        return redirect(url_for("dashboard.mesas"))
 
     data = svs.obtener_mesas(auth)
 
@@ -291,7 +290,7 @@ def mesas():
     
     if eliminar_id:
         svs.eliminar_mesa(eliminar_id, auth)
-        return redirect("/dashboard/mesas")
+        return redirect(url_for("dashboard.mesas"))
 
     return render_template(
         "dashboard/mesas.html",
@@ -304,20 +303,20 @@ def mesas():
 @dashboard_bp.route("/mesas/eliminar/<int:id_mesa>")
 def eliminar_mesa_ruta(id_mesa):
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
     svs.eliminar_mesa(id_mesa, auth)
-    return redirect("/dashboard/mesas")
+    return redirect(url_for("dashboard.mesas"))
 
 @dashboard_bp.route("/upload-img", methods=["POST"])
 def subir_imagen():
     name = request.form.get("file-name")
     imagen = request.files["imagen"]
     if not usuario_es_admin():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
 
     svs.subir_imagen(imagen,name,auth)
 
-    return redirect("/dashboard/menu")
+    return redirect(url_for("dashboard.menu"))

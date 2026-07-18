@@ -36,7 +36,7 @@
                     {{ navbtn_comp(
                         text="Home",
                         selected=request.endpoint == "dashboard.home",
-                        func="window.location.href='/dashboard'"
+                        func="window.location.href='" + url_for('dashboard.home') + "'"
                     ) }}
                 </div>
 
@@ -44,7 +44,7 @@
                     {{ navbtn_comp(
                         text="Reservas",
                         selected=request.endpoint == "dashboard.reservas",
-                        func="window.location.href='/dashboard/reservas'"
+                        func="window.location.href='" + url_for('dashboard.reservas') + "'"
                     ) }}
                 </div>
 
@@ -52,7 +52,7 @@
                     {{ navbtn_comp(
                         text="Config. In-page",
                         selected=request.endpoint == "dashboard.configuracion",
-                        func="window.location.href='/dashboard/configuracion'"
+                        func="window.location.href='" + url_for('dashboard.configuracion') + "'"
                     ) }}
                 </div>
 
@@ -60,7 +60,7 @@
                     {{ navbtn_comp(
                         text="Reseñas",
                         selected=request.endpoint == "dashboard.reseñas",
-                        func="window.location.href='/dashboard/reseñas'"
+                        func="window.location.href='" + url_for('dashboard.reseñas') + "'"
                     ) }}
                 </div>
 
@@ -68,7 +68,7 @@
                     {{ navbtn_comp(
                         text="Menu",
                         selected=request.endpoint == "dashboard.menu",
-                        func="window.location.href='/dashboard/menu'"
+                        func="window.location.href='" + url_for('dashboard.menu') + "'"
                     ) }}
                 </div>
 
@@ -76,7 +76,7 @@
                     {{ navbtn_comp(
                         text="Mesas",
                         selected=request.endpoint == "dashboard.mesas",
-                        func="window.location.href='/dashboard/mesas'"
+                        func="window.location.href='" + url_for('dashboard.mesas') + "'"
                     ) }}
                 </div>
 
@@ -84,7 +84,7 @@
                     {{ navbtn_comp(
                         text="Usuarios",
                         selected=request.endpoint == "dashboard.usuarios",
-                        func="window.location.href='/dashboard/usuarios'"
+                        func="window.location.href='" + url_for('dashboard.usuarios') + "'"
                     ) }}
                 </div>
 
@@ -96,12 +96,12 @@
 
             {{ navbtn_comp(
                 text="Volver a inicio",
-                func="window.location.href='../'"
+                func="window.location.href='" + url_for('home.inicio') + "'"
             ) }}
 
             {{ navbtn_comp(
                 text="Cerrar Sesion",
-                func="window.location.href='../auth/logout'"
+                func="window.location.href='" + url_for('auth.logout') + "'"
             ) }}
 
         </div>

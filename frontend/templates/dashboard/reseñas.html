@@ -16,6 +16,14 @@
         show_check=true,
         func_check="toggleResenia"
     ) }}
-
+    <script>
+        function toggleResenia(id, aprobada) {
+            if (aprobada) {
+                window.location.href = `{{ url_for('dashboard.reseñas') }}?desaprobar=${id}`;
+            } else {
+                window.location.href = `{{ url_for('dashboard.reseñas') }}?aprobar=${id}`;
+            }
+        }
+    </script>
 
 {% endblock %}

@@ -196,7 +196,7 @@ INSERT INTO imagenes (unique_name, img_url) VALUES
 ('bruschettas','https://bxsiebhagayfpbldmsud.supabase.co/storage/v1/object/public/menu-imagenes/e97b4b8d-9619-45f3-aa16-c3881a20b137.png');
 
 INSERT INTO resenia (id_usuario,id_reserva,calificacion,comentario,estado) 
-VALUES(1,1,3,"No estuvo mal","aprobada"),
-(1,3,4,"Muy bueno","aprobada"),
-(1,5,5,"Excelente","aprobada"),
-(2,2,1,"No me gusto nada","aprobada")
+VALUES(1,1,3,'No estuvo mal','aprobada'),
+(1,3,4,'Muy bueno','aprobada'),
+(1,5,5,'Excelente','aprobada'),
+(2,2,1,'No me gusto nada','aprobada')

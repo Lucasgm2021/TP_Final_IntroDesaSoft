@@ -3,7 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage 
 from email.mime.multipart import MIMEMultipart
 import services.qr as qr
-from constants import SERVIDOR_MAIL,PUERTO_MAIL,CUENTA_MAIL_LOGIN,CONTRASEÑA_MAIL,CUENTA_MAIL_FROM,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
+from constants import SERVIDOR_MAIL,PUERTO_MAIL,CUENTA_MAIL_LOGIN,CONTRASENA_MAIL,CUENTA_MAIL_FROM,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
 
 PROVEEDORES_CONFIG = {
     SERVICIO_MAIL_GMAIL_APP_PASS: {
@@ -11,7 +11,7 @@ PROVEEDORES_CONFIG = {
         "port": PUERTO_MAIL, #465
         "from": CUENTA_MAIL_LOGIN,
         "user": CUENTA_MAIL_LOGIN,
-        "password": CONTRASEÑA_MAIL,
+        "password": CONTRASENA_MAIL,
         "use_ssl": True
     },
     SERVICIO_MAIL_MAILJET: {
@@ -19,7 +19,7 @@ PROVEEDORES_CONFIG = {
         "port": PUERTO_MAIL, #2525
         "from": CUENTA_MAIL_FROM,
         "user": CUENTA_MAIL_LOGIN,#api key       
-        "password": CONTRASEÑA_MAIL,#secret key  
+        "password": CONTRASENA_MAIL,#secret key  
         "use_ssl": False
     }
 }
@@ -60,16 +60,21 @@ def enviar_mail_con_qr(proveedor, mail_destino, asunto, mail_data, ruta_template
     config = PROVEEDORES_CONFIG[proveedor]
     
     msg = construir_mensaje_con_qr(config["from"], mail_destino, asunto, mail_data, ruta_template)
-
-    if config["use_ssl"]:
-        # Conexión directa SSL (Caso Gmail puerto 465)
-        with smtplib.SMTP_SSL(config["server"], config["port"], timeout=10) as server:
-            server.login(config["user"], config["password"])
-            server.send_message(msg)
-    else:
-        with smtplib.SMTP(config["server"], config["port"], timeout=10) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(config["user"], config["password"])
-            server.send_message(msg)
+    try:
+        if config["use_ssl"]:
+            # Conexión directa SSL (Caso Gmail puerto 465)
+            with smtplib.SMTP_SSL(config["server"], config["port"], timeout=10) as server:
+                server.login(config["user"], config["password"])
+                server.send_message(msg)
+        else:
+            with smtplib.SMTP(config["server"], config["port"], timeout=10) as server:
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(config["user"], config["password"])
+                server.send_message(msg)
+    except Exception as e:
+        # Atrapamos absolutamente cualquier fallo (Errno 101, timeouts, etc.)
+        print(f"Alerta de Red: Render no permite enviar mails con smtp, se debe usar una api externa. {e}", flush=True)
+        # Retornamos True o simplemente pasamos para que el backend continúe limpio
+        return False

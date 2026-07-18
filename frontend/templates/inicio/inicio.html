@@ -29,19 +29,19 @@
         {{ button2_comp(
             text="VER MENÚ",
             height=50,
-            func="window.location.href='/menu'"
+            func="window.location.href='" + url_for('menu.mostrar_menu') + "'"
         ) }}
         <div class="flex-row" style="margin:10px;">
             {{ button1_comp(
                 text="RESERVAS",
                 height=50,
-                func="window.location.href='/reservas/mis_reservas'"
+                func="window.location.href='" + url_for('reservas.mis_reservas') + "'"
             ) }}
         {% if usuario_admin %}
         {{ button1_comp(
                 text="DASHBOARD",
                 height=50,
-                func="window.location.href='/dashboard/'"
+                func="window.location.href='" + url_for('dashboard.home') + "'"
             ) }}
         {% endif %}
 
@@ -50,18 +50,18 @@
             {{ button1_comp(
                 text="LOG-IN",
                 height=50,
-                func="window.location.href='/auth/login'"
+                func="window.location.href='" + url_for('auth.login') + "'"
             ) }}
             {{ button1_comp(
                 text="REGISTER",
                 height=50,
-                func="window.location.href='/auth/register'"
+                func="window.location.href='" + url_for('auth.register') + "'"
             ) }}
         {% else %}
             {{ button1_comp(
                 text="LOG OUT",
                 height=50,
-                func="window.location.href='/auth/logout'"
+                func="window.location.href='" + url_for('auth.logout') + "'"
             ) }}
         {% endif %}
         </div>
@@ -162,7 +162,7 @@
                     {{ button2_comp(
                         text="MAS RESEÑAS",
                         height=65,
-                        func="window.location.href='/reseñas'"
+                        func="window.location.href='" + url_for('reseñas.mostrar_reseñas') + "'"
                     ) }}
                     </div>
 

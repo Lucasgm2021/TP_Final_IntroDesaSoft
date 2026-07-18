@@ -22,14 +22,12 @@ def crear_reseña():
 
     if not is_user:
         respuesta, status = error
-        print(respuesta, status)
-
         return jsonify(respuesta), status
 
     respuesta, status = (
         crear_reseña_service(data)
     )
-    print(respuesta,status)
+
     return jsonify(respuesta), status
 
 @reseñas_bp.route("/reseñables", methods=["GET"])

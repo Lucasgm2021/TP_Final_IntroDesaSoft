@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5001
+EXPOSE 10001
 
-CMD ["python", "app.py"]
+# Use Gunicorn to run your Flask application dynamically on Render's assigned port
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:10001"]

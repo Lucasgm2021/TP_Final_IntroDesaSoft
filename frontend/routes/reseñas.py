@@ -24,7 +24,7 @@ def mostrar_reseñas():
 def formulario_reseña():
     cookies = {BACKEND_SESSION_COOKIE_NAME: session.get(FRONTEND_COOKIE_CLAVE,"")}
     if not usuario_es_valido():
-        return redirect("/")
+        return redirect(url_for("home.inicio"))
     
     if request.method=="GET":
         id_reserva = request.args.get("id_reserva")

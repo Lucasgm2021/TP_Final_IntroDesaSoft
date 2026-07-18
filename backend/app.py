@@ -23,16 +23,22 @@ from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from routes.imagenes import imagenes_bp
 
-from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
+# 1. IMPORTAMOS tu engine reparado con el SSL corregido
+from constants import DB_EXTERNAL_URI
+from db.config import connect_args
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}"
+app.config["SQLALCHEMY_DATABASE_URI"] = DB_EXTERNAL_URI
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
+
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "connect_args": connect_args
+}
 
 app.json.sort_keys = False
 

@@ -3,20 +3,21 @@ from flask import (
     render_template,
     request,
     redirect,
-    session
+    session,
+    url_for
 )
 
 import requests
 from constants import API_BASE_URL,BACKEND_SESSION_COOKIE_NAME, FRONTEND_COOKIE_CLAVE
 
-auth_front_bp = Blueprint(
-    "auth_front",
+auth_bp = Blueprint(
+    "auth",
     __name__,
     template_folder="templates",
     static_folder="static",
 )
 
-@auth_front_bp.route("/register", methods=["GET","POST"])
+@auth_bp.route("/register", methods=["GET","POST"])
 def register():
     if request.method == 'GET':
         return render_template('auth/register.html')
@@ -31,14 +32,14 @@ def register():
 
     if resp.status_code in (200, 201):
         session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
-        return redirect('/')
+        return redirect(url_for("home.inicio"))
     elif resp.status_code == 409:
         return render_template('auth/register.html', error="Email ya utilizado")
     else:
         return render_template('auth/register.html', error=f"Error:{resp.status_code}")
 
 
-@auth_front_bp.route("/login", methods=["GET","POST"])
+@auth_bp.route("/login", methods=["GET","POST"])
 def login():
     if request.method == 'GET':
         return render_template('auth/login.html')
@@ -52,11 +53,11 @@ def login():
     )
     if resp.status_code == 201:
         session[FRONTEND_COOKIE_CLAVE] = resp.cookies.get(BACKEND_SESSION_COOKIE_NAME)
-        return redirect('/')
+        return redirect(url_for("home.inicio"))
     else:
         return render_template('auth/login.html', error="Credenciales inválidas")
 
-@auth_front_bp.route("/logout", methods=["GET","POST"])
+@auth_bp.route("/logout", methods=["GET","POST"])
 def logout():
     data = session.get(FRONTEND_COOKIE_CLAVE) or ''
     requests.post(
@@ -64,4 +65,4 @@ def logout():
         cookies={BACKEND_SESSION_COOKIE_NAME: data}
     )
     session.clear()
-    return redirect('/')
+    return redirect(url_for("home.inicio"))
