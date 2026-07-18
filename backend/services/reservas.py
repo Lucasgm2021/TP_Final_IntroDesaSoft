@@ -12,7 +12,7 @@ import services.mail as servicios_mail
 from services.messages import error_msg,unauthorized,server_error,not_found
 from services.mesas import obtener_mesas
 import db.usuarios as queries_usuarios
-from constants import URL_PAGINA_WEB,SERVICIO_MAIL,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
+from constants import URL_FRONT,SERVICIO_MAIL,SERVICIO_MAIL_GMAIL_APP_PASS,SERVICIO_MAIL_MAILJET
 
 MAS_UNO = 1
 
@@ -115,8 +115,8 @@ def crear_reserva(data):
     asunto = "RESERVA REGISTRADA"
     
     datos_mail = {
-        "qr_data": f"{URL_PAGINA_WEB}/reservas/mostrar_confirmacion?code={uuid_qr}",
-        "url_cancelar": f"{URL_PAGINA_WEB}/reservas/mostrar_cancelacion?code={uuid_qr}"
+        "qr_data": f"{URL_FRONT}/reservas/mostrar_confirmacion?code={uuid_qr}",
+        "url_cancelar": f"{URL_FRONT}/reservas/mostrar_cancelacion?code={uuid_qr}"
     }
 
     mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
