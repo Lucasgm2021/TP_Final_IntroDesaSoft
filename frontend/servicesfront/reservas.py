@@ -15,6 +15,7 @@ def crear_reserva(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,coo
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor.']}
     except Exception as e:
+        print(f"Error inesperado al crear la reserva: {e}",flush=True)
         return {'errores': [f"Ocurrió un error inesperado al crear la reserva. Inténtalo de nuevo más tarde.{e}"]}
 
 def obtener_mesas(fecha,hora,ubicacion_bool,comensales,cookies):
