@@ -23,7 +23,9 @@ from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from routes.imagenes import imagenes_bp
 
+# 1. IMPORTAMOS tu engine reparado con el SSL corregido
 from constants import DB_EXTERNAL_URI
+from db.config import engine 
 
 app = Flask(__name__)
 
@@ -36,7 +38,7 @@ app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
 app.json.sort_keys = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine=engine)
 
 app.config["SESSION_SQLALCHEMY"] = db
 
