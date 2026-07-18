@@ -177,5 +177,16 @@
         </form>
     </div>
     {% endif %}
+    <script>
+    function editarPlato(id){
+
+        window.location.href = `{{ url_for('dashboard.menu') }}?edit=${id}`
+    }
+
+    function eliminarPlato(id){
+
+        window.location.href = `{{ url_for('dashboard.menu') }}?eliminar=${id}`
+    }
+    </script>
 </div>
 {% endblock %}

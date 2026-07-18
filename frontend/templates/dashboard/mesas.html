@@ -101,12 +101,12 @@
 
     <script>
         function editarMesa(id) {
-            window.location.href = '{{ url_for('dashboard.mesas', edit=id) }}';
+            window.location.href = "{{ url_for('dashboard.mesas') }}?edit=" + id;
         }
 
         function eliminarMesa(id) {
             if (confirm('¿Estás seguro de que deseas eliminar la Mesa N° ' + id + '?')) {
-                window.location.href = '{{ url_for('dashboard.mesas', eliminar=id) }}';
+                window.location.href = "{{ url_for('dashboard.mesas') }}?eliminar=" + id;
             }
         }
     </script>

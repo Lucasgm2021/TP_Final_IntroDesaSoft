@@ -8,45 +8,6 @@ if (selectFecha) {
     selectFecha.setAttribute('min', formattedDate);
 }
 
-function editarPlato(id){
-
-    window.location.href =
-        `/dashboard/menu?edit=${id}`
-}
-
-function eliminarPlato(id){
-
-    window.location.href =
-        `/dashboard/menu?eliminar=${id}`
-}
-
-function volverAlInicio() {
-    window.location.href = '/';
-}
-
-
-function editarReserva(id){
-
-    window.location.href =
-        `/dashboard/reservas?edit=${id}`
-}
-
-function editarInfo(clave) {
-    window.location.href = `/dashboard/configuracion?edit=${clave}`;
-}
-
-function eliminarInfo(clave) {
-    window.location.href = `/dashboard/configuracion?eliminar=${clave}`;
-}
-
-function toggleResenia(id, aprobada) {
-    if (aprobada) {
-        window.location.href = `/dashboard/reseñas?desaprobar=${id}`;
-    } else {
-        window.location.href = `/dashboard/reseñas?aprobar=${id}`;
-    }
-}
-
 function togglePopup(id_reserva) {
     const popup = document.getElementById('my-popup-overlay');
     if (id_reserva) {

@@ -99,5 +99,13 @@
         </form>
     </div>
     {% endif %}
+    <script>
+        function editarInfo(clave) {
+            window.location.href = `{{ url_for('dashboard.configuracion') }}?edit=${clave}`;
+        }
 
+        function eliminarInfo(clave) {
+            window.location.href = `{{ url_for('dashboard.configuracion') }}?eliminar=${clave}`;
+        }
+    </script>
 {% endblock %}
