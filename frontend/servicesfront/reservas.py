@@ -10,7 +10,7 @@ def crear_reserva(hora_reserva,dia_reserva,nro_comensales,interior,ids_mesas,coo
             "nro_comensales": nro_comensales,
             "interior": interior,
             "ids_mesas": ids_mesas
-        }, timeout=10,cookies=cookies)
+        }, timeout=30,cookies=cookies)
         return leer_respuesta_request(response,201)
     except requests.exceptions.ConnectionError:
         return {'errores': ['No se pudo conectar con el servidor.']}
