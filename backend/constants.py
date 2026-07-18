@@ -5,12 +5,12 @@ MYSQL_DATABASE=os.getenv("MYSQL_DATABASE","restaurante")
 MYSQL_ROOT_PASSWORD=os.getenv("MYSQL_ROOT_PASSWORD","1234")
 DB_PORT=3306
 DB_HOST=os.getenv("DB_HOST","localhost")
-DB_EXTERNAL_URI = os.getenv("DB_EXTERNAL_URI","")
-
+DB_URI = os.getenv("DB_URI",f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}")
+DB_CA_CERT_PATH = os.path.join(os.getcwd(), "ca.pem")
 
 #url front para mail
 FRONTEND_PORT = os.getenv("FRONTEND_PORT","5001")
-URL_PAGINA_WEB= f"http://127.0.0.1:{FRONTEND_PORT}"
+URL_FRONT= os.getenv("URL_FRONT",f"http://127.0.0.1:{FRONTEND_PORT}")
 
 #mail conf
 CUENTA_MAIL_LOGIN=os.getenv("CUENTA_MAIL_LOGIN","tpintrodesasoftware@gmail.com")

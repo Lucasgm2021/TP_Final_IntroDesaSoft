@@ -1,47 +1,32 @@
 from sqlalchemy import create_engine, text
 import os
 import ssl
-from constants import DB_EXTERNAL_URI
-
-possible_paths = [
-    "/app/ca.pem",
-    "/opt/render/project/src/ca.pem",
-    "/opt/render/project/src/backend/ca.pem",
-    os.path.join(os.getcwd(), "ca.pem")
-]
-
-cert_path = None
-for path in possible_paths:
-    if os.path.exists(path) and os.path.getsize(path) > 0:
-        cert_path = path
-        break
+from constants import DB_URI, DB_CA_CERT_PATH
 
 connect_args = {}
 
-if cert_path:
+if os.path.exists(DB_CA_CERT_PATH) and os.path.getsize(DB_CA_CERT_PATH) > 0:
     try:
-        with open(cert_path, "r", encoding="utf-8") as f:
+        with open(DB_CA_CERT_PATH, "r", encoding="utf-8") as f:
             cert_content = f.read().strip()
         
-        print(f"🚀 Successfully read certificate contents from {cert_path}")
+        print(f"🚀 Successfully read certificate from: {DB_CA_CERT_PATH}")
         
         context = ssl.create_default_context()
         context.load_verify_locations(cadata=cert_content)
-        
         connect_args = {"ssl": context}
-        print("✅ SSL Context loaded successfully with cadata")
+        print("✅ SSL Context loaded successfully")
         
     except Exception as e:
         print(f"⚠️ Error creating custom SSL context: {e}")
-        connect_args = {"ssl": {"ca": cert_path}}
+        connect_args = {"ssl": {"ca": DB_CA_CERT_PATH}}
 else:
-    print("⚠️ WARNING: No ca.pem found.")
+    print(f"⚠️ WARNING: No certificate found at '{DB_CA_CERT_PATH}'. Connecting without custom SSL.")
 
 engine = create_engine(
-    DB_EXTERNAL_URI,
+    DB_URI,
     connect_args=connect_args
 )
-
 
 def ejecutar_query_lectura(query, params=None):
     with engine.connect() as conn:

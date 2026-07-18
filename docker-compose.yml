@@ -1,11 +1,28 @@
 services:
+  db:
+    image: mysql:8.0
+    command: --default-time-zone='-03:00'
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./backend/db/01_init_db.sql:/docker-entrypoint-initdb.d/01_init_db.sql
+      - ./backend/db/02_insert_datos.sql:/docker-entrypoint-initdb.d/02_insert_datos.sql
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -u root -p$$MYSQL_ROOT_PASSWORD -e 'USE restaurante;'"]
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+      interval: 5s
+
   backend:
     build: ./backend
     ports:
       - "5000:5000"
     volumes:
       - ./backend:/app
-      - ./backend/ca.pem:/app/ca.pem:ro  # Injects the untracked file directly into Docker
     env_file:
       - ./backend/.env
 
@@ -17,5 +34,3 @@ services:
       - ./frontend:/app
     env_file:
       - ./frontend/.env
-    depends_on:
-      - backend
