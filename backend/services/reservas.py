@@ -3,6 +3,9 @@ from flask import session
 import uuid
 from pathlib import Path
 from datetime import datetime,timedelta
+from datetime import time, date, datetime
+from zoneinfo import ZoneInfo
+
 import db.reservas as queries_reservas
 import db.menu as queries_mesas
 import services.mail as servicios_mail
@@ -67,7 +70,15 @@ def crear_reserva(data):
         if data["id_usuario"] != session["id_usuario"] and not session["es_admin"]:
             return error_msg(**unauthorized(custom_desc="No puedes crear una reserva para otro usuario."))
         id_usuario = data["id_usuario"]
-    errores = []
+
+    ahora_arg = datetime.now(ZoneInfo("America/Argentina/Buenos_Aires"))
+    instante_actual = ahora_arg.time()
+    hoy = ahora_arg.date().isoformat()
+    hora_datetime = time.fromisoformat(hora)
+
+    if fecha == hoy and hora_datetime < instante_actual: 
+        return error_msg(400,"Solicitud invalida",description="No puedes reservar hoy antes que la hora actual.")
+
     fecha_hora = datetime.strptime(fecha + " " + hora, "%Y-%m-%d %H:%M:%S")
 
     try:

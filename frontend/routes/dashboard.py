@@ -1,6 +1,7 @@
 import requests
 from flask import Blueprint, render_template, redirect, session, request, url_for
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 import servicesfront.dashboard as svs
 from servicesfront.reservas import obtener_reservas_admin
@@ -19,7 +20,10 @@ def home():
         return redirect(url_for("home.inicio"))
 
     auth = session.get(FRONTEND_COOKIE_CLAVE) or ""
-    hoy = date.today().isoformat()
+    
+    ahora_arg = datetime.now(ZoneInfo("America/Argentina/Buenos_Aires"))
+
+    hoy = ahora_arg.date().isoformat()
 
     todas = svs.obtener_todas_las_reservas(auth)
     reservas_hoy = [r for r in todas if r["fecha"] == hoy]
