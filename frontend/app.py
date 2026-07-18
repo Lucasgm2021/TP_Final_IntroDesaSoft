@@ -13,13 +13,12 @@ else:
 
 from routes.reservas import reserva_bp
 from routes.dashboard import dashboard_bp
-from routes.auth import auth_front_bp
+from routes.auth import auth_bp
 from routes.reseñas import reseñas_front_bp
-from routes.public import public_bp
+from routes.menu import menu_bp
 from routes.mi_perfil import usuarios_bp
-
-from servicesfront.inicio import obtener_info_restaurante, obtener_servicios_extra, obtener_reseñas_aprobadas
-from servicesfront.verificaciones import usuario_es_valido, usuario_es_admin
+from routes.home import home_bp
+from constants import BASE_URL_FRONT
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "mandarina"
@@ -27,35 +26,13 @@ app.config["SESSION_PERMANENT"] = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
 
-@app.route("/")
-def inicio():
-    user = usuario_es_valido()
-    info = obtener_info_restaurante()
-    admin = usuario_es_admin()
-    reseñas = obtener_reseñas_aprobadas()
-    servicios = obtener_servicios_extra()
-    try:
-        #mysql con docker no guarda bien la info con tildes y ñ. Lo corrijo para mostrar en html.
-        info["historia"] = info["historia"].encode('latin-1').decode('utf-8')
-    except:
-        #si la info estaba ok, no da error al intentar la corrección, ignoro este caso.
-        pass
-
-    return render_template(
-        "inicio/inicio.html",
-        usuario_logueado=user,
-        usuario_admin=admin,
-        info=info,
-        reseñas=reseñas,
-        servicios=servicios,
-    )
-
-app.register_blueprint(reseñas_front_bp, url_prefix="/reseñas")
-app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
-app.register_blueprint(auth_front_bp, url_prefix="/auth")
-app.register_blueprint(public_bp, url_prefix="/menu")
-app.register_blueprint(usuarios_bp,url_prefix="/usuarios")
-app.register_blueprint(reserva_bp,url_prefix="/reservas")
+app.register_blueprint(home_bp, url_prefix=f"/{BASE_URL_FRONT}/")
+app.register_blueprint(reseñas_front_bp, url_prefix=f"/{BASE_URL_FRONT}/reseñas")
+app.register_blueprint(dashboard_bp, url_prefix=f"/{BASE_URL_FRONT}/dashboard")
+app.register_blueprint(auth_bp, url_prefix=f"/{BASE_URL_FRONT}/auth")
+app.register_blueprint(menu_bp, url_prefix=f"/{BASE_URL_FRONT}/menu")
+app.register_blueprint(usuarios_bp,url_prefix=f"/{BASE_URL_FRONT}/usuarios")
+app.register_blueprint(reserva_bp,url_prefix=f"/{BASE_URL_FRONT}/reservas")
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5001)

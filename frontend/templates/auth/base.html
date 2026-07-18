@@ -30,7 +30,7 @@
 
             <div class="auth-header">
                 {% from "componentes/circle_comp.html" import circle_comp %}
-                {{ circle_comp(size=50,type=3, func="window.location.href='/'",text="<")}}
+                {{ circle_comp(size=50,type=3, func="window.location.href='" + url_for('home.inicio') + "'",text="<")}}
 
                 <h1 class="puerto-hermoso">
                     PUERTO
