@@ -21,7 +21,7 @@
                 
                 {% from "componentes/circle_comp.html" import circle_comp %}
                 <div style="position: absolute; left: 0;">
-                    {{ circle_comp(size=40, type=3, func="window.location.href='" + url_for('dashboard.inicio') + "'; return false;", text="<") }}
+                    {{ circle_comp(size=40, type=3, func="window.location.href='" + url_for('home.inicio') + "'; return false;", text="<") }}
                 </div>
 
                 <h2 class="reseñas-titulo">
