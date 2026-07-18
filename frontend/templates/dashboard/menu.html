@@ -144,7 +144,7 @@
 
             <div class="modal-actions">
                 {{ button1_comp(text="Cancelar", height=50,
-                    func="window.location.href='/dashboard/menu'; return false;") }}
+                    func="window.location.href='" + url_for('dashboard.menu') + "'; return false;") }}
                 {{ button1_comp(text="Crear", height=50, type="submit") }}
             </div>
 

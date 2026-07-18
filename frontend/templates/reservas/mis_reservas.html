@@ -40,13 +40,13 @@
                     text="<",
                     size=40,
                     type=3,
-                    func="window.location.href='/'"
+                    func="window.location.href='" + url_for('home.inicio') + "'"
                 ) }}
                 <h1>Puerto Hermoso</h1>
             </div>
             <div class="header-right">
                 <button class="button-default button-mi-perfil button-generic"
-                    onclick="window.location.href='{{ url_for('usuarios.cliente.mi_perfil') }}'">
+                    onclick="window.location.href='{{ url_for('usuarios.mi_perfil') }}'">
                     Mi perfil
                 </button>
                 <button class="button-default button-nueva-reserva button-generic"
