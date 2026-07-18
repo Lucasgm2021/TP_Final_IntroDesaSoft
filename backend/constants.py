@@ -5,6 +5,8 @@ MYSQL_DATABASE=os.getenv("MYSQL_DATABASE","restaurante")
 MYSQL_ROOT_PASSWORD=os.getenv("MYSQL_ROOT_PASSWORD","1234")
 DB_PORT=3306
 DB_HOST=os.getenv("DB_HOST","localhost")
+DB_EXTERNAL_URI = os.getenv("DB_EXTERNAL_URI","")
+
 
 #url front para mail
 FRONTEND_PORT = os.getenv("FRONTEND_PORT","5001")

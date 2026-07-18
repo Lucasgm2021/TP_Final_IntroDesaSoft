@@ -1,8 +1,13 @@
 from sqlalchemy import create_engine, text
-from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
+from constants import DB_EXTERNAL_URI
 # mysql+pymysql://usuario:password@host/db
 engine = create_engine(
-   f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}?charset=utf8mb4",
+   DB_EXTERNAL_URI,
+    connect_args={
+        "ssl": {
+            "ca": "/app/ca.pem" # Path to your downloaded Aiven certificate inside Docker
+        }
+    },
     echo=False
 )
 

@@ -23,14 +23,14 @@ from routes.sesion_usuario import sesion_usuario_bp
 from routes.mesas import mesas_bp
 from routes.imagenes import imagenes_bp
 
-from constants import MYSQL_DATABASE,MYSQL_ROOT_PASSWORD,DB_HOST,DB_PORT
+from constants import DB_EXTERNAL_URI
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "mandarina"
 app.config["SESSION_PERMANENT"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/{MYSQL_DATABASE}"
+app.config["SQLALCHEMY_DATABASE_URI"] = DB_EXTERNAL_URI
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
