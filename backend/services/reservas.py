@@ -93,7 +93,17 @@ def crear_reserva(data):
                 id_mesa
             )
     except Exception as e:
-        return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")
+        import traceback
+        import sys
+        # Capturamos el traceback detallado
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = exc_tb.tb_next.tb_frame.f_code.co_filename if exc_tb.tb_next else "Desconocido"
+        line_no = exc_tb.tb_next.tb_lineno if exc_tb.tb_next else "Desconocida"
+        
+        error_detallado = f"[{exc_type.__name__}] en {fname} (Línea {line_no}): {e}"
+        print(f"🚨 ERROR DETALLADO EN BACKEND: {error_detallado}", flush=True)
+        
+        return error_msg(500, "Error creando la reserva", description=error_detallado)
     try:
         #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
