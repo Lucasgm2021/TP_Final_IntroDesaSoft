@@ -1,6 +1,8 @@
 services:
   backend:
     build: ./backend
+    ports:
+      - "5000:5000"
     volumes:
       - ./backend:/app
       - ./backend/ca.pem:/app/ca.pem:ro  # Injects the untracked file directly into Docker

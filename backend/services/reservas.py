@@ -92,6 +92,9 @@ def crear_reserva(data):
                 id_reserva,
                 id_mesa
             )
+    except Exception as e:
+        return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")
+    try:
         #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
         asunto = "RESERVA REGISTRADA"
@@ -109,7 +112,7 @@ def crear_reserva(data):
         )  
         queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
     except Exception as e:
-        return error_msg(500,"Error creando la reserva",description=f"Ha ocurrido un error en el servidor. {e}")
+        return error_msg(500,"Error enviando mail",description=f"Ha ocurrido un error en el envio de mail. {e}")
     return {"msg":"Reserva creada exitosamente","id": id_reserva},201
 
 def modificar_reserva(id_reserva,data):
