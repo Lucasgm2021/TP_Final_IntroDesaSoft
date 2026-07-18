@@ -92,37 +92,30 @@ def crear_reserva(data):
                 id_reserva,
                 id_mesa
             )
-    except Exception as e:
-        import traceback
-        import sys
-        # Capturamos el traceback detallado
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = exc_tb.tb_next.tb_frame.f_code.co_filename if exc_tb.tb_next else "Desconocido"
-        line_no = exc_tb.tb_next.tb_lineno if exc_tb.tb_next else "Desconocida"
-        
-        error_detallado = f"[{exc_type.__name__}] en {fname} (Línea {line_no}): {e}"
-        print(f"🚨 ERROR DETALLADO EN BACKEND: {error_detallado}", flush=True)
-        
-        return error_msg(500, "Error creando la reserva", description=error_detallado)
+    except Exception as e:       
+        return error_msg(500, "Error creando la reserva", description="Ha ocurrido un error en el servidor.")
+
     try:
-        #envío mail. 
+    #envío mail. 
         mail_usuario = queries_usuarios.obtener_usuario_id(id_usuario)["email"]
-        asunto = "RESERVA REGISTRADA"
+    except:
+        return error_msg(500, "Error obteniendo email del usuario", description="Ha ocurrido un error en el servidor.")
         
-        datos_mail = {
-            "qr_data": f"{URL_PAGINA_WEB}/reservas/mostrar_confirmacion?code={uuid_qr}",
-            "url_cancelar": f"{URL_PAGINA_WEB}/reservas/mostrar_cancelacion?code={uuid_qr}"
-        }
+    asunto = "RESERVA REGISTRADA"
+    
+    datos_mail = {
+        "qr_data": f"{URL_PAGINA_WEB}/reservas/mostrar_confirmacion?code={uuid_qr}",
+        "url_cancelar": f"{URL_PAGINA_WEB}/reservas/mostrar_cancelacion?code={uuid_qr}"
+    }
 
-        mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
+    mail_template = Path(__file__).resolve().parent.parent / "templates"/ "mail_reserva_qr_adjunto.html"
 
-        servicios_mail.enviar_mail_con_qr(
-            proveedor=SERVICIO_MAIL,mail_destino=mail_usuario,
-            asunto=asunto,mail_data=datos_mail,ruta_template=mail_template
-        )  
-        queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
-    except Exception as e:
-        return error_msg(500,"Error enviando mail",description=f"Ha ocurrido un error en el envio de mail. {e}")
+    servicios_mail.enviar_mail_con_qr(
+        proveedor=SERVICIO_MAIL,mail_destino=mail_usuario,
+        asunto=asunto,mail_data=datos_mail,ruta_template=mail_template
+    )  
+    queries_reservas.actualizar_contadores_reservas_usuario(id_usuario,diferencia_total=MAS_UNO)
+
     return {"msg":"Reserva creada exitosamente","id": id_reserva},201
 
 def modificar_reserva(id_reserva,data):

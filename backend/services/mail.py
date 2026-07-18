@@ -60,16 +60,21 @@ def enviar_mail_con_qr(proveedor, mail_destino, asunto, mail_data, ruta_template
     config = PROVEEDORES_CONFIG[proveedor]
     
     msg = construir_mensaje_con_qr(config["from"], mail_destino, asunto, mail_data, ruta_template)
-
-    if config["use_ssl"]:
-        # Conexión directa SSL (Caso Gmail puerto 465)
-        with smtplib.SMTP_SSL(config["server"], config["port"], timeout=10) as server:
-            server.login(config["user"], config["password"])
-            server.send_message(msg)
-    else:
-        with smtplib.SMTP(config["server"], config["port"], timeout=10) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(config["user"], config["password"])
-            server.send_message(msg)
+    try:
+        if config["use_ssl"]:
+            # Conexión directa SSL (Caso Gmail puerto 465)
+            with smtplib.SMTP_SSL(config["server"], config["port"], timeout=10) as server:
+                server.login(config["user"], config["password"])
+                server.send_message(msg)
+        else:
+            with smtplib.SMTP(config["server"], config["port"], timeout=10) as server:
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(config["user"], config["password"])
+                server.send_message(msg)
+    except Exception as e:
+        # Atrapamos absolutamente cualquier fallo (Errno 101, timeouts, etc.)
+        print(f"Alerta de Red: Render no permite enviar mails con smtp, se debe usar una api externa. {e}", flush=True)
+        # Retornamos True o simplemente pasamos para que el backend continúe limpio
+        return False
