@@ -12,7 +12,7 @@ if not os.path.exists(cert_path):
 print(f"Connecting to DB using SSL cert at: {os.path.abspath(cert_path)}")
 
 engine = create_engine(
-    DATABASE_URL,
+    DB_EXTERNAL_URI,
     connect_args={
         "ssl": {
             "ca": cert_path
