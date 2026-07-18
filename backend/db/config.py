@@ -7,19 +7,10 @@ from constants import DB_EXTERNAL_URI
 cert_path = os.path.join(os.getcwd(), "ca.pem")
 
 engine = create_engine(
-    DATABASE_URL,
-    connect_args={
-        "ssl": {
-            "ca": cert_path
-        }
-    }
-)
-
-engine = create_engine(
    DB_EXTERNAL_URI,
     connect_args={
         "ssl": {
-            "ca": "/app/ca.pem" # Path to your downloaded Aiven certificate inside Docker
+            "ca": cert_path # Path to your downloaded Aiven certificate inside Docker
         }
     },
     echo=False
