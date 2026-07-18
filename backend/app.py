@@ -25,7 +25,7 @@ from routes.imagenes import imagenes_bp
 
 # 1. IMPORTAMOS tu engine reparado con el SSL corregido
 from constants import DB_EXTERNAL_URI
-from db.config import engine 
+from db.config import connect_args
 
 app = Flask(__name__)
 
@@ -36,9 +36,13 @@ app.config["SQLALCHEMY_DATABASE_URI"] = DB_EXTERNAL_URI
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "connect_args": connect_args
+}
+
 app.json.sort_keys = False
 
-db = SQLAlchemy(app, engine=engine)
+db = SQLAlchemy(app)
 
 app.config["SESSION_SQLALCHEMY"] = db
 

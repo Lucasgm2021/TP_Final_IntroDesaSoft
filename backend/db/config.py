@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, text
 import os
+import ssl
 from constants import DB_EXTERNAL_URI
 
 possible_paths = [
@@ -24,9 +25,6 @@ if cert_path:
         
         print(f"🚀 Successfully read certificate contents from {cert_path}")
         
-        # En PyMySQL, el sub-diccionario 'ssl' maneja directamente el contexto si usamos sslContext
-        # Pero la forma más compatible sin romper su parser interno de diccionarios es armar un contexto nativo:
-        import ssl
         context = ssl.create_default_context()
         context.load_verify_locations(cadata=cert_content)
         
@@ -35,21 +33,13 @@ if cert_path:
         
     except Exception as e:
         print(f"⚠️ Error creating custom SSL context: {e}")
-        # Si falla, dejamos que use el path tradicional como último recurso
         connect_args = {"ssl": {"ca": cert_path}}
 else:
     print("⚠️ WARNING: No ca.pem found.")
 
-# Creamos el engine pasando el objeto SSL Context directamente
-
 engine = create_engine(
-   DB_EXTERNAL_URI,
-    connect_args={
-        "ssl": {
-            "ca": cert_path # Path to your downloaded Aiven certificate inside Docker
-        }
-    },
-    echo=False
+    DB_EXTERNAL_URI,
+    connect_args=connect_args
 )
 
 
