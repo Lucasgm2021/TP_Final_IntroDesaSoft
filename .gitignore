@@ -3,3 +3,5 @@
 __pycache__
 .env
 backend/ca.pem
+bin
+.buildozer

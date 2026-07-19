@@ -23,6 +23,7 @@ services:
       - "5000:5000"
     volumes:
       - ./backend:/app
+      - ./backend/ca.pem:/app/ca.pem:ro
     env_file:
       - ./backend/.env
 
@@ -34,3 +35,6 @@ services:
       - ./frontend:/app
     env_file:
       - ./frontend/.env
+
+volumes:
+  db_data:
