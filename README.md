@@ -33,8 +33,14 @@ Acceso adicional a un panel de administrador con:
 urls: 
    1. backend: https://tp-final-introdesasoft.onrender.com
    2. frontend: https://tp-final-introdesasoft-1.onrender.com
+
 Uso gratuito, consulta inicial puede demorarse ya que se apaga la instancia y debe iniciarse.
+
 El envio de mails no funciona desde render con smtplib. Se debe migrar a uso de una API o revisar configuracion.
+
+### App kivy
+
+Pendiente, queda sin funcionar.
 
 ## Configuracion general
 
@@ -246,6 +252,8 @@ Apagar y **borrar** los datos (la proxima vez se vuelven a correr los scripts sq
 ```bash
 docker compose down -v
 ```
+
+#### OBSERVACIONES PARA PRUEBAS
 
 Tener en cuenta ademas que se puede hacer pruebas mixtas:
 

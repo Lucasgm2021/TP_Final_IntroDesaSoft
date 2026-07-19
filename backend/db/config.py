@@ -10,18 +10,18 @@ if os.path.exists(DB_CA_CERT_PATH) and os.path.getsize(DB_CA_CERT_PATH) > 0:
         with open(DB_CA_CERT_PATH, "r", encoding="utf-8") as f:
             cert_content = f.read().strip()
         
-        print(f"🚀 Successfully read certificate from: {DB_CA_CERT_PATH}")
+        print(f"Successfully read certificate from: {DB_CA_CERT_PATH}")
         
         context = ssl.create_default_context()
         context.load_verify_locations(cadata=cert_content)
         connect_args = {"ssl": context}
-        print("✅ SSL Context loaded successfully")
+        print("SSL Context loaded successfully")
         
     except Exception as e:
-        print(f"⚠️ Error creating custom SSL context: {e}")
+        print(f"Error creating custom SSL context: {e}")
         connect_args = {"ssl": {"ca": DB_CA_CERT_PATH}}
 else:
-    print(f"⚠️ WARNING: No certificate found at '{DB_CA_CERT_PATH}'. Connecting without custom SSL.")
+    print(f"WARNING: No certificate found at '{DB_CA_CERT_PATH}'. Connecting without custom SSL.")
 
 engine = create_engine(
     DB_URI,
