@@ -26,6 +26,16 @@ Acceso adicional a un panel de administrador con:
 - ABM de la informacion del restaurante y servicios extra en la vista de inicio.
 - Vistas de solo lectura: dashboard de reservas del dia y estadisticas del restaurante, listado de usuarios registrados y de todas las reservas realizadas. 
 
+### Publicado a internet
+
+- BBDD mysql publicada en [aiven.io](https://aiven.io/), se apaga si no se usa por un periodo de tiempo.
+- Frontend y backend publicados como servicios en https://render.com/
+urls: 
+   1. backend: https://tp-final-introdesasoft.onrender.com
+   2. frontend: https://tp-final-introdesasoft-1.onrender.com
+Uso gratuito, consulta inicial puede demorarse ya que se apaga la instancia y debe iniciarse.
+El envio de mails no funciona desde render con smtplib. Se debe migrar a uso de una API o revisar configuracion.
+
 ## Configuracion general
 
 ### 1. Variables de entorno
@@ -42,10 +52,12 @@ cp .env.example .env
 MYSQL_DATABASE=restaurante
 MYSQL_ROOT_PASSWORD=1234
 DB_HOST=localhost
+DB_URI=mysql+pymysql://<pass>@<host>:<port>/<default db>?ssl_ca=/<path_for_docker>/ca.pem
 FRONTEND_PORT=5001
+URL_FRONT=
 CUENTA_MAIL_LOGIN=tpintrodesasoftware@gmail.com
 CUENTA_MAIL_FROM=tpintrodesasoftware@gmail.com
-CONTRASEÑA_MAIL=
+CONTRASENA_MAIL=
 PUERTO_MAIL=465
 SERVIDOR_MAIL=smtp.gmail.com
 SERVICIO_MAIL=gmail_app_pass
@@ -53,6 +65,10 @@ SUPABASE_URL=https://bxsiebhagayfpbldmsud.supabase.co
 SUPABASE_API_KEY=
 BUCKET_NAME=menu-imagenes
 ```
+Si se coloca DB_URI, no usa MYSQL_DATABASE, MYSQL_ROOT y DB_HOST.
+Formato de DB_URI para uso de db externa en aiven.io. Si es local, se arma con las variables mencionadas en el codigo (se puede omitir en ese caso).
+
+Si no se coloca URL_FRONT, la arma usando localhost + FRONTEND_PORT.
 
 #### 1.2. Frontend
 
@@ -229,4 +245,18 @@ Apagar y **borrar** los datos (la proxima vez se vuelven a correr los scripts sq
 
 ```bash
 docker compose down -v
+```
+
+Tener en cuenta ademas que se puede hacer pruebas mixtas:
+
+Levantar servicio front local y conectar con backend y db publicadas. 
+Levantar front y backend local y conectar con db publicadas.
+
+Se quitan depends_on entre servicios en yml para este fin y en backend se incluye: ./backend/ca.pem:/app/ca.pem:ro
+El archivo ca.pem se descarga de la db publicada y se coloca dentro de la carpeta backend para conectar a la db publicada en aiven.io.
+
+Para levantar ciertos servicios:
+
+```bash
+docker compose up <servicios>
 ```
